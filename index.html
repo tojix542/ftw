@@ -275,11 +275,15 @@ table tr:last-child td{border-bottom:none}
 
 <script>
 /* ═══════════════════════════════════════════════════════════════════
-   BOT API URL — change this one line if your bot moves.
+   BOT API URL
+   ───────────────────────────────────────────────────────────────────
+   Wispbyte gives you a domain. If https:// works, keep it.
+   If only http:// works, swap the line below to http://G-Side.wisp.uno
+   — but note the dashboard is on HTTPS, so the browser will then block
+   the call ("mixed content"). In that case, set up Cloudflare Tunnel
+   and use the https://...trycloudflare.com URL it gives you instead.
    ═══════════════════════════════════════════════════════════════════ */
-const BOT_API = "http://78.154.103.24:13506";
-/* If you later set up Cloudflare Tunnel, replace the line above with:
-   const BOT_API = "https://something.trycloudflare.com";              */
+const BOT_API = "https://G-Side.wisp.uno";
 
 const PAGES = ['hub','verify','antinuke','scam','backup','ai','music','status','presence'];
 let SESSION='', USER=null, dirty=false, config={}, newPerms={};
@@ -405,8 +409,6 @@ async function saveAll(){
   }catch(e){ toast('Save failed',false); }
 }
 
-/* ---- Staff management (owner only) ---- */
-
 function renderPermGrid(){
   const g=document.getElementById('perm-grid');
   g.innerHTML='';
@@ -469,7 +471,6 @@ async function removeStaff(id){
   }catch(e){ toast('Failed',false); }
 }
 
-/* ---- Startup: auto-login if we have a saved session ---- */
 window.addEventListener('load',()=>{
   renderPermGrid();
   const sess=localStorage.getItem('ftw_session');
