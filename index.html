@@ -186,9 +186,178 @@ table tr:hover td{background:rgba(255,255,255,.015)}
 .donut-legend-value{margin-left:auto;font-weight:700;color:var(--text)}
 
 .panel-title{font-size:14px;font-weight:700;margin-bottom:16px}
+
+/* ═══════════════════════════════════════════════════════════════
+   FTW ADVANCED UI LAYER
+   Keeps the original API/function contracts intact.
+   ═══════════════════════════════════════════════════════════════ */
+:root{
+  --shadow-sm:0 8px 24px rgba(0,0,0,.18);
+  --shadow-lg:0 24px 70px rgba(0,0,0,.34);
+  --glass:rgba(21,25,34,.72);
+  --glass-strong:rgba(21,25,34,.9);
+  --ease:cubic-bezier(.22,1,.36,1);
+}
+html{scroll-behavior:smooth}
+body{
+  background:
+    radial-gradient(900px 500px at 5% -10%,rgba(59,158,255,.10),transparent 60%),
+    radial-gradient(800px 500px at 100% 110%,rgba(132,224,92,.08),transparent 60%),
+    var(--bg);
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;opacity:.22;
+  background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+  background-size:32px 32px;
+  mask-image:linear-gradient(to bottom,black,transparent 85%);
+}
+button,input,select,textarea{font:inherit}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,
+.nav-item:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+#app{position:relative}
+#sidebar{
+  backdrop-filter:blur(18px);background:linear-gradient(180deg,rgba(21,25,34,.96),rgba(15,18,25,.92));
+  box-shadow:12px 0 50px rgba(0,0,0,.16);transition:width .35s var(--ease),transform .35s var(--ease);
+}
+.sidebar-header{position:sticky;top:0;background:rgba(21,25,34,.88);backdrop-filter:blur(16px);z-index:2}
+.sidebar-brand{font-size:24px;text-shadow:0 0 30px rgba(132,224,92,.15)}
+.sidebar-status .dot{animation:pulseDot 2s ease-in-out infinite}
+.nav-item{position:relative;overflow:hidden;transition:transform .18s var(--ease),background .18s,color .18s}
+.nav-item::after{content:"";position:absolute;left:0;top:20%;bottom:20%;width:2px;background:var(--green);transform:scaleY(0);transition:transform .2s var(--ease)}
+.nav-item:hover{transform:translateX(3px)}
+.nav-item.active::after{transform:scaleY(1)}
+#topbar{
+  position:relative;z-index:5;backdrop-filter:blur(18px);
+  background:rgba(13,16,23,.78);box-shadow:0 1px 0 rgba(255,255,255,.02);
+}
+#content{padding-top:28px}
+.page.active{animation:pageIn .42s var(--ease)}
+@keyframes pageIn{from{opacity:0;transform:translateY(12px) scale(.995)}to{opacity:1;transform:none}}
+@keyframes pulseDot{0%,100%{box-shadow:0 0 0 3px var(--green-dim),0 0 0 0 rgba(132,224,92,0)}50%{box-shadow:0 0 0 3px var(--green-dim),0 0 0 8px rgba(132,224,92,.06)}}
+.card,.profile-strip,.setting-row{
+  box-shadow:var(--shadow-sm);transition:transform .22s var(--ease),border-color .22s,box-shadow .22s,background .22s;
+}
+.card:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.09);box-shadow:0 16px 40px rgba(0,0,0,.22)}
+.card-light:hover{box-shadow:0 18px 44px rgba(0,0,0,.25)}
+.grid-kpi>.card{overflow:hidden}
+.grid-kpi>.card::before{
+  content:"";position:absolute;inset:-80px -80px auto auto;width:170px;height:170px;
+  background:radial-gradient(circle,rgba(255,255,255,.06),transparent 68%);pointer-events:none;
+}
+.card-value{transition:transform .25s var(--ease),color .2s}
+.kpi-bump{animation:kpiBump .5s var(--ease)}
+@keyframes kpiBump{0%{transform:scale(.92);opacity:.55}70%{transform:scale(1.06)}100%{transform:scale(1);opacity:1}}
+.btn{position:relative;overflow:hidden;transition:transform .18s var(--ease),box-shadow .18s,filter .18s}
+.btn:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(0,0,0,.18)}
+.btn:active{transform:translateY(0) scale(.98)}
+.btn::after{
+  content:"";position:absolute;inset:0;background:linear-gradient(120deg,transparent 35%,rgba(255,255,255,.12),transparent 65%);
+  transform:translateX(-120%);transition:transform .5s var(--ease);pointer-events:none
+}
+.btn:hover::after{transform:translateX(120%)}
+.input-sm,.field input,.field select,.field textarea{transition:border-color .2s,box-shadow .2s,background .2s,transform .15s}
+.input-sm:focus,.field input:focus,.field select:focus,.field textarea:focus{
+  border-color:var(--green);box-shadow:0 0 0 4px var(--green-dim);background:rgba(28,33,44,.96)
+}
+.profile-strip{background:linear-gradient(135deg,rgba(59,158,255,.12),rgba(132,224,92,.07));box-shadow:var(--shadow-lg)}
+.profile-strip::before{
+  content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 0 35%,rgba(255,255,255,.035) 50%,transparent 65%);
+  transform:translateX(-100%);animation:sheen 8s ease-in-out infinite;pointer-events:none
+}
+@keyframes sheen{0%,55%{transform:translateX(-100%)}75%,100%{transform:translateX(100%)}}
+.profile-avatar{transition:transform .3s var(--ease),box-shadow .3s}
+.profile-strip:hover .profile-avatar{transform:scale(1.04) rotate(1deg);box-shadow:0 0 0 8px var(--green-dim),0 10px 30px rgba(0,0,0,.25)}
+.role-badge{transition:transform .18s,background .18s}
+.role-badge:hover{transform:translateY(-1px)}
+.toast{backdrop-filter:blur(18px);box-shadow:var(--shadow-lg)}
+.toast.show{animation:toastIn .35s var(--ease)}
+@keyframes toastIn{from{opacity:0;transform:translateX(140%) scale(.96)}to{opacity:1;transform:translateX(0) scale(1)}}
+.save-bar{left:260px;backdrop-filter:blur(18px);box-shadow:var(--shadow-lg)}
+.skeleton{
+  position:relative;overflow:hidden;background:var(--surface2)!important;color:transparent!important;
+  border-radius:7px;min-height:1em
+}
+.skeleton::after{content:"";position:absolute;inset:0;transform:translateX(-100%);
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.07),transparent);
+  animation:shimmer 1.35s infinite}
+@keyframes shimmer{100%{transform:translateX(100%)}}
+.live-indicator{display:inline-flex;align-items:center;gap:7px}
+.live-indicator::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 12px var(--green);animation:pulseDot 1.7s infinite}
+.command-palette,.mobile-overlay{position:fixed;inset:0;z-index:500;display:none}
+.command-palette.open,.mobile-overlay.open{display:block}
+.command-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.58);backdrop-filter:blur(7px)}
+.command-dialog{
+  position:relative;width:min(680px,calc(100vw - 28px));margin:9vh auto 0;
+  background:var(--glass-strong);border:1px solid var(--border2);border-radius:18px;
+  box-shadow:0 35px 100px rgba(0,0,0,.55);overflow:hidden;animation:dialogIn .25s var(--ease)
+}
+@keyframes dialogIn{from{opacity:0;transform:translateY(-12px) scale(.98)}to{opacity:1;transform:none}}
+.command-input{width:100%;border:0;border-bottom:1px solid var(--border);background:transparent;color:var(--text);padding:18px 20px;font-size:16px;outline:none}
+.command-list{max-height:55vh;overflow:auto;padding:8px}
+.command-item{display:flex;align-items:center;gap:12px;padding:12px;border-radius:10px;cursor:pointer;color:var(--text2)}
+.command-item:hover,.command-item.selected{background:var(--green-dim);color:var(--text)}
+.command-key{margin-left:auto;color:var(--text3);font:11px 'JetBrains Mono',monospace}
+.command-hint{padding:10px 14px;border-top:1px solid var(--border);color:var(--text3);font-size:11px}
+.mobile-menu{display:none}
+.topbar-search{
+  display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);
+  color:var(--text2);border-radius:9px;padding:8px 11px;cursor:pointer;min-width:190px
+}
+.topbar-search kbd{margin-left:auto;font:10px 'JetBrains Mono',monospace;color:var(--text3);border:1px solid var(--border2);padding:2px 5px;border-radius:4px}
+.empty-state{padding:44px 20px;text-align:center;color:var(--text3)}
+.empty-state strong{display:block;color:var(--text2);margin-bottom:5px}
+.table-scroll{overflow:auto;border-radius:10px}
+.table-scroll table{min-width:620px}
+.action-meta{font-size:11px;color:var(--text3);margin-top:5px}
+#session-chip{display:inline-flex;align-items:center;gap:6px;font-size:10px;color:var(--text3);border:1px solid var(--border);padding:5px 8px;border-radius:20px}
+#session-chip::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--green)}
+@media(max-width:900px){
+  body{overflow:hidden}
+  #sidebar{position:fixed;left:0;top:0;bottom:0;transform:translateX(-102%);width:280px;min-width:280px;z-index:300}
+  #sidebar.open{transform:translateX(0)}
+  .mobile-menu{display:inline-flex}
+  .topbar-search{min-width:0;width:42px;padding:9px;justify-content:center}
+  .topbar-search span{display:none}
+  #topbar{padding:0 14px;height:60px}
+  #content{padding:18px 14px 90px}
+  .save-bar{left:14px;right:14px;bottom:14px}
+  .grid-kpi,.grid-2,.grid-3{grid-template-columns:1fr}
+  .profile-strip{align-items:flex-start;padding:18px}
+  .profile-avatar{width:62px;height:62px}
+  .topbar-actions .btn-primary{display:none}
+}
+@media(max-width:560px){
+  .auth-card{width:calc(100vw - 28px);padding:28px 22px}
+  .auth-logo .ftw-badge{font-size:48px}
+  .grid-charts,.grid-charts-3{grid-template-columns:1fr}
+  .card{padding:16px}
+  .profile-meta{gap:8px;flex-direction:column}
+  .topbar-actions{gap:5px}
+  .topbar-actions .btn-secondary{font-size:0;padding:9px 11px}
+  .topbar-actions .btn-secondary::before{content:"↻";font-size:15px}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.001ms!important}
+}
+
 </style>
 </head>
 <body>
+
+<!-- Advanced UX controls -->
+<div class="mobile-overlay" id="mobile-overlay" onclick="toggleSidebar(false)">
+  <div class="command-backdrop"></div>
+</div>
+<div class="command-palette" id="command-palette" aria-hidden="true">
+  <div class="command-backdrop" onclick="closeCommandPalette()"></div>
+  <div class="command-dialog" role="dialog" aria-modal="true" aria-label="Quick navigation">
+    <input id="command-input" class="command-input" autocomplete="off" placeholder="Jump to a page or action…" aria-label="Search dashboard">
+    <div class="command-list" id="command-list"></div>
+    <div class="command-hint">↑ ↓ navigate · Enter select · Esc close</div>
+  </div>
+</div>
+
 
 <!-- ══ AUTH ══ -->
 <div id="auth-screen">
@@ -216,7 +385,7 @@ table tr:hover td{background:rgba(255,255,255,.015)}
 <div id="app">
   <nav id="sidebar">
     <div class="sidebar-header">
-      <div class="sidebar-brand">FTW</div>
+      <div class="sidebar-brand" title="FTW Analytics">FTW</div>
       <div class="sidebar-status">
         <div class="dot"></div>
         <span id="who">—</span>
@@ -1323,6 +1492,199 @@ window.addEventListener('load',()=>{
     }).catch(()=>{ localStorage.removeItem('ftw_session'); });
   }
 });
+
+/* ═══ ADVANCED UX / ANIMATION LAYER ═══ */
+(function(){
+  const pageNames = {
+    overview:'Dashboard',status:'Live Status',logs:'Activity',audit:'Audit Log',
+    messaging:'Messaging',moderation:'Moderation',channels:'Channels',roles:'Roles',
+    admin:'Admin Actions',whitelist:'Whitelist',hub:'Join-to-Create',verify:'Voice Verify',
+    antinuke:'AntiNuke',scam:'Scam Catcher',backup:'Backup System',ai:'AI Chat',
+    music:'Music Player','status-cfg':'Server Status',presence:'Presence & Bio',staff:'Staff Access'
+  };
+  const pageIcons = {
+    overview:'⌂',status:'◉',logs:'≋',audit:'✓',messaging:'✉',moderation:'⚑',channels:'#',
+    roles:'◇',admin:'⚙',whitelist:'✓',hub:'⌁',verify:'◌',antinuke:'🛡',scam:'⌁',
+    backup:'↥',ai:'✦',music:'♫','status-cfg':'▣',presence:'☼',staff:'♟'
+  };
+
+  window.toggleSidebar = function(open){
+    const sidebar=document.getElementById('sidebar');
+    const overlay=document.getElementById('mobile-overlay');
+    if(!sidebar) return;
+    sidebar.classList.toggle('open', open);
+    overlay?.classList.toggle('open', open);
+  };
+
+  window.closeCommandPalette=function(){
+    const p=document.getElementById('command-palette');
+    if(!p) return;
+    p.classList.remove('open'); p.setAttribute('aria-hidden','true');
+  };
+
+  function commandItems(query=''){
+    const q=query.trim().toLowerCase();
+    return [...document.querySelectorAll('.nav-item[data-page]')]
+      .filter(n=>!n.classList.contains('hidden'))
+      .map(n=>({page:n.dataset.page,name:pageNames[n.dataset.page]||n.dataset.page}))
+      .filter(x=>!q || x.name.toLowerCase().includes(q) || x.page.includes(q));
+  }
+
+  function renderCommands(query=''){
+    const list=document.getElementById('command-list');
+    if(!list) return;
+    const items=commandItems(query);
+    list.innerHTML=items.length ? items.map((x,i)=>`
+      <div class="command-item ${i===0?'selected':''}" data-page="${x.page}" tabindex="0">
+        <span>${pageIcons[x.page]||'•'}</span><strong>${x.name}</strong><span class="command-key">${x.page}</span>
+      </div>`).join('') :
+      '<div class="empty-state"><strong>No matches</strong>Try another page name.</div>';
+    list.querySelectorAll('.command-item').forEach(item=>{
+      item.onclick=()=>{ nav(item.dataset.page); closeCommandPalette(); };
+      item.onkeydown=e=>{if(e.key==='Enter'){nav(item.dataset.page);closeCommandPalette()}};
+    });
+  }
+
+  window.openCommandPalette=function(){
+    const p=document.getElementById('command-palette'), input=document.getElementById('command-input');
+    if(!p) return;
+    p.classList.add('open'); p.setAttribute('aria-hidden','false');
+    renderCommands(); input.value=''; requestAnimationFrame(()=>input.focus());
+  };
+
+  function addTopbarControls(){
+    const top=document.querySelector('.topbar-actions');
+    if(!top || document.getElementById('quick-search')) return;
+    const search=document.createElement('button');
+    search.id='quick-search'; search.className='topbar-search';
+    search.innerHTML='<span>⌕ Quick navigation</span><kbd>Ctrl K</kbd>';
+    search.onclick=openCommandPalette;
+    top.prepend(search);
+
+    const menu=document.createElement('button');
+    menu.className='btn btn-secondary mobile-menu'; menu.setAttribute('aria-label','Open navigation');
+    menu.textContent='☰'; menu.onclick=()=>toggleSidebar(true);
+    document.getElementById('topbar').prepend(menu);
+
+    const chip=document.createElement('span');
+    chip.id='session-chip'; chip.textContent='Secure session';
+    top.appendChild(chip);
+  }
+
+  function animateNumber(el, next){
+    if(!el || next==null || next==='—') return;
+    const target=Number(String(next).replace(/[^\d.-]/g,'')); 
+    if(!Number.isFinite(target)){el.textContent=next;return}
+    const start=Number(el.dataset.num||0), duration=650, t0=performance.now();
+    el.dataset.num=target;
+    el.classList.remove('kpi-bump'); void el.offsetWidth; el.classList.add('kpi-bump');
+    function tick(t){
+      const p=Math.min(1,(t-t0)/duration), eased=1-Math.pow(1-p,3);
+      el.textContent=Math.round(start+(target-start)*eased).toLocaleString();
+      if(p<1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  function observeKpis(){
+    ['kpi-members','kpi-hubs','kpi-threats','kpi-verify','mini-an','mini-sc'].forEach(id=>{
+      const el=document.getElementById(id); if(!el) return;
+      const obs=new MutationObserver(()=>{
+        const txt=el.textContent.trim();
+        if(txt && txt!=='—' && !el.dataset.animating){
+          const n=Number(txt.replace(/[^\d.-]/g,''));
+          if(Number.isFinite(n)){
+            el.dataset.animating='1'; animateNumber(el,n);
+            setTimeout(()=>delete el.dataset.animating,80);
+          }
+        }
+      });
+      obs.observe(el,{childList:true,characterData:true,subtree:true});
+    });
+  }
+
+  function decoratePages(){
+    document.querySelectorAll('.page').forEach(page=>{
+      const id=page.id.replace('page-','');
+      page.setAttribute('aria-label',pageNames[id]||id);
+    });
+    document.querySelectorAll('table').forEach(t=>{
+      if(t.parentElement.classList.contains('table-scroll')) return;
+      const wrap=document.createElement('div'); wrap.className='table-scroll';
+      t.parentNode.insertBefore(wrap,t); wrap.appendChild(t);
+    });
+  }
+
+  function wireKeyboard(){
+    const input=document.getElementById('command-input');
+    input?.addEventListener('input',()=>renderCommands(input.value));
+    document.addEventListener('keydown',e=>{
+      if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='k'){
+        e.preventDefault(); openCommandPalette();
+      }
+      if(e.key==='Escape'){
+        closeCommandPalette(); toggleSidebar(false);
+      }
+      if(e.key==='Enter' && document.activeElement?.id==='in-pw') doLogin();
+    });
+    const list=document.getElementById('command-list');
+    document.addEventListener('keydown',e=>{
+      if(!document.getElementById('command-palette')?.classList.contains('open')) return;
+      const items=[...list.querySelectorAll('.command-item')]; if(!items.length) return;
+      let idx=items.findIndex(x=>x.classList.contains('selected'));
+      if(e.key==='ArrowDown'){e.preventDefault();idx=(idx+1)%items.length}
+      else if(e.key==='ArrowUp'){e.preventDefault();idx=(idx-1+items.length)%items.length}
+      else return;
+      items.forEach(x=>x.classList.remove('selected'));items[idx].classList.add('selected');items[idx].focus();
+    });
+  }
+
+  function addLoadingState(){
+    document.querySelectorAll('#logs-list,#audit-list').forEach(el=>{
+      if(el && !el.dataset.loaded) el.innerHTML='<div class="empty-state skeleton" style="height:72px"></div>';
+    });
+  }
+
+  const originalNav=window.nav;
+  if(typeof originalNav==='function'){
+    window.nav=function(page){
+      originalNav(page);
+      toggleSidebar(false);
+      const active=document.getElementById('page-'+page);
+      if(active) active.scrollIntoView({block:'nearest'});
+    };
+  }
+
+  const originalToast=window.toast;
+  if(typeof originalToast==='function'){
+    window.toast=function(message,ok=true){
+      originalToast(message,ok);
+      const el=document.getElementById('toast');
+      if(el){el.setAttribute('role',ok?'status':'alert');}
+    };
+  }
+
+  window.addEventListener('load',()=>{
+    addTopbarControls();
+    decoratePages();
+    observeKpis();
+    wireKeyboard();
+    addLoadingState();
+    renderCommands();
+  });
+
+  /* Enhance existing chart defaults without replacing API behavior. */
+  window.addEventListener('load',()=>{
+    if(window.Chart){
+      Chart.defaults.animation.duration=900;
+      Chart.defaults.animation.easing='easeOutQuart';
+      Chart.defaults.plugins.tooltip.padding=10;
+      Chart.defaults.plugins.tooltip.cornerRadius=8;
+      Chart.defaults.plugins.tooltip.displayColors=true;
+    }
+  });
+})();
+
 </script>
 </body>
 </html>
