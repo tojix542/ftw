@@ -41,8 +41,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .btn-login{background:linear-gradient(135deg,var(--green),#5cb845);color:#0a1a08;font-size:14px;font-weight:700;border:none;border-radius:9px;padding:13px 24px;cursor:pointer;margin-top:4px;transition:transform .1s,box-shadow .2s}
 .btn-login:hover{transform:translateY(-1px);box-shadow:0 8px 20px -8px var(--green-glow)}
 .btn-login:disabled{opacity:.5;cursor:wait;transform:none}
-.btn-oauth{background:linear-gradient(135deg,#5865F2,#4752c4);color:#fff;font-size:14px;font-weight:700;border:none;border-radius:9px;padding:13px 24px;cursor:pointer;margin-top:4px;display:flex;align-items:center;justify-content:center;gap:10px;transition:transform .1s,box-shadow .2s}
-.btn-oauth:hover{transform:translateY(-1px);box-shadow:0 8px 20px -8px rgba(88,101,242,.55)}
+.btn-oauth{background:linear-gradient(135deg,#5865F2,#4752c4);color:#fff;font-size:14px;font-weight:700;border:none;border-radius:9px;padding:13px 24px;cursor:pointer;margin-top:4px;display:flex;align-items:center;justify-content:center;gap:10px;transition:transform .1s,box-shadow .2s;text-decoration:none}
+.btn-oauth:hover{transform:translateY(-1px);box-shadow:0 8px 20px -8px rgba(88,101,242,.55);color:#fff}
 .btn-oauth:disabled{opacity:.55;cursor:not-allowed;transform:none;box-shadow:none}
 .btn-oauth svg{width:20px;height:20px;flex-shrink:0}
 #auth-error{color:var(--red);font-size:12px;text-align:center;display:none;line-height:1.5}
@@ -344,7 +344,6 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.001ms!important}
 }
 
-
 /* ─── LIVE DISCORD SERVER PROFILE ─── */
 .server-hero{margin-bottom:20px;position:relative}
 .server-banner{min-height:205px;border:1px solid var(--border);border-radius:18px;overflow:hidden;position:relative;background:
@@ -388,7 +387,6 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 @keyframes livePulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.75)}}
 @media(max-width:850px){.server-grid{grid-template-columns:1fr}.server-banner-content{padding:24px 20px}.server-name{font-size:22px}.server-meta-row{gap:10px 14px}}
 @media(max-width:600px){.server-name-row{flex-direction:column}.server-live-pill{align-self:flex-start}.server-profile-body{grid-template-columns:1fr}.server-icon{width:76px;height:76px;border-radius:22px}}
-
 
 /* ─── PROFESSIONAL OPERATIONS CENTER ─── */
 .pro-control-center{margin:0 0 22px;padding:22px;border:1px solid var(--border);border-radius:18px;background:linear-gradient(145deg,rgba(255,255,255,.035),rgba(255,255,255,.012));box-shadow:0 20px 55px rgba(0,0,0,.18)}
@@ -466,13 +464,15 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   <div class="auth-card">
     <h2 id="auth-title">Sign in</h2>
 
-    <!-- Step 1: Discord OAuth -->
+    <!-- Step 1: Discord OAuth (plain link — works even if the bot is offline) -->
     <div id="auth-step-1">
       <p>Authorize with Discord to continue.<br>You must be a member of the server.</p>
-      <button class="btn-oauth" id="btn-oauth" onclick="startDiscordAuth()">
+      <a id="btn-oauth"
+         class="btn-oauth"
+         href="https://discord.com/oauth2/authorize?client_id=1548944999536656424&response_type=code&redirect_uri=https%3A%2F%2Fftw.hmktt22.workers.dev%2F&scope=identify+guilds&prompt=consent">
         <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.317 4.369a19.79 19.79 0 0 0-4.885-1.515.074.074 0 0 0-.079.037 13.75 13.75 0 0 0-.61 1.255 18.27 18.27 0 0 0-5.487 0 12.71 12.71 0 0 0-.617-1.255.077.077 0 0 0-.079-.037 19.74 19.74 0 0 0-4.885 1.516.07.07 0 0 0-.033.027C.533 9.045-.32 13.58.099 18.058a.082.082 0 0 0 .031.056 19.94 19.94 0 0 0 6.008 3.038.078.078 0 0 0 .085-.028 14.24 14.24 0 0 0 1.226-1.994.076.076 0 0 0-.042-.106 13.13 13.13 0 0 1-1.872-.892.077.077 0 0 1-.008-.128c.126-.094.252-.192.372-.291a.074.074 0 0 1 .078-.011c3.928 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .079.009c.12.099.246.198.373.292a.077.077 0 0 1-.006.127 12.3 12.3 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.88 19.88 0 0 0 6.012-3.038.077.077 0 0 0 .032-.055c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028ZM8.02 15.331c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418Zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418Z"/></svg>
         Authorize with Discord
-      </button>
+      </a>
     </div>
 
     <!-- Step 2: password -->
@@ -1286,8 +1286,13 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 <div class="toast" id="toast"></div>
 
 <script>
-/* ═══════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════
+   CONFIG — public values only. Never put the client secret here.
+   ═══════════════════════════════════════════════════════════════ */
 const BOT_API = "https://G-Side.wisp.uno";
+const DISCORD_CLIENT_ID    = "1548944999536656424";
+const DISCORD_REDIRECT_URI = "https://ftw.hmktt22.workers.dev/";
+const DISCORD_SCOPES       = "identify guilds";
 
 const PAGES = ['hub','verify','antinuke','scam','backup','ai','music',
                'status-cfg','presence','messaging','moderation','channels','roles',
@@ -1329,41 +1334,18 @@ function fmtRel(ts){
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   DISCORD OAUTH + PASSWORD LOGIN
+   AUTH
+   ─ Step 1: click the OAuth <a> link → Discord consent screen
+   ─ Discord redirects back with ?code= → handled below
+   ─ Step 2: enter password → POST /api/login with preauth token
    ═══════════════════════════════════════════════════════════════ */
-let OAUTH_CFG = { enabled:false, client_id:null, scopes:'identify guilds', redirect_uri:null };
 let PREAUTH = null;
 let PREAUTH_USER = null;
 
-async function loadOauthConfig(){
-  try{
-    const r = await fetch(BOT_API + '/api/health');
-    const d = await r.json();
-    OAUTH_CFG.enabled      = !!d.oauth_enabled;
-    OAUTH_CFG.client_id    = d.discord_client_id || null;
-    OAUTH_CFG.scopes       = d.oauth_scopes || 'identify guilds';
-    OAUTH_CFG.redirect_uri = d.oauth_redirect_uri || (window.location.origin + window.location.pathname);
-    const btn = document.getElementById('btn-oauth');
-    if (btn && !OAUTH_CFG.enabled){
-      btn.disabled = true;
-      btn.textContent = 'Discord OAuth not configured';
-    }
-  }catch(e){ /* leave the button as-is */ }
-}
-
-function startDiscordAuth(){
-  if(!OAUTH_CFG.enabled || !OAUTH_CFG.client_id){
-    showAuthError('Discord OAuth is not configured on the bot.');
-    return;
-  }
-  const params = new URLSearchParams({
-    client_id: OAUTH_CFG.client_id,
-    redirect_uri: OAUTH_CFG.redirect_uri,
-    response_type: 'code',
-    scope: OAUTH_CFG.scopes,
-    prompt: 'consent',
-  });
-  window.location.href = 'https://discord.com/oauth2/authorize?' + params.toString();
+function showAuthError(msg){
+  const err = document.getElementById('auth-error');
+  err.textContent = msg;
+  err.style.display = 'block';
 }
 
 function cancelAuth(){
@@ -1375,17 +1357,12 @@ function cancelAuth(){
   document.getElementById('auth-error').style.display = 'none';
 }
 
-function showAuthError(msg){
-  const err = document.getElementById('auth-error');
-  err.textContent = msg;
-  err.style.display = 'block';
-}
-
 async function handleOAuthCallback(code){
   document.getElementById('auth-step-1').style.display = 'none';
   document.getElementById('auth-step-2').style.display = 'none';
   document.getElementById('auth-step-loading').style.display = '';
   document.getElementById('auth-title').textContent = 'Verifying…';
+
   try{
     const r = await fetch(BOT_API + '/api/oauth/exchange', {
       method: 'POST',
@@ -1397,7 +1374,8 @@ async function handleOAuthCallback(code){
 
     if(!r.ok){
       showAuthError(d.error || 'Discord authorization failed.');
-      cancelAuth();
+      document.getElementById('auth-step-1').style.display = '';
+      document.getElementById('auth-title').textContent = 'Sign in';
       return;
     }
     PREAUTH = d.preauth;
@@ -1409,8 +1387,9 @@ async function handleOAuthCallback(code){
     setTimeout(()=>document.getElementById('in-pw').focus(), 80);
   }catch(e){
     document.getElementById('auth-step-loading').style.display = 'none';
-    showAuthError('Could not reach the bot API.');
-    cancelAuth();
+    showAuthError('Could not reach the bot API. Is the bot running?');
+    document.getElementById('auth-step-1').style.display = '';
+    document.getElementById('auth-title').textContent = 'Sign in';
   }
 }
 
@@ -1925,7 +1904,6 @@ async function saveAll(){
     else if(el.type === 'number') payload[k] = Number(el.value);
     else payload[k] = el.value;
   });
-  // comma-separated lists handled here
   if(document.getElementById('ai-trigger-words')){
     const raw = document.getElementById('ai-trigger-words').value.trim();
     payload.ai_trigger_words = raw ? raw.split(',').map(s=>s.trim()).filter(Boolean) : [];
@@ -1980,7 +1958,7 @@ async function removeWhitelist(id){ if(!confirm('Remove this member?')) return; 
 async function toggleWhitelist(){ const enabled = document.getElementById('wl-enabled').checked; const r = await post('/api/whitelist/toggle',{enabled}); if(r) toast('Whitelist '+(enabled?'enabled':'disabled')); }
 
 /* ═══════════════════════════════════════════════════════════════
-   AI PANEL (Claude + ChatGPT)
+   AI PANEL
    ═══════════════════════════════════════════════════════════════ */
 function selectAIProvider(provider){
   const hidden = document.getElementById('ai-provider-hidden');
@@ -2081,10 +2059,7 @@ window.addEventListener('load', async () => {
   liveServerTimer = setInterval(() => { loadLiveServer(); loadProCenter(); }, 5000);
   loadProCenter();
 
-  // Fetch public OAuth metadata for the button
-  await loadOauthConfig();
-
-  // Handle Discord OAuth redirect (?code= or ?error=)
+  // 1) Handle OAuth redirect back from Discord (?code= or ?error=)
   const url = new URL(window.location.href);
   const code = url.searchParams.get('code');
   const oauthError = url.searchParams.get('error');
@@ -2097,7 +2072,7 @@ window.addEventListener('load', async () => {
     return;
   }
 
-  // Restore existing session
+  // 2) Restore existing session if any
   const sess = localStorage.getItem('ftw_session');
   if(sess){
     SESSION = sess;
