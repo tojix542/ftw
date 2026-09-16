@@ -341,6 +341,51 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.001ms!important}
 }
 
+
+/* ─── LIVE DISCORD SERVER PROFILE ─── */
+.server-hero{margin-bottom:20px;position:relative}
+.server-banner{min-height:205px;border:1px solid var(--border);border-radius:18px;overflow:hidden;position:relative;background:
+  radial-gradient(circle at 80% 20%,rgba(59,158,255,.24),transparent 38%),
+  radial-gradient(circle at 15% 90%,rgba(132,224,92,.18),transparent 42%),var(--surface)}
+.server-banner.has-image{background-size:cover;background-position:center}
+.server-banner-shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(7,10,15,.92) 0%,rgba(7,10,15,.72) 52%,rgba(7,10,15,.28) 100%)}
+.server-banner-content{position:relative;z-index:1;display:flex;align-items:center;gap:20px;padding:30px 30px 26px;min-height:205px}
+.server-icon-wrap{position:relative;flex:0 0 auto}
+.server-icon{width:92px;height:92px;border-radius:26px;object-fit:cover;background:var(--surface3);border:2px solid rgba(255,255,255,.24);box-shadow:0 16px 40px rgba(0,0,0,.35)}
+.server-online-dot{position:absolute;right:-3px;bottom:3px;width:19px;height:19px;border-radius:50%;background:var(--green);border:4px solid var(--bg);box-shadow:0 0 18px var(--green-glow)}
+.server-main{min-width:0;flex:1}
+.server-name-row{display:flex;align-items:flex-start;gap:14px;justify-content:space-between}
+.server-name{font-size:27px;font-weight:850;letter-spacing:-.8px;text-shadow:0 2px 16px rgba(0,0,0,.35)}
+.server-id{font:11px 'JetBrains Mono',monospace;color:rgba(255,255,255,.48);margin-top:5px}
+.server-live-pill{display:flex;align-items:center;gap:7px;padding:6px 10px;border-radius:999px;background:rgba(132,224,92,.13);border:1px solid rgba(132,224,92,.28);color:var(--green);font-size:10px;font-weight:800;letter-spacing:1px;white-space:nowrap}
+.server-live-pill span{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green)}
+.server-meta-row{display:flex;flex-wrap:wrap;gap:14px 20px;margin-top:18px;color:rgba(255,255,255,.7);font-size:12px}
+.server-meta-row b{color:#fff}
+.server-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.server-panel{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:18px;min-width:0}
+.server-panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.server-profile-body{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.server-profile-stat{display:flex;flex-direction:column;gap:5px;padding:11px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:10px}
+.server-profile-stat span{font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:var(--text3);font-weight:700}
+.server-profile-stat b{font-size:12px;color:var(--text)}
+.server-description{margin-top:12px;color:var(--text2);font-size:12px;line-height:1.6;min-height:38px}
+.bot-profile{display:flex;align-items:center;gap:13px}
+.bot-avatar-large{width:58px;height:58px;border-radius:50%;object-fit:cover;background:var(--surface3);border:2px solid var(--green);box-shadow:0 0 0 5px var(--green-dim)}
+.bot-name{font-size:17px;font-weight:800}
+.bot-handle{font:11px 'JetBrains Mono',monospace;color:var(--text3);margin-top:2px}
+.bot-status-line{display:flex;align-items:center;gap:6px;color:var(--text2);font-size:11px;margin-top:7px}
+.bot-live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 9px var(--green)}
+.bot-banner{height:86px;margin-top:16px;border-radius:11px;overflow:hidden;position:relative;background:var(--surface2);border:1px solid var(--border);background-size:cover;background-position:center}
+.bot-banner-label{position:absolute;left:10px;top:8px;font-size:9px;text-transform:uppercase;letter-spacing:.8px;font-weight:800;color:rgba(255,255,255,.72);z-index:2}
+.bot-banner-empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:11px}
+.bot-banner.has-image .bot-banner-empty{display:none}
+.live-foot{display:flex;justify-content:space-between;gap:12px;margin-top:9px;padding:0 4px;color:var(--text3);font-size:10px}
+.live-foot span:first-child{display:flex;align-items:center;gap:7px;color:var(--green);font-weight:700}
+.live-foot i{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:livePulse 1.6s infinite}
+@keyframes livePulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.75)}}
+@media(max-width:850px){.server-grid{grid-template-columns:1fr}.server-banner-content{padding:24px 20px}.server-name{font-size:22px}.server-meta-row{gap:10px 14px}}
+@media(max-width:600px){.server-name-row{flex-direction:column}.server-live-pill{align-self:flex-start}.server-profile-body{grid-template-columns:1fr}.server-icon{width:76px;height:76px;border-radius:22px}}
+
 </style>
 </head>
 <body>
@@ -446,6 +491,70 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
               <span>📥 <span id="pf-joined">—</span></span>
             </div>
             <div class="role-badges" id="pf-roles"></div>
+          </div>
+        </div>
+
+        <div class="server-hero" id="server-hero">
+          <div class="server-banner" id="server-banner">
+            <div class="server-banner-shade"></div>
+            <div class="server-banner-content">
+              <div class="server-icon-wrap">
+                <img id="server-icon" class="server-icon" src="" alt="Server icon">
+                <span id="server-online-dot" class="server-online-dot"></span>
+              </div>
+              <div class="server-main">
+                <div class="server-name-row">
+                  <div>
+                    <div class="server-name" id="server-name">Loading server…</div>
+                    <div class="server-id" id="server-id">—</div>
+                  </div>
+                  <div class="server-live-pill"><span></span> LIVE</div>
+                </div>
+                <div class="server-meta-row">
+                  <span>👥 <b id="server-members">—</b> members</span>
+                  <span>💬 <b id="server-channels">—</b> channels</span>
+                  <span>🎭 <b id="server-roles">—</b> roles</span>
+                  <span>🔊 <b id="server-hubs">—</b> active voice</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="server-grid">
+            <div class="server-panel">
+              <div class="server-panel-head">
+                <div class="card-title">Discord Server Profile</div>
+                <div class="card-tag blue" id="server-sync">SYNCING</div>
+              </div>
+              <div class="server-profile-body">
+                <div class="server-profile-stat"><span>Owner</span><b id="server-owner">—</b></div>
+                <div class="server-profile-stat"><span>Created</span><b id="server-created">—</b></div>
+                <div class="server-profile-stat"><span>Boost level</span><b id="server-boost">—</b></div>
+                <div class="server-profile-stat"><span>Verification</span><b id="server-verification">—</b></div>
+              </div>
+              <div class="server-description" id="server-description">Live Discord guild information will appear here.</div>
+            </div>
+            <div class="server-panel bot-profile-panel">
+              <div class="server-panel-head">
+                <div class="card-title">Bot Profile</div>
+                <div class="card-tag">DISCORD</div>
+              </div>
+              <div class="bot-profile">
+                <img id="bot-avatar-large" class="bot-avatar-large" src="" alt="Bot avatar">
+                <div class="bot-profile-info">
+                  <div class="bot-name" id="bot-profile-name">—</div>
+                  <div class="bot-handle" id="bot-profile-handle">@—</div>
+                  <div class="bot-status-line"><span class="bot-live-dot"></span><span id="bot-profile-status">Connected to Discord</span></div>
+                </div>
+              </div>
+              <div class="bot-banner" id="bot-banner">
+                <div class="bot-banner-label">Bot banner</div>
+                <div class="bot-banner-empty" id="bot-banner-empty">No banner supplied by the bot API</div>
+              </div>
+            </div>
+          </div>
+          <div class="live-foot">
+            <span><i></i> Live server sync</span>
+            <span id="server-last-sync">Waiting for first sync…</span>
           </div>
         </div>
 
@@ -918,7 +1027,7 @@ const PAGES = ['hub','verify','antinuke','scam','backup','ai','music',
                'admin','audit','whitelist'];
 
 let SESSION='', USER=null, dirty=false, config={}, newPerms={};
-let statusTimer=null, logsTimer=null, auditTimer=null, statusHist=[];
+let statusTimer=null, logsTimer=null, auditTimer=null, liveServerTimer=null, statusHist=[];
 const charts = {};
 
 /* ─── Chart.js defaults ─── */
@@ -970,7 +1079,7 @@ async function doLogin(){
     document.getElementById('auth-screen').style.display='none';
     document.getElementById('app').classList.add('visible');
     applyUser();
-    await Promise.all([loadProfile(), loadConfig(), loadHealth(), loadAnalytics()]);
+    await Promise.all([loadProfile(), loadLiveServer(), loadConfig(), loadHealth(), loadAnalytics()]);
     if(USER.role==='owner') await loadStaff();
   }catch(e){
     if(e.message==='invalid credentials') err.textContent='Wrong Discord ID or password.';
@@ -984,7 +1093,7 @@ async function doLogin(){
 
 function doLogout(){
   if(SESSION) fetch(BOT_API+'/api/logout',{method:'POST',headers:hdr()}).catch(()=>{});
-  [statusTimer,logsTimer,auditTimer].forEach(t=>{ if(t) clearInterval(t); });
+  [statusTimer,logsTimer,auditTimer,liveServerTimer].forEach(t=>{ if(t) clearInterval(t); });
   localStorage.removeItem('ftw_session');
   location.reload();
 }
@@ -1025,7 +1134,80 @@ async function loadProfile(){
       if(r.colour && r.colour!=='#000000') { b.style.borderColor=r.colour; b.style.color=r.colour; }
       rolesEl.appendChild(b);
     });
+    applyServerProfile({}, {}, p);
   }catch(e){}
+}
+
+
+/* ═══ LIVE DISCORD SERVER + BOT PROFILE ═══ */
+function firstDefined(...vals){ return vals.find(v=>v!==undefined && v!==null && v!==''); }
+function safeText(v, fallback='—'){ return (v===undefined||v===null||v==='') ? fallback : String(v); }
+function setImg(id, url){
+  const el=document.getElementById(id);
+  if(!el) return;
+  if(url){ el.src=url; el.style.display=''; }
+  else { el.removeAttribute('src'); el.style.display='none'; }
+}
+function formatDiscordDate(v){
+  if(!v) return '—';
+  const n=typeof v==='number' ? (v<10000000000?v*1000:v) : Date.parse(v);
+  return Number.isFinite(n) ? new Date(n).toLocaleDateString() : safeText(v);
+}
+function applyServerProfile(d, fallbackStatus, botProfile){
+  d=d||{};
+  fallbackStatus=fallbackStatus||{};
+  botProfile=botProfile||{};
+  const guild=firstDefined(d.guild,d.server,d);
+  const bot=firstDefined(d.bot,botProfile)||{};
+  const icon=firstDefined(guild.icon_url,guild.icon,guild.avatar_url);
+  const banner=firstDefined(guild.banner_url,guild.banner);
+  const botAvatar=firstDefined(bot.avatar_url,bot.avatar,botProfile.avatar);
+  const botBanner=firstDefined(bot.banner_url,bot.banner,botProfile.banner);
+
+  setImg('server-icon',icon);
+  const sb=document.getElementById('server-banner');
+  if(sb){
+    if(banner){ sb.style.backgroundImage=`url("${banner}")`; sb.classList.add('has-image'); }
+    else { sb.style.backgroundImage=''; sb.classList.remove('has-image'); }
+  }
+  document.getElementById('server-name').textContent=safeText(firstDefined(guild.name,d.name),'Discord Server');
+  document.getElementById('server-id').textContent=firstDefined(guild.id,d.guild_id,d.id)?'ID · '+firstDefined(guild.id,d.guild_id,d.id):'—';
+  document.getElementById('server-members').textContent=safeText(firstDefined(guild.member_count,guild.members,d.members,fallbackStatus.members),0);
+  document.getElementById('server-channels').textContent=safeText(firstDefined(guild.channel_count,guild.channels,d.channels,fallbackStatus.channels),0);
+  document.getElementById('server-roles').textContent=safeText(firstDefined(guild.role_count,guild.roles,d.roles,fallbackStatus.roles),0);
+  document.getElementById('server-hubs').textContent=safeText(firstDefined(guild.active_voice,guild.hubs,d.hubs,fallbackStatus.hubs),0);
+  document.getElementById('server-owner').textContent=safeText(firstDefined(guild.owner_name,guild.owner?.name,guild.owner_id,d.owner_name,guild.owner_id));
+  document.getElementById('server-created').textContent=formatDiscordDate(firstDefined(guild.created_at,d.created_at));
+  document.getElementById('server-boost').textContent=safeText(firstDefined(guild.premium_tier,guild.boost_level,d.premium_tier),'—');
+  document.getElementById('server-verification').textContent=safeText(firstDefined(guild.verification_level,d.verification_level),'—');
+  document.getElementById('server-description').textContent=safeText(firstDefined(guild.description,d.description),'Live Discord guild information');
+  setImg('bot-avatar-large',botAvatar);
+  document.getElementById('bot-profile-name').textContent=safeText(firstDefined(bot.display_name,bot.name,botProfile.display_name,botProfile.username),'Bot');
+  document.getElementById('bot-profile-handle').textContent='@'+safeText(firstDefined(bot.username,botProfile.username),'bot');
+  document.getElementById('bot-profile-status').textContent=firstDefined(bot.status,botProfile.status,fallbackStatus.status,'Connected to Discord');
+  const bb=document.getElementById('bot-banner');
+  if(bb){
+    if(botBanner){ bb.style.backgroundImage=`url("${botBanner}")`; bb.classList.add('has-image'); }
+    else { bb.style.backgroundImage=''; bb.classList.remove('has-image'); }
+  }
+  document.getElementById('server-sync').textContent='LIVE';
+  document.getElementById('server-last-sync').textContent='Last sync · '+new Date().toLocaleTimeString();
+}
+async function loadLiveServer(){
+  try{
+    const [serverRes, statusRes, profileRes] = await Promise.all([
+      fetch(BOT_API+'/api/server',{headers:hdr()}),
+      fetch(BOT_API+'/api/status',{headers:hdr()}),
+      fetch(BOT_API+'/api/profile',{headers:hdr()})
+    ]);
+    const server=serverRes.ok ? await serverRes.json() : {};
+    const status=statusRes.ok ? await statusRes.json() : {};
+    const profile=profileRes.ok ? await profileRes.json() : {};
+    applyServerProfile(server,status,profile);
+  }catch(e){
+    document.getElementById('server-sync').textContent='OFFLINE';
+    document.getElementById('server-last-sync').textContent='Live sync unavailable';
+  }
 }
 
 /* ═══ CONFIG ═══ */
@@ -1379,7 +1561,7 @@ function nav(page){
 }
 
 function refreshAll(){
-  loadProfile(); loadConfig(); loadAnalytics();
+  loadProfile(); loadLiveServer(); loadConfig(); loadAnalytics();
   const p=document.querySelector('.page.active')?.id;
   if(p==='page-status') loadStatus();
   if(p==='page-logs') loadLogs();
@@ -1478,6 +1660,7 @@ async function removeStaff(id){ if(!confirm('Remove this staff member?')) return
 /* ═══ BOOT ═══ */
 window.addEventListener('load',()=>{
   renderPermGrid();
+  liveServerTimer=setInterval(loadLiveServer,5000);
   const sess=localStorage.getItem('ftw_session');
   if(sess){
     SESSION=sess;
@@ -1487,7 +1670,7 @@ window.addEventListener('load',()=>{
       document.getElementById('auth-screen').style.display='none';
       document.getElementById('app').classList.add('visible');
       applyUser();
-      Promise.all([loadProfile(), loadConfig(), loadHealth(), loadAnalytics()]);
+      Promise.all([loadProfile(), loadLiveServer(), loadConfig(), loadHealth(), loadAnalytics()]);
       if(u.role==='owner') loadStaff();
     }).catch(()=>{ localStorage.removeItem('ftw_session'); });
   }
