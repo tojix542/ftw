@@ -91,16 +91,12 @@ table tr:last-child td{border-bottom:none}
     <h2>Sign in</h2>
     <p>Use your Discord user ID and the password the owner gave you.</p>
     <div class="field">
-      <label>Bot API URL</label>
-      <input type="text" id="in-api" placeholder="http://78.154.103.24:13506">
-    </div>
-    <div class="field">
       <label>Discord ID</label>
-      <input type="text" id="in-id" placeholder="267052792693129217" inputmode="numeric">
+      <input type="text" id="in-id" placeholder="267052792693129217" inputmode="numeric" autocomplete="username">
     </div>
     <div class="field">
       <label>Password</label>
-      <input type="password" id="in-pw" placeholder="••••">
+      <input type="password" id="in-pw" placeholder="••••" autocomplete="current-password">
     </div>
     <button class="btn-login" id="btn-login" onclick="doLogin()">Sign in</button>
     <div id="auth-error"></div>
@@ -278,9 +274,15 @@ table tr:last-child td{border-bottom:none}
 <div class="toast" id="toast"></div>
 
 <script>
+/* ═══════════════════════════════════════════════════════════════════
+   BOT API URL — change this one line if your bot moves.
+   ═══════════════════════════════════════════════════════════════════ */
+const BOT_API = "http://78.154.103.24:13506";
+/* If you later set up Cloudflare Tunnel, replace the line above with:
+   const BOT_API = "https://something.trycloudflare.com";              */
+
 const PAGES = ['hub','verify','antinuke','scam','backup','ai','music','status','presence'];
-let API='', SESSION='', USER=null, dirty=false, config={};
-let newPerms = {};
+let SESSION='', USER=null, dirty=false, config={}, newPerms={};
 
 function toast(m, ok=true){
   const el=document.getElementById('toast');
@@ -291,24 +293,22 @@ function toast(m, ok=true){
 function hdr(){ return {'Content-Type':'application/json','X-Session':SESSION}; }
 
 async function doLogin(){
-  const api=document.getElementById('in-api').value.trim().replace(/\/$/,'');
   const id=document.getElementById('in-id').value.trim();
   const pw=document.getElementById('in-pw').value;
   const err=document.getElementById('auth-error');
   const btn=document.getElementById('btn-login');
   err.style.display='none';
-  if(!api||!id||!pw){ err.textContent='All fields are required.'; err.style.display='block'; return; }
+  if(!id||!pw){ err.textContent='Both fields are required.'; err.style.display='block'; return; }
   btn.disabled=true; btn.textContent='Signing in…';
   try{
-    const r=await fetch(api+'/api/login',{
+    const r=await fetch(BOT_API+'/api/login',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({discord_id:id,password:pw})
     });
     const data=await r.json();
     if(!r.ok){ throw new Error(data.error||'login failed'); }
-    API=api; SESSION=data.token; USER=data.user;
-    localStorage.setItem('ftw_api',api);
+    SESSION=data.token; USER=data.user;
     localStorage.setItem('ftw_session',SESSION);
     document.getElementById('auth-screen').style.display='none';
     document.getElementById('app').classList.add('visible');
@@ -317,7 +317,13 @@ async function doLogin(){
     await loadHealth();
     if(USER.role==='owner') await loadStaff();
   }catch(e){
-    err.textContent=e.message==='invalid credentials'?'Wrong Discord ID or password.':('Error: '+e.message);
+    if(e.message==='invalid credentials'){
+      err.textContent='Wrong Discord ID or password.';
+    } else if(e.message==='Failed to fetch'){
+      err.textContent='Cannot reach the bot API at '+BOT_API+'. Check that the bot is online and the port is exposed.';
+    } else {
+      err.textContent='Error: '+e.message;
+    }
     err.style.display='block';
   }finally{
     btn.disabled=false; btn.textContent='Sign in';
@@ -325,9 +331,8 @@ async function doLogin(){
 }
 
 function doLogout(){
-  if(SESSION) fetch(API+'/api/logout',{method:'POST',headers:hdr()}).catch(()=>{});
+  if(SESSION) fetch(BOT_API+'/api/logout',{method:'POST',headers:hdr()}).catch(()=>{});
   localStorage.removeItem('ftw_session');
-  localStorage.removeItem('ftw_api');
   location.reload();
 }
 
@@ -345,7 +350,7 @@ function applyUser(){
 
 async function loadConfig(){
   try{
-    const r=await fetch(API+'/api/config',{headers:hdr()});
+    const r=await fetch(BOT_API+'/api/config',{headers:hdr()});
     if(r.status===401){ toast('Session expired — sign in again',false); doLogout(); return; }
     config=await r.json();
     document.querySelectorAll('[data-key]').forEach(el=>{
@@ -363,7 +368,7 @@ async function loadConfig(){
 
 async function loadHealth(){
   try{
-    const r=await fetch(API+'/api/health');
+    const r=await fetch(BOT_API+'/api/health');
     const d=await r.json();
     document.getElementById('health').textContent=
       'Bot: '+(d.bot||'offline')+'\nHubs: '+d.hubs+'\nUptime: '+Math.floor(d.uptime/60)+' min';
@@ -393,7 +398,7 @@ async function saveAll(){
     else payload[k]=el.value;
   });
   try{
-    const r=await fetch(API+'/api/config',{method:'POST',headers:hdr(),body:JSON.stringify(payload)});
+    const r=await fetch(BOT_API+'/api/config',{method:'POST',headers:hdr(),body:JSON.stringify(payload)});
     if(!r.ok){ toast('Bot rejected the save',false); return; }
     dirty=false; document.getElementById('save-bar').classList.remove('visible');
     toast('✓ Configuration saved');
@@ -417,7 +422,7 @@ function renderPermGrid(){
 async function loadStaff(){
   if(!USER||USER.role!=='owner') return;
   try{
-    const r=await fetch(API+'/api/staff',{headers:hdr()});
+    const r=await fetch(BOT_API+'/api/staff',{headers:hdr()});
     if(!r.ok) return;
     const d=await r.json();
     const tb=document.getElementById('staff-rows');
@@ -440,7 +445,7 @@ async function addStaff(){
   const pw=document.getElementById('sf-pw').value;
   if(!id||!name||!pw){ toast('All three fields are required',false); return; }
   try{
-    const r=await fetch(API+'/api/staff/add',{method:'POST',headers:hdr(),
+    const r=await fetch(BOT_API+'/api/staff/add',{method:'POST',headers:hdr(),
       body:JSON.stringify({discord_id:id,name,password:pw,perms:newPerms})});
     const d=await r.json();
     if(!r.ok){ toast(d.error||'Failed',false); return; }
@@ -456,7 +461,7 @@ async function addStaff(){
 async function removeStaff(id){
   if(!confirm('Remove this staff member?')) return;
   try{
-    const r=await fetch(API+'/api/staff/remove',{method:'POST',headers:hdr(),
+    const r=await fetch(BOT_API+'/api/staff/remove',{method:'POST',headers:hdr(),
       body:JSON.stringify({discord_id:id})});
     if(!r.ok){ toast('Failed',false); return; }
     toast('Removed');
@@ -464,14 +469,13 @@ async function removeStaff(id){
   }catch(e){ toast('Failed',false); }
 }
 
-/* ---- Startup ---- */
+/* ---- Startup: auto-login if we have a saved session ---- */
 window.addEventListener('load',()=>{
   renderPermGrid();
-  const api=localStorage.getItem('ftw_api');
   const sess=localStorage.getItem('ftw_session');
-  if(api&&sess){
-    API=api; SESSION=sess;
-    fetch(API+'/api/me',{headers:hdr()}).then(r=>{
+  if(sess){
+    SESSION=sess;
+    fetch(BOT_API+'/api/me',{headers:hdr()}).then(r=>{
       if(!r.ok) throw 0;
       return r.json();
     }).then(u=>{
@@ -482,7 +486,6 @@ window.addEventListener('load',()=>{
       if(u.role==='owner') loadStaff();
     }).catch(()=>{
       localStorage.removeItem('ftw_session');
-      localStorage.removeItem('ftw_api');
     });
   }
 });
