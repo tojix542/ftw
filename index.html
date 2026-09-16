@@ -41,7 +41,11 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .btn-login{background:linear-gradient(135deg,var(--green),#5cb845);color:#0a1a08;font-size:14px;font-weight:700;border:none;border-radius:9px;padding:13px 24px;cursor:pointer;margin-top:4px;transition:transform .1s,box-shadow .2s}
 .btn-login:hover{transform:translateY(-1px);box-shadow:0 8px 20px -8px var(--green-glow)}
 .btn-login:disabled{opacity:.5;cursor:wait;transform:none}
-#auth-error{color:var(--red);font-size:12px;text-align:center;display:none}
+.btn-oauth{background:linear-gradient(135deg,#5865F2,#4752c4);color:#fff;font-size:14px;font-weight:700;border:none;border-radius:9px;padding:13px 24px;cursor:pointer;margin-top:4px;display:flex;align-items:center;justify-content:center;gap:10px;transition:transform .1s,box-shadow .2s}
+.btn-oauth:hover{transform:translateY(-1px);box-shadow:0 8px 20px -8px rgba(88,101,242,.55)}
+.btn-oauth:disabled{opacity:.55;cursor:not-allowed;transform:none;box-shadow:none}
+.btn-oauth svg{width:20px;height:20px;flex-shrink:0}
+#auth-error{color:var(--red);font-size:12px;text-align:center;display:none;line-height:1.5}
 
 /* ─── APP SHELL ─── */
 #app{display:flex;width:100%;height:100vh;opacity:0;transition:opacity .3s}
@@ -189,7 +193,6 @@ table tr:hover td{background:rgba(255,255,255,.015)}
 
 /* ═══════════════════════════════════════════════════════════════
    FTW ADVANCED UI LAYER
-   Keeps the original API/function contracts intact.
    ═══════════════════════════════════════════════════════════════ */
 :root{
   --shadow-sm:0 8px 24px rgba(0,0,0,.18);
@@ -425,6 +428,17 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 @media(max-width:950px){.pro-columns{grid-template-columns:1fr 1fr}.pro-columns .pro-card:last-child{grid-column:1/-1}.pro-bottom{grid-template-columns:1fr}}
 @media(max-width:650px){.pro-section-head{align-items:flex-start;flex-direction:column}.pro-actions{width:100%}.pro-actions button{flex:1}.pro-metrics{grid-template-columns:1fr 1fr}.pro-columns{grid-template-columns:1fr}.pro-columns .pro-card:last-child{grid-column:auto}.pro-bottom{grid-template-columns:1fr}}
 
+/* ─── AI PAGE ─── */
+.ai-provider-row{display:flex;gap:10px;flex-wrap:wrap}
+.ai-provider-chip{flex:1;min-width:180px;background:var(--surface2);border:2px solid var(--border);border-radius:12px;padding:14px 16px;cursor:pointer;display:flex;flex-direction:column;gap:6px;transition:all .18s var(--ease);user-select:none}
+.ai-provider-chip:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.14)}
+.ai-provider-chip.selected{border-color:var(--green);background:var(--green-dim);box-shadow:0 0 0 4px var(--green-dim)}
+.ai-provider-chip .ai-name{font-size:14px;font-weight:800}
+.ai-provider-chip .ai-desc{font-size:11px;color:var(--text3)}
+.ai-provider-chip.selected .ai-desc{color:var(--green)}
+.ai-test-box{display:flex;gap:10px;margin-top:14px}
+.ai-test-box textarea{flex:1;min-height:60px}
+.ai-test-output{margin-top:14px;padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;font-size:13px;color:var(--text2);line-height:1.6;min-height:44px;white-space:pre-wrap;word-break:break-word}
 </style>
 </head>
 <body>
@@ -442,25 +456,43 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   </div>
 </div>
 
-
 <!-- ══ AUTH ══ -->
 <div id="auth-screen">
   <div class="auth-logo">
     <div class="ftw-badge">FTW</div>
     <div class="sub">Analytics Dashboard</div>
   </div>
+
   <div class="auth-card">
-    <h2>Sign in</h2>
-    <p>Use your Discord user ID and the password the owner gave you.</p>
-    <div class="field">
-      <label>Discord ID</label>
-      <input type="text" id="in-id" placeholder="267052792693129217" inputmode="numeric" autocomplete="username">
+    <h2 id="auth-title">Sign in</h2>
+
+    <!-- Step 1: Discord OAuth -->
+    <div id="auth-step-1">
+      <p>Authorize with Discord to continue.<br>You must be a member of the server.</p>
+      <button class="btn-oauth" id="btn-oauth" onclick="startDiscordAuth()">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.317 4.369a19.79 19.79 0 0 0-4.885-1.515.074.074 0 0 0-.079.037 13.75 13.75 0 0 0-.61 1.255 18.27 18.27 0 0 0-5.487 0 12.71 12.71 0 0 0-.617-1.255.077.077 0 0 0-.079-.037 19.74 19.74 0 0 0-4.885 1.516.07.07 0 0 0-.033.027C.533 9.045-.32 13.58.099 18.058a.082.082 0 0 0 .031.056 19.94 19.94 0 0 0 6.008 3.038.078.078 0 0 0 .085-.028 14.24 14.24 0 0 0 1.226-1.994.076.076 0 0 0-.042-.106 13.13 13.13 0 0 1-1.872-.892.077.077 0 0 1-.008-.128c.126-.094.252-.192.372-.291a.074.074 0 0 1 .078-.011c3.928 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .079.009c.12.099.246.198.373.292a.077.077 0 0 1-.006.127 12.3 12.3 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.88 19.88 0 0 0 6.012-3.038.077.077 0 0 0 .032-.055c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028ZM8.02 15.331c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418Zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418Z"/></svg>
+        Authorize with Discord
+      </button>
     </div>
-    <div class="field">
-      <label>Password</label>
-      <input type="password" id="in-pw" placeholder="••••" autocomplete="current-password">
+
+    <!-- Step 2: password -->
+    <div id="auth-step-2" style="display:none;">
+      <p>Authenticated as <b id="auth-user" style="color:var(--green);word-break:break-all;"></b>.<br>
+         Enter your password to finish signing in.</p>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="in-pw" placeholder="••••" autocomplete="current-password">
+      </div>
+      <button class="btn-login" id="btn-login" onclick="doLogin()">Sign in</button>
+      <button class="btn btn-secondary" style="width:100%;margin-top:8px;"
+              onclick="cancelAuth()">← Use another account</button>
     </div>
-    <button class="btn-login" id="btn-login" onclick="doLogin()">Sign in</button>
+
+    <!-- Loading overlay during OAuth callback -->
+    <div id="auth-step-loading" style="display:none;">
+      <p>Verifying Discord authorization…</p>
+    </div>
+
     <div id="auth-error"></div>
   </div>
 </div>
@@ -597,76 +629,75 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
           </div>
         </div>
 
-        
-<div class="pro-control-center">
-  <div class="pro-section-head">
-    <div>
-      <div class="eyebrow">OPERATIONS CENTER</div>
-      <h2>Professional Server Control</h2>
-      <p>Monitor Discord, bot health, security and activity from one command center.</p>
-    </div>
-    <div class="pro-actions">
-      <button class="btn btn-sm" onclick="proRefresh()">↻ Refresh all</button>
-      <button class="btn btn-primary btn-sm" onclick="nav('status')">Open live monitor</button>
-    </div>
-  </div>
+        <div class="pro-control-center">
+          <div class="pro-section-head">
+            <div>
+              <div class="eyebrow">OPERATIONS CENTER</div>
+              <h2>Professional Server Control</h2>
+              <p>Monitor Discord, bot health, security and activity from one command center.</p>
+            </div>
+            <div class="pro-actions">
+              <button class="btn btn-sm" onclick="proRefresh()">↻ Refresh all</button>
+              <button class="btn btn-primary btn-sm" onclick="nav('status')">Open live monitor</button>
+            </div>
+          </div>
 
-  <div class="pro-metrics">
-    <div class="pro-metric"><span class="pro-icon">⚡</span><div><b id="pro-latency">—</b><small>Latency</small></div></div>
-    <div class="pro-metric"><span class="pro-icon">🟢</span><div><b id="pro-health">ONLINE</b><small>Bot health</small></div></div>
-    <div class="pro-metric"><span class="pro-icon">🛡</span><div><b id="pro-security">ACTIVE</b><small>Protection</small></div></div>
-    <div class="pro-metric"><span class="pro-icon">↗</span><div><b id="pro-events">—</b><small>Recent events</small></div></div>
-  </div>
+          <div class="pro-metrics">
+            <div class="pro-metric"><span class="pro-icon">⚡</span><div><b id="pro-latency">—</b><small>Latency</small></div></div>
+            <div class="pro-metric"><span class="pro-icon">🟢</span><div><b id="pro-health">ONLINE</b><small>Bot health</small></div></div>
+            <div class="pro-metric"><span class="pro-icon">🛡</span><div><b id="pro-security">ACTIVE</b><small>Protection</small></div></div>
+            <div class="pro-metric"><span class="pro-icon">↗</span><div><b id="pro-events">—</b><small>Recent events</small></div></div>
+          </div>
 
-  <div class="pro-columns">
-    <div class="pro-card">
-      <div class="pro-card-head"><span>Live Services</span><span class="status-chip live">OPERATIONAL</span></div>
-      <div class="service-list">
-        <div class="service-row"><span><i class="svc-dot"></i>Discord Gateway</span><b id="svc-gateway">Connected</b></div>
-        <div class="service-row"><span><i class="svc-dot"></i>Bot API</span><b id="svc-api">Connected</b></div>
-        <div class="service-row"><span><i class="svc-dot"></i>Analytics</span><b>Running</b></div>
-        <div class="service-row"><span><i class="svc-dot"></i>Audit Logging</span><b>Protected</b></div>
-        <div class="service-row"><span><i class="svc-dot"></i>Live Sync</span><b id="svc-sync">5s</b></div>
-      </div>
-    </div>
+          <div class="pro-columns">
+            <div class="pro-card">
+              <div class="pro-card-head"><span>Live Services</span><span class="status-chip live">OPERATIONAL</span></div>
+              <div class="service-list">
+                <div class="service-row"><span><i class="svc-dot"></i>Discord Gateway</span><b id="svc-gateway">Connected</b></div>
+                <div class="service-row"><span><i class="svc-dot"></i>Bot API</span><b id="svc-api">Connected</b></div>
+                <div class="service-row"><span><i class="svc-dot"></i>Analytics</span><b>Running</b></div>
+                <div class="service-row"><span><i class="svc-dot"></i>Audit Logging</span><b>Protected</b></div>
+                <div class="service-row"><span><i class="svc-dot"></i>Live Sync</span><b id="svc-sync">5s</b></div>
+              </div>
+            </div>
 
-    <div class="pro-card">
-      <div class="pro-card-head"><span>Quick Actions</span><span class="card-tag">ADMIN</span></div>
-      <div class="quick-grid">
-        <button onclick="nav('messaging')"><span>✉</span>Send message</button>
-        <button onclick="nav('moderation')"><span>⚖</span>Moderation</button>
-        <button onclick="nav('channels')"><span>▦</span>Channels</button>
-        <button onclick="nav('roles')"><span>♟</span>Roles</button>
-        <button onclick="nav('backup')"><span>◫</span>Backup</button>
-        <button onclick="nav('audit')"><span>◷</span>Audit log</button>
-      </div>
-    </div>
+            <div class="pro-card">
+              <div class="pro-card-head"><span>Quick Actions</span><span class="card-tag">ADMIN</span></div>
+              <div class="quick-grid">
+                <button onclick="nav('messaging')"><span>✉</span>Send message</button>
+                <button onclick="nav('moderation')"><span>⚖</span>Moderation</button>
+                <button onclick="nav('channels')"><span>▦</span>Channels</button>
+                <button onclick="nav('roles')"><span>♟</span>Roles</button>
+                <button onclick="nav('backup')"><span>◫</span>Backup</button>
+                <button onclick="nav('audit')"><span>◷</span>Audit log</button>
+              </div>
+            </div>
 
-    <div class="pro-card">
-      <div class="pro-card-head"><span>Security Snapshot</span><span class="status-chip live">SECURE</span></div>
-      <div class="security-list">
-        <div><span>AntiNuke</span><b>Enabled</b></div>
-        <div><span>Scam Catcher</span><b>Enabled</b></div>
-        <div><span>Whitelist</span><b id="pro-whitelist">Protected</b></div>
-        <div><span>Staff access</span><b>Permissioned</b></div>
-      </div>
-    </div>
-  </div>
+            <div class="pro-card">
+              <div class="pro-card-head"><span>Security Snapshot</span><span class="status-chip live">SECURE</span></div>
+              <div class="security-list">
+                <div><span>AntiNuke</span><b>Enabled</b></div>
+                <div><span>Scam Catcher</span><b>Enabled</b></div>
+                <div><span>Whitelist</span><b id="pro-whitelist">Protected</b></div>
+                <div><span>Staff access</span><b>Permissioned</b></div>
+              </div>
+            </div>
+          </div>
 
-  <div class="pro-bottom">
-    <div class="pro-timeline">
-      <div class="pro-card-head"><span>Live Activity Stream</span><button class="text-btn" onclick="nav('logs')">View all →</button></div>
-      <div id="pro-activity"><div class="pro-empty">Waiting for live events…</div></div>
-    </div>
-    <div class="pro-card uptime-card">
-      <div class="pro-card-head"><span>Bot Runtime</span><span id="pro-runtime">—</span></div>
-      <div class="runtime-ring"><div><strong id="pro-runtime-big">—</strong><small>uptime</small></div></div>
-      <div class="runtime-meta"><span>Ping <b id="pro-ping">—</b></span><span>CPU <b id="pro-cpu">—</b></span><span>Memory <b id="pro-mem">—</b></span></div>
-    </div>
-  </div>
-</div>
+          <div class="pro-bottom">
+            <div class="pro-timeline">
+              <div class="pro-card-head"><span>Live Activity Stream</span><button class="text-btn" onclick="nav('logs')">View all →</button></div>
+              <div id="pro-activity"><div class="pro-empty">Waiting for live events…</div></div>
+            </div>
+            <div class="pro-card uptime-card">
+              <div class="pro-card-head"><span>Bot Runtime</span><span id="pro-runtime">—</span></div>
+              <div class="runtime-ring"><div><strong id="pro-runtime-big">—</strong><small>uptime</small></div></div>
+              <div class="runtime-meta"><span>Ping <b id="pro-ping">—</b></span><span>CPU <b id="pro-cpu">—</b></span><span>Memory <b id="pro-mem">—</b></span></div>
+            </div>
+          </div>
+        </div>
 
-<div class="grid-kpi">
+        <div class="grid-kpi">
           <div class="card card-light">
             <div class="card-label">Total Members</div>
             <div class="card-value card-value-lg" id="kpi-members">—</div>
@@ -989,7 +1020,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
         </div></div>
       </div>
 
-      <!-- ══ CONFIG PAGES (compact) ══ -->
+      <!-- ══ JOIN-TO-CREATE ══ -->
       <div class="page" id="page-hub">
         <div class="card"><div>
           <div class="card-title" style="margin-bottom:16px;">Join-to-Create</div>
@@ -1004,18 +1035,62 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
         </div></div>
       </div>
 
+      <!-- ══ VOICE VERIFY ══ -->
       <div class="page" id="page-verify">
-        <div class="card"><div>
+        <div class="card" style="margin-bottom:16px;"><div>
           <div class="card-title" style="margin-bottom:16px;">Voice Verification</div>
           <div class="setting-row"><div>Enabled</div>
             <label class="toggle"><input type="checkbox" data-key="verify_enabled" onchange="markDirty()"><div class="toggle-track"><div class="toggle-thumb"></div></div></label></div>
           <div class="setting-row"><div>Waiting Channel ID</div>
             <input class="input-sm" type="text" data-key="verify_waiting_channel_id" onchange="markDirty()" style="width:220px;"></div>
+          <div class="setting-row"><div>Verification Channel ID</div>
+            <input class="input-sm" type="text" data-key="verify_channel_id" onchange="markDirty()" style="width:220px;"></div>
           <div class="setting-row"><div>Verified Role ID</div>
             <input class="input-sm" type="text" data-key="verified_role_id" onchange="markDirty()" style="width:220px;"></div>
+          <div class="setting-row"><div>Unverified Role ID</div>
+            <input class="input-sm" type="text" data-key="unverified_role_id" onchange="markDirty()" style="width:220px;"></div>
+          <div class="setting-row"><div>Log Channel ID</div>
+            <input class="input-sm" type="text" data-key="verify_log_channel_id" onchange="markDirty()" style="width:220px;"></div>
+        </div></div>
+
+        <div class="card"><div>
+          <div class="card-title" style="margin-bottom:16px;">Voice Verification · Requirements</div>
+          <div class="setting-row"><div>Require screen-share (Go-Live)</div>
+            <label class="toggle"><input type="checkbox" data-key="verify_require_stream" onchange="markDirty()"><div class="toggle-track"><div class="toggle-thumb"></div></div></label></div>
+          <div class="setting-row"><div>Stream seconds</div>
+            <input class="input-sm" type="number" data-key="verify_stream_seconds" step="1" min="0" onchange="markDirty()" style="width:100px;"></div>
+          <div class="setting-row"><div>Speech required (s)</div>
+            <input class="input-sm" type="number" data-key="verify_required_seconds" step="0.5" min="0" onchange="markDirty()" style="width:100px;"></div>
+          <div class="setting-row"><div>Presence fallback (s)</div>
+            <input class="input-sm" type="number" data-key="verify_presence_fallback_seconds" step="0.5" min="0" onchange="markDirty()" style="width:100px;"></div>
+          <div class="setting-row"><div>Mic threshold (RMS)</div>
+            <input class="input-sm" type="number" data-key="verify_rms_threshold" step="1" min="0" onchange="markDirty()" style="width:100px;"></div>
+          <div class="setting-row"><div>Timeout (s)</div>
+            <input class="input-sm" type="number" data-key="verify_timeout_seconds" step="1" min="10" onchange="markDirty()" style="width:100px;"></div>
+        </div></div>
+
+        <div class="card" style="margin-top:16px;"><div>
+          <div class="card-title" style="margin-bottom:16px;">Voice Prompt (TTS)</div>
+          <div class="setting-row"><div>Speak the prompt to the member</div>
+            <label class="toggle"><input type="checkbox" data-key="verify_voice_enabled" onchange="markDirty()"><div class="toggle-track"><div class="toggle-thumb"></div></div></label></div>
+          <div class="setting-row"><div>Language</div>
+            <select class="input-sm" data-key="verify_voice_language" onchange="markDirty()" style="width:160px;">
+              <option value="en">English</option>
+              <option value="fr">French</option>
+              <option value="ar">Arabic</option>
+              <option value="es">Spanish</option>
+              <option value="de">German</option>
+              <option value="it">Italian</option>
+              <option value="pt">Portuguese</option>
+            </select></div>
+          <div class="setting-row" style="flex-direction:column;align-items:stretch;gap:8px;">
+            <div>Custom prompt (leave empty to use the default generated one)</div>
+            <textarea class="input-sm" data-key="verify_voice_custom_text" rows="3" onchange="markDirty()"></textarea>
+          </div>
         </div></div>
       </div>
 
+      <!-- ══ ANTINUKE ══ -->
       <div class="page" id="page-antinuke">
         <div class="card"><div>
           <div class="card-title" style="margin-bottom:16px;">AntiNuke</div>
@@ -1027,9 +1102,18 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
               <option value="timeout">Timeout</option><option value="strip">Strip Roles</option>
               <option value="quarantine">Quarantine</option><option value="warn">Warn Only</option>
             </select></div>
+          <div class="setting-row"><div>Cross-vector detection</div>
+            <label class="toggle"><input type="checkbox" data-key="antinuke_cross_vector" onchange="markDirty()"><div class="toggle-track"><div class="toggle-thumb"></div></div></label></div>
+          <div class="setting-row"><div>Extended thresholds</div>
+            <label class="toggle"><input type="checkbox" data-key="antinuke_extended" onchange="markDirty()"><div class="toggle-track"><div class="toggle-thumb"></div></div></label></div>
+          <div class="setting-row"><div>Alert channel ID</div>
+            <input class="input-sm" type="text" data-key="antinuke_alert_channel_id" onchange="markDirty()" style="width:220px;"></div>
+          <div class="setting-row"><div>DM the owner on trigger</div>
+            <label class="toggle"><input type="checkbox" data-key="antinuke_alert_dm" onchange="markDirty()"><div class="toggle-track"><div class="toggle-thumb"></div></div></label></div>
         </div></div>
       </div>
 
+      <!-- ══ SCAM CATCHER ══ -->
       <div class="page" id="page-scam">
         <div class="card"><div>
           <div class="card-title" style="margin-bottom:16px;">Scam Catcher</div>
@@ -1037,9 +1121,17 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
             <label class="toggle"><input type="checkbox" data-key="scam_catcher_enabled" onchange="markDirty()"><div class="toggle-track"><div class="toggle-thumb"></div></div></label></div>
           <div class="setting-row"><div>Honeypot Channel ID</div>
             <input class="input-sm" type="text" data-key="scam_catcher_channel_id" onchange="markDirty()" style="width:220px;"></div>
+          <div class="setting-row"><div>Punishment</div>
+            <select class="input-sm" data-key="scam_catcher_punishment" onchange="markDirty()" style="width:180px;">
+              <option value="timeout">Timeout</option>
+              <option value="ban">Ban + purge</option>
+            </select></div>
+          <div class="setting-row"><div>Timeout duration (s)</div>
+            <input class="input-sm" type="number" data-key="scam_catcher_timeout_seconds" min="60" onchange="markDirty()" style="width:120px;"></div>
         </div></div>
       </div>
 
+      <!-- ══ BACKUP ══ -->
       <div class="page" id="page-backup">
         <div class="card"><div>
           <div class="card-title" style="margin-bottom:16px;">Backup System</div>
@@ -1047,6 +1139,10 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
             <label class="toggle"><input type="checkbox" data-key="backup_enabled" onchange="markDirty()"><div class="toggle-track"><div class="toggle-thumb"></div></div></label></div>
           <div class="setting-row"><div>Interval (hours)</div>
             <input class="input-sm" type="number" data-key="backup_interval_hours" min="1" max="72" onchange="markDirty()" style="width:80px;"></div>
+          <div class="setting-row"><div>Retention (files to keep)</div>
+            <input class="input-sm" type="number" data-key="backup_retention" min="1" max="100" onchange="markDirty()" style="width:80px;"></div>
+          <div class="setting-row"><div>Status message channel ID</div>
+            <input class="input-sm" type="text" data-key="backup_channel_id" onchange="markDirty()" style="width:220px;"></div>
           <div style="display:flex;gap:10px;margin-top:16px;">
             <button class="btn btn-primary" onclick="runBackup()">Run Backup Now</button>
             <button class="btn btn-warn" onclick="restoreBackup()">Restore Latest</button>
@@ -1054,24 +1150,78 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
         </div></div>
       </div>
 
+      <!-- ══ AI CHAT (ChatGPT + Claude) ══ -->
       <div class="page" id="page-ai">
-        <div class="card"><div>
-          <div class="card-title" style="margin-bottom:16px;">AI Chat</div>
-          <div class="setting-row"><div>Enabled</div>
+        <div class="card" style="margin-bottom:16px;"><div>
+          <div class="card-title" style="margin-bottom:16px;">AI Chat · Provider</div>
+          <div class="ai-provider-row" id="ai-provider-row">
+            <div class="ai-provider-chip" data-provider="anthropic" onclick="selectAIProvider('anthropic')">
+              <div class="ai-name">Claude</div>
+              <div class="ai-desc">Anthropic · claude-sonnet</div>
+            </div>
+            <div class="ai-provider-chip" data-provider="openai" onclick="selectAIProvider('openai')">
+              <div class="ai-name">ChatGPT</div>
+              <div class="ai-desc">OpenAI · gpt-4o / o-series</div>
+            </div>
+          </div>
+          <input type="hidden" data-key="ai_provider" id="ai-provider-hidden" onchange="markDirty()">
+          <div class="setting-row" style="margin-top:14px;"><div>Enabled</div>
             <label class="toggle"><input type="checkbox" data-key="ai_enabled" onchange="markDirty()"><div class="toggle-track"><div class="toggle-thumb"></div></div></label></div>
-          <div class="setting-row"><div>Model</div>
-            <input class="input-sm" type="text" data-key="ai_model" onchange="markDirty()" style="width:300px;"></div>
+          <div class="setting-row"><div>Reply on mention</div>
+            <label class="toggle"><input type="checkbox" data-key="ai_reply_to_mentions" onchange="markDirty()"><div class="toggle-track"><div class="toggle-thumb"></div></div></label></div>
+        </div></div>
+
+        <div class="card" style="margin-bottom:16px;"><div>
+          <div class="card-title" style="margin-bottom:16px;">Models</div>
+          <div class="setting-row"><div>Claude model</div>
+            <input class="input-sm" type="text" data-key="ai_model" onchange="markDirty()" style="width:320px;" placeholder="claude-sonnet-4-5-20250929"></div>
+          <div class="setting-row"><div>ChatGPT model</div>
+            <input class="input-sm" type="text" data-key="openai_model" onchange="markDirty()" style="width:320px;" placeholder="gpt-4o-mini"></div>
+          <div class="setting-row"><div>ChatGPT temperature (0–2)</div>
+            <input class="input-sm" type="number" data-key="openai_temperature" step="0.1" min="0" max="2" onchange="markDirty()" style="width:100px;"></div>
+          <div class="setting-row"><div>Max output tokens</div>
+            <input class="input-sm" type="number" data-key="ai_max_tokens" min="1" max="8192" onchange="markDirty()" style="width:120px;"></div>
+        </div></div>
+
+        <div class="card" style="margin-bottom:16px;"><div>
+          <div class="card-title" style="margin-bottom:16px;">System Prompt</div>
+          <div class="setting-row" style="flex-direction:column;align-items:stretch;gap:8px;">
+            <textarea class="input-sm" data-key="ai_system_prompt" rows="5" onchange="markDirty()"></textarea>
+          </div>
+          <div class="setting-row"><div>Trigger words (comma separated)</div>
+            <input class="input-sm" type="text" id="ai-trigger-words" onchange="onTriggerWordsChange()" style="width:300px;" placeholder="og, bot, ai">
+          </div>
+          <div class="setting-row"><div>Allowed channel IDs (comma separated)</div>
+            <input class="input-sm" type="text" id="ai-channel-ids" onchange="onAiChannelsChange()" style="width:300px;" placeholder="123456789012345678, 987654321098765432">
+          </div>
+        </div></div>
+
+        <div class="card"><div>
+          <div class="card-title" style="margin-bottom:14px;">Test AI <span class="card-tag" style="margin-left:6px;">Owner only</span></div>
+          <div class="ai-test-box">
+            <textarea class="input-sm" id="ai-test-prompt" placeholder="Ask the bot's AI a question…"></textarea>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;">
+            <button class="btn btn-primary" onclick="testAI(null)">Test with active provider</button>
+            <button class="btn btn-secondary" onclick="testAI('anthropic')">Test Claude</button>
+            <button class="btn btn-secondary" onclick="testAI('openai')">Test ChatGPT</button>
+          </div>
+          <div class="ai-test-output" id="ai-test-output">Response will appear here.</div>
         </div></div>
       </div>
 
+      <!-- ══ MUSIC ══ -->
       <div class="page" id="page-music">
         <div class="card"><div>
           <div class="card-title" style="margin-bottom:16px;">Music Player</div>
           <div class="setting-row"><div>Default Volume</div>
             <input class="input-sm" type="number" data-key="music_default_volume" step="0.1" min="0.1" max="2" onchange="markDirty()" style="width:100px;"></div>
+          <div class="setting-row"><div>Max duration (s)</div>
+            <input class="input-sm" type="number" data-key="music_max_seconds" min="60" onchange="markDirty()" style="width:120px;"></div>
         </div></div>
       </div>
 
+      <!-- ══ STATUS CARD CONFIG ══ -->
       <div class="page" id="page-status-cfg">
         <div class="card"><div>
           <div class="card-title" style="margin-bottom:16px;">Server Status Card</div>
@@ -1079,9 +1229,16 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
             <label class="toggle"><input type="checkbox" data-key="status_enabled" onchange="markDirty()"><div class="toggle-track"><div class="toggle-thumb"></div></div></label></div>
           <div class="setting-row"><div>Status Channel ID</div>
             <input class="input-sm" type="text" data-key="status_channel_id" onchange="markDirty()" style="width:220px;"></div>
+          <div class="setting-row"><div>Language</div>
+            <select class="input-sm" data-key="status_language" onchange="markDirty()" style="width:180px;">
+              <option value="en">🇬🇧 English</option>
+              <option value="fr">🇫🇷 Français</option>
+              <option value="ar">🇸🇦 العربية</option>
+            </select></div>
         </div></div>
       </div>
 
+      <!-- ══ PRESENCE & BIO ══ -->
       <div class="page" id="page-presence">
         <div class="card"><div>
           <div class="card-title" style="margin-bottom:16px;">Presence &amp; Bio</div>
@@ -1089,6 +1246,8 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
             <label class="toggle"><input type="checkbox" data-key="bio_enabled" onchange="markDirty()"><div class="toggle-track"><div class="toggle-thumb"></div></div></label></div>
           <div class="setting-row"><div>Presence interval (s)</div>
             <input class="input-sm" type="number" data-key="presence_interval" min="5" max="600" onchange="markDirty()" style="width:100px;"></div>
+          <div class="setting-row"><div>Bio interval (s)</div>
+            <input class="input-sm" type="number" data-key="bio_interval" min="10" max="600" onchange="markDirty()" style="width:100px;"></div>
         </div></div>
       </div>
 
@@ -1169,33 +1328,125 @@ function fmtRel(ts){
   return Math.floor(d/86400)+'d ago';
 }
 
-/* ═══ LOGIN ═══ */
-async function doLogin(){
-  const id=val('in-id'), pw=document.getElementById('in-pw').value;
-  const err=document.getElementById('auth-error'), btn=document.getElementById('btn-login');
-  err.style.display='none';
-  if(!id||!pw){ err.textContent='Both fields are required.'; err.style.display='block'; return; }
-  btn.disabled=true; btn.textContent='Signing in…';
+/* ═══════════════════════════════════════════════════════════════
+   DISCORD OAUTH + PASSWORD LOGIN
+   ═══════════════════════════════════════════════════════════════ */
+let OAUTH_CFG = { enabled:false, client_id:null, scopes:'identify guilds', redirect_uri:null };
+let PREAUTH = null;
+let PREAUTH_USER = null;
+
+async function loadOauthConfig(){
   try{
-    const r=await fetch(BOT_API+'/api/login',{
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({discord_id:id,password:pw})});
-    const data=await r.json();
-    if(!r.ok) throw new Error(data.error||'login failed');
-    SESSION=data.token; USER=data.user;
-    localStorage.setItem('ftw_session',SESSION);
-    document.getElementById('auth-screen').style.display='none';
+    const r = await fetch(BOT_API + '/api/health');
+    const d = await r.json();
+    OAUTH_CFG.enabled      = !!d.oauth_enabled;
+    OAUTH_CFG.client_id    = d.discord_client_id || null;
+    OAUTH_CFG.scopes       = d.oauth_scopes || 'identify guilds';
+    OAUTH_CFG.redirect_uri = d.oauth_redirect_uri || (window.location.origin + window.location.pathname);
+    const btn = document.getElementById('btn-oauth');
+    if (btn && !OAUTH_CFG.enabled){
+      btn.disabled = true;
+      btn.textContent = 'Discord OAuth not configured';
+    }
+  }catch(e){ /* leave the button as-is */ }
+}
+
+function startDiscordAuth(){
+  if(!OAUTH_CFG.enabled || !OAUTH_CFG.client_id){
+    showAuthError('Discord OAuth is not configured on the bot.');
+    return;
+  }
+  const params = new URLSearchParams({
+    client_id: OAUTH_CFG.client_id,
+    redirect_uri: OAUTH_CFG.redirect_uri,
+    response_type: 'code',
+    scope: OAUTH_CFG.scopes,
+    prompt: 'consent',
+  });
+  window.location.href = 'https://discord.com/oauth2/authorize?' + params.toString();
+}
+
+function cancelAuth(){
+  PREAUTH = null; PREAUTH_USER = null;
+  document.getElementById('auth-step-1').style.display = '';
+  document.getElementById('auth-step-2').style.display = 'none';
+  document.getElementById('auth-step-loading').style.display = 'none';
+  document.getElementById('auth-title').textContent = 'Sign in';
+  document.getElementById('auth-error').style.display = 'none';
+}
+
+function showAuthError(msg){
+  const err = document.getElementById('auth-error');
+  err.textContent = msg;
+  err.style.display = 'block';
+}
+
+async function handleOAuthCallback(code){
+  document.getElementById('auth-step-1').style.display = 'none';
+  document.getElementById('auth-step-2').style.display = 'none';
+  document.getElementById('auth-step-loading').style.display = '';
+  document.getElementById('auth-title').textContent = 'Verifying…';
+  try{
+    const r = await fetch(BOT_API + '/api/oauth/exchange', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({code}),
+    });
+    const d = await r.json().catch(()=>({}));
+    document.getElementById('auth-step-loading').style.display = 'none';
+
+    if(!r.ok){
+      showAuthError(d.error || 'Discord authorization failed.');
+      cancelAuth();
+      return;
+    }
+    PREAUTH = d.preauth;
+    PREAUTH_USER = d.user;
+    document.getElementById('auth-user').textContent =
+      PREAUTH_USER.display_name || PREAUTH_USER.username || PREAUTH_USER.id;
+    document.getElementById('auth-title').textContent = 'Enter your password';
+    document.getElementById('auth-step-2').style.display = '';
+    setTimeout(()=>document.getElementById('in-pw').focus(), 80);
+  }catch(e){
+    document.getElementById('auth-step-loading').style.display = 'none';
+    showAuthError('Could not reach the bot API.');
+    cancelAuth();
+  }
+}
+
+async function doLogin(){
+  const pw  = document.getElementById('in-pw').value;
+  const err = document.getElementById('auth-error');
+  const btn = document.getElementById('btn-login');
+  err.style.display = 'none';
+  if(!PREAUTH){ showAuthError('Please authorize with Discord first.'); return; }
+  if(!pw){ showAuthError('Password is required.'); return; }
+  btn.disabled = true; btn.textContent = 'Signing in…';
+  try{
+    const r = await fetch(BOT_API + '/api/login', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({preauth: PREAUTH, password: pw}),
+    });
+    const data = await r.json().catch(()=>({}));
+    if(!r.ok) throw new Error(data.error || 'login failed');
+    SESSION = data.token;
+    USER = data.user;
+    localStorage.setItem('ftw_session', SESSION);
+    PREAUTH = null;
+    document.getElementById('auth-screen').style.display = 'none';
     document.getElementById('app').classList.add('visible');
     applyUser();
-    await Promise.all([loadProfile(), loadLiveServer(), loadProCenter(), loadConfig(), loadHealth(), loadAnalytics()]);
-    if(USER.role==='owner') await loadStaff();
+    await Promise.all([loadProfile(), loadLiveServer(), loadProCenter(), loadConfig(), loadHealth(), loadAnalytics(), loadAiPanel()]);
+    if (USER.role === 'owner') await loadStaff();
   }catch(e){
-    if(e.message==='invalid credentials') err.textContent='Wrong Discord ID or password.';
-    else if(e.message==='Failed to fetch') err.textContent='Cannot reach '+BOT_API+'.';
-    else err.textContent='Error: '+e.message;
-    err.style.display='block';
+    if(e.message === 'invalid password') showAuthError('Wrong password.');
+    else if(e.message === 'preauth invalid or expired') showAuthError('Session expired. Please authorize with Discord again.');
+    else if(e.message === 'Discord authorization required.') showAuthError('Discord authorization required.');
+    else if(e.message === 'Failed to fetch') showAuthError('Cannot reach ' + BOT_API + '.');
+    else showAuthError('Error: ' + e.message);
   }finally{
-    btn.disabled=false; btn.textContent='Sign in';
+    btn.disabled = false; btn.textContent = 'Sign in';
   }
 }
 
@@ -1207,99 +1458,108 @@ function doLogout(){
 }
 
 function applyUser(){
-  document.getElementById('who').textContent=USER.name+(USER.role==='owner'?' · Owner':' · Staff');
+  document.getElementById('who').textContent = USER.name + (USER.role === 'owner' ? ' · Owner' : ' · Staff');
   document.querySelectorAll('.nav-item[data-page]').forEach(n=>{
-    const p=n.dataset.page;
-    if(p==='overview'||p==='status'||p==='logs'){ n.classList.remove('hidden'); return; }
+    const p = n.dataset.page;
+    if(p==='overview' || p==='status' || p==='logs'){ n.classList.remove('hidden'); return; }
     if(USER.role==='owner'){ n.classList.remove('hidden'); return; }
-    if(p==='staff'||p==='admin'||p==='audit'){ n.classList.add('hidden'); return; }
-    n.classList.toggle('hidden', !(USER.perms||{})[p]);
+    if(p==='staff' || p==='admin' || p==='audit'){ n.classList.add('hidden'); return; }
+    n.classList.toggle('hidden', !(USER.perms || {})[p]);
   });
-  document.getElementById('nav-staff').style.display = USER.role==='owner'?'':'none';
+  document.getElementById('nav-staff').style.display = USER.role==='owner' ? '' : 'none';
 }
 
-/* ═══ PROFILE ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   PROFILE
+   ═══════════════════════════════════════════════════════════════ */
 async function loadProfile(){
   try{
-    const r=await fetch(BOT_API+'/api/profile',{headers:hdr()});
+    const r = await fetch(BOT_API+'/api/profile',{headers:hdr()});
     if(!r.ok) return;
-    const p=await r.json();
-    document.getElementById('pf-avatar').src=p.avatar||'';
-    document.getElementById('pf-name').textContent=p.display_name||p.username;
-    document.getElementById('pf-username').textContent='@'+p.username;
-    document.getElementById('pf-id').textContent=p.id;
-    document.getElementById('pf-created').textContent=fmtTime(p.created_at);
-    document.getElementById('pf-joined').textContent=p.joined_at?fmtTime(p.joined_at):'not in server';
-    const rolesEl=document.getElementById('pf-roles');
-    rolesEl.innerHTML='';
-    if(p.role==='owner'){
-      const b=document.createElement('span'); b.className='role-badge owner'; b.textContent='OWNER'; rolesEl.appendChild(b);
+    const p = await r.json();
+    document.getElementById('pf-avatar').src = p.avatar || '';
+    document.getElementById('pf-name').textContent = p.display_name || p.username;
+    document.getElementById('pf-username').textContent = '@' + p.username;
+    document.getElementById('pf-id').textContent = p.id;
+    document.getElementById('pf-created').textContent = fmtTime(p.created_at);
+    document.getElementById('pf-joined').textContent = p.joined_at ? fmtTime(p.joined_at) : 'not in server';
+    const rolesEl = document.getElementById('pf-roles');
+    rolesEl.innerHTML = '';
+    if(p.role === 'owner'){
+      const b = document.createElement('span');
+      b.className = 'role-badge owner';
+      b.textContent = 'OWNER';
+      rolesEl.appendChild(b);
     }
-    (p.roles||[]).forEach(r=>{
+    (p.roles || []).forEach(r=>{
       if(r.is_default) return;
-      const b=document.createElement('span');
-      b.className='role-badge'; b.textContent=r.name;
-      if(r.colour && r.colour!=='#000000') { b.style.borderColor=r.colour; b.style.color=r.colour; }
+      const b = document.createElement('span');
+      b.className = 'role-badge';
+      b.textContent = r.name;
+      if(r.colour && r.colour !== '#000000'){ b.style.borderColor = r.colour; b.style.color = r.colour; }
       rolesEl.appendChild(b);
     });
     applyServerProfile({}, {}, p);
   }catch(e){}
 }
 
-
-/* ═══ LIVE DISCORD SERVER + BOT PROFILE ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   LIVE SERVER + BOT PROFILE
+   ═══════════════════════════════════════════════════════════════ */
 function firstDefined(...vals){ return vals.find(v=>v!==undefined && v!==null && v!==''); }
 function safeText(v, fallback='—'){ return (v===undefined||v===null||v==='') ? fallback : String(v); }
 function setImg(id, url){
-  const el=document.getElementById(id);
+  const el = document.getElementById(id);
   if(!el) return;
-  if(url){ el.src=url; el.style.display=''; }
-  else { el.removeAttribute('src'); el.style.display='none'; }
+  if(url){ el.src = url; el.style.display = ''; }
+  else { el.removeAttribute('src'); el.style.display = 'none'; }
 }
 function formatDiscordDate(v){
   if(!v) return '—';
-  const n=typeof v==='number' ? (v<10000000000?v*1000:v) : Date.parse(v);
+  const n = typeof v === 'number' ? (v < 10000000000 ? v*1000 : v) : Date.parse(v);
   return Number.isFinite(n) ? new Date(n).toLocaleDateString() : safeText(v);
 }
 function applyServerProfile(d, fallbackStatus, botProfile){
-  d=d||{};
-  fallbackStatus=fallbackStatus||{};
-  botProfile=botProfile||{};
-  const guild=firstDefined(d.guild,d.server,d);
-  const bot=firstDefined(d.bot,botProfile)||{};
-  const icon=firstDefined(guild.icon_url,guild.icon,guild.avatar_url);
-  const banner=firstDefined(guild.banner_url,guild.banner);
-  const botAvatar=firstDefined(bot.avatar_url,bot.avatar,botProfile.avatar);
-  const botBanner=firstDefined(bot.banner_url,bot.banner,botProfile.banner);
+  d = d || {};
+  fallbackStatus = fallbackStatus || {};
+  botProfile = botProfile || {};
+  const guild = firstDefined(d.guild, d.server, d);
+  const bot   = firstDefined(d.bot, botProfile) || {};
+  const icon    = firstDefined(guild.icon_url, guild.icon, guild.avatar_url);
+  const banner  = firstDefined(guild.banner_url, guild.banner);
+  const botAvatar = firstDefined(bot.avatar_url, bot.avatar, botProfile.avatar);
+  const botBanner = firstDefined(bot.banner_url, bot.banner, botProfile.banner);
 
-  setImg('server-icon',icon);
-  const sb=document.getElementById('server-banner');
+  setImg('server-icon', icon);
+  const sb = document.getElementById('server-banner');
   if(sb){
-    if(banner){ sb.style.backgroundImage=`url("${banner}")`; sb.classList.add('has-image'); }
-    else { sb.style.backgroundImage=''; sb.classList.remove('has-image'); }
+    if(banner){ sb.style.backgroundImage = `url("${banner}")`; sb.classList.add('has-image'); }
+    else { sb.style.backgroundImage = ''; sb.classList.remove('has-image'); }
   }
-  document.getElementById('server-name').textContent=safeText(firstDefined(guild.name,d.name),'Discord Server');
-  document.getElementById('server-id').textContent=firstDefined(guild.id,d.guild_id,d.id)?'ID · '+firstDefined(guild.id,d.guild_id,d.id):'—';
-  document.getElementById('server-members').textContent=safeText(firstDefined(guild.member_count,guild.members,d.members,fallbackStatus.members),0);
-  document.getElementById('server-channels').textContent=safeText(firstDefined(guild.channel_count,guild.channels,d.channels,fallbackStatus.channels),0);
-  document.getElementById('server-roles').textContent=safeText(firstDefined(guild.role_count,guild.roles,d.roles,fallbackStatus.roles),0);
-  document.getElementById('server-hubs').textContent=safeText(firstDefined(guild.active_voice,guild.hubs,d.hubs,fallbackStatus.hubs),0);
-  document.getElementById('server-owner').textContent=safeText(firstDefined(guild.owner_name,guild.owner?.name,guild.owner_id,d.owner_name,guild.owner_id));
-  document.getElementById('server-created').textContent=formatDiscordDate(firstDefined(guild.created_at,d.created_at));
-  document.getElementById('server-boost').textContent=safeText(firstDefined(guild.premium_tier,guild.boost_level,d.premium_tier),'—');
-  document.getElementById('server-verification').textContent=safeText(firstDefined(guild.verification_level,d.verification_level),'—');
-  document.getElementById('server-description').textContent=safeText(firstDefined(guild.description,d.description),'Live Discord guild information');
-  setImg('bot-avatar-large',botAvatar);
-  document.getElementById('bot-profile-name').textContent=safeText(firstDefined(bot.display_name,bot.name,botProfile.display_name,botProfile.username),'Bot');
-  document.getElementById('bot-profile-handle').textContent='@'+safeText(firstDefined(bot.username,botProfile.username),'bot');
-  document.getElementById('bot-profile-status').textContent=firstDefined(bot.status,botProfile.status,fallbackStatus.status,'Connected to Discord');
-  const bb=document.getElementById('bot-banner');
+  document.getElementById('server-name').textContent = safeText(firstDefined(guild.name, d.name), 'Discord Server');
+  document.getElementById('server-id').textContent = firstDefined(guild.id, d.guild_id, d.id)
+    ? 'ID · ' + firstDefined(guild.id, d.guild_id, d.id) : '—';
+  document.getElementById('server-members').textContent = safeText(firstDefined(guild.member_count, guild.members, d.members, fallbackStatus.members), 0);
+  document.getElementById('server-channels').textContent = safeText(firstDefined(guild.channel_count, guild.channels, d.channels, fallbackStatus.channels), 0);
+  document.getElementById('server-roles').textContent = safeText(firstDefined(guild.role_count, guild.roles, d.roles, fallbackStatus.roles), 0);
+  document.getElementById('server-hubs').textContent = safeText(firstDefined(guild.active_voice, guild.hubs, d.hubs, fallbackStatus.hubs), 0);
+  document.getElementById('server-owner').textContent = safeText(firstDefined(guild.owner_name, guild.owner?.name, guild.owner_id, d.owner_name));
+  document.getElementById('server-created').textContent = formatDiscordDate(firstDefined(guild.created_at, d.created_at));
+  document.getElementById('server-boost').textContent = safeText(firstDefined(guild.premium_tier, guild.boost_level, d.premium_tier), '—');
+  document.getElementById('server-verification').textContent = safeText(firstDefined(guild.verification_level, d.verification_level), '—');
+  document.getElementById('server-description').textContent = safeText(firstDefined(guild.description, d.description), 'Live Discord guild information');
+
+  setImg('bot-avatar-large', botAvatar);
+  document.getElementById('bot-profile-name').textContent = safeText(firstDefined(bot.display_name, bot.name, botProfile.display_name, botProfile.username), 'Bot');
+  document.getElementById('bot-profile-handle').textContent = '@' + safeText(firstDefined(bot.username, botProfile.username), 'bot');
+  document.getElementById('bot-profile-status').textContent = firstDefined(bot.status, botProfile.status, fallbackStatus.status, 'Connected to Discord');
+  const bb = document.getElementById('bot-banner');
   if(bb){
-    if(botBanner){ bb.style.backgroundImage=`url("${botBanner}")`; bb.classList.add('has-image'); }
-    else { bb.style.backgroundImage=''; bb.classList.remove('has-image'); }
+    if(botBanner){ bb.style.backgroundImage = `url("${botBanner}")`; bb.classList.add('has-image'); }
+    else { bb.style.backgroundImage = ''; bb.classList.remove('has-image'); }
   }
-  document.getElementById('server-sync').textContent='LIVE';
-  document.getElementById('server-last-sync').textContent='Last sync · '+new Date().toLocaleTimeString();
+  document.getElementById('server-sync').textContent = 'LIVE';
+  document.getElementById('server-last-sync').textContent = 'Last sync · ' + new Date().toLocaleTimeString();
 }
 async function loadLiveServer(){
   try{
@@ -1308,82 +1568,91 @@ async function loadLiveServer(){
       fetch(BOT_API+'/api/status',{headers:hdr()}),
       fetch(BOT_API+'/api/profile',{headers:hdr()})
     ]);
-    const server=serverRes.ok ? await serverRes.json() : {};
-    const status=statusRes.ok ? await statusRes.json() : {};
-    const profile=profileRes.ok ? await profileRes.json() : {};
-    applyServerProfile(server,status,profile);
+    const server  = serverRes.ok  ? await serverRes.json()  : {};
+    const status  = statusRes.ok  ? await statusRes.json()  : {};
+    const profile = profileRes.ok ? await profileRes.json() : {};
+    applyServerProfile(server, status, profile);
   }catch(e){
-    document.getElementById('server-sync').textContent='OFFLINE';
-    document.getElementById('server-last-sync').textContent='Live sync unavailable';
+    document.getElementById('server-sync').textContent = 'OFFLINE';
+    document.getElementById('server-last-sync').textContent = 'Live sync unavailable';
   }
 }
 
-
-/* ═══ PROFESSIONAL DASHBOARD LIVE LAYER ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   PRO CENTER
+   ═══════════════════════════════════════════════════════════════ */
 function proRuntime(sec){
-  sec=Number(sec)||0; const d=Math.floor(sec/86400), h=Math.floor(sec%86400/3600), m=Math.floor(sec%3600/60);
+  sec = Number(sec) || 0;
+  const d = Math.floor(sec/86400), h = Math.floor(sec%86400/3600), m = Math.floor(sec%3600/60);
   return d ? `${d}d ${h}h` : `${h}h ${m}m`;
 }
 function renderProEvents(logs){
-  const el=document.getElementById('pro-activity'); if(!el) return;
-  if(!logs||!logs.length){ el.innerHTML='<div class="pro-empty">No recent events</div>'; return; }
-  el.innerHTML=logs.slice(0,5).map(l=>`<div class="pro-event"><span class="pro-event-time">${new Date((l.time||Date.now()/1000)*1000).toLocaleTimeString()}</span><span class="pro-event-kind">${safeText(l.kind,'EVENT')}</span><span class="pro-event-text">${safeText(l.text,'Activity received')}</span></div>`).join('');
+  const el = document.getElementById('pro-activity');
+  if(!el) return;
+  if(!logs || !logs.length){ el.innerHTML = '<div class="pro-empty">No recent events</div>'; return; }
+  el.innerHTML = logs.slice(0,5).map(l=>`
+    <div class="pro-event">
+      <span class="pro-event-time">${new Date((l.time||Date.now()/1000)*1000).toLocaleTimeString()}</span>
+      <span class="pro-event-kind">${safeText(l.kind,'EVENT')}</span>
+      <span class="pro-event-text">${safeText(l.text,'Activity received')}</span>
+    </div>`).join('');
 }
 async function loadProCenter(){
   try{
-    const [s,l,w]=await Promise.all([
+    const [s,l,w] = await Promise.all([
       fetch(BOT_API+'/api/status',{headers:hdr()}),
       fetch(BOT_API+'/api/logs',{headers:hdr()}),
       fetch(BOT_API+'/api/whitelist',{headers:hdr()})
     ]);
-    const status=s.ok?await s.json():{};
-    const logs=l.ok?await l.json():{};
-    const wl=w.ok?await w.json():{};
-    document.getElementById('pro-latency').textContent=safeText(status.ping_ms,'—')+(status.ping_ms!=null?'ms':'');
-    document.getElementById('pro-events').textContent=String((logs.logs||[]).length);
-    document.getElementById('pro-ping').textContent=safeText(status.ping_ms,'—')+(status.ping_ms!=null?'ms':'');
-    document.getElementById('pro-cpu').textContent=safeText(status.cpu,'—')+(status.cpu!=null?'%':'');
-    document.getElementById('pro-mem').textContent=safeText(status.mem_mb,'—')+(status.mem_mb!=null?'MB':'');
-    document.getElementById('pro-runtime').textContent=proRuntime(status.uptime);
-    document.getElementById('pro-runtime-big').textContent=proRuntime(status.uptime);
-    document.getElementById('pro-whitelist').textContent=wl.enabled===false?'Disabled':'Protected';
-    renderProEvents(logs.logs||[]);
+    const status = s.ok ? await s.json() : {};
+    const logs   = l.ok ? await l.json() : {};
+    const wl     = w.ok ? await w.json() : {};
+    document.getElementById('pro-latency').textContent = safeText(status.ping_ms,'—') + (status.ping_ms != null ? 'ms' : '');
+    document.getElementById('pro-events').textContent = String((logs.logs || []).length);
+    document.getElementById('pro-ping').textContent = safeText(status.ping_ms,'—') + (status.ping_ms != null ? 'ms' : '');
+    document.getElementById('pro-cpu').textContent = safeText(status.cpu,'—') + (status.cpu != null ? '%' : '');
+    document.getElementById('pro-mem').textContent = safeText(status.mem_mb,'—') + (status.mem_mb != null ? 'MB' : '');
+    document.getElementById('pro-runtime').textContent = proRuntime(status.uptime);
+    document.getElementById('pro-runtime-big').textContent = proRuntime(status.uptime);
+    document.getElementById('pro-whitelist').textContent = wl.enabled === false ? 'Disabled' : 'Protected';
+    renderProEvents(logs.logs || []);
   }catch(e){
-    const h=document.getElementById('pro-health'); if(h) h.textContent='CHECK';
+    const h = document.getElementById('pro-health'); if(h) h.textContent = 'CHECK';
   }
 }
 function proRefresh(){ loadLiveServer(); loadProCenter(); loadStatus(); toast('Live dashboard refreshed'); }
 
-/* ═══ CONFIG ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   CONFIG
+   ═══════════════════════════════════════════════════════════════ */
 async function loadConfig(){
   try{
-    const r=await fetch(BOT_API+'/api/config',{headers:hdr()});
-    if(r.status===401){ toast('Session expired',false); doLogout(); return; }
-    config=await r.json();
+    const r = await fetch(BOT_API+'/api/config',{headers:hdr()});
+    if(r.status === 401){ toast('Session expired', false); doLogout(); return; }
+    config = await r.json();
     document.querySelectorAll('[data-key]').forEach(el=>{
-      const k=el.dataset.key;
+      const k = el.dataset.key;
       if(!(k in config)) return;
-      if(el.type==='checkbox') el.checked=!!config[k];
-      else el.value=config[k];
+      if(el.type === 'checkbox') el.checked = !!config[k];
+      else el.value = config[k];
     });
-    const wlToggle=document.getElementById('wl-enabled');
+    const wlToggle = document.getElementById('wl-enabled');
     if(wlToggle) wlToggle.checked = config.whitelist_enabled !== false;
-  }catch(e){ toast('Failed to load config',false); }
+    loadAiPanel();
+  }catch(e){ toast('Failed to load config', false); }
 }
 
 async function loadHealth(){
-  try{
-    const r=await fetch(BOT_API+'/api/health');
-    const d=await r.json();
-    // used only as a readiness check now
-  }catch(e){}
+  try{ await fetch(BOT_API+'/api/health'); }catch(e){}
 }
 
-/* ═══ ANALYTICS + CHARTS ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   ANALYTICS + CHARTS
+   ═══════════════════════════════════════════════════════════════ */
 async function loadAnalytics(){
   let d = null;
   try{
-    const r=await fetch(BOT_API+'/api/analytics',{headers:hdr()});
+    const r = await fetch(BOT_API+'/api/analytics',{headers:hdr()});
     if(r.ok) d = await r.json();
   }catch(e){}
   if(!d){
@@ -1395,174 +1664,111 @@ async function loadAnalytics(){
       members: 0, guilds: 1, hubs: 0
     };
   }
-  // KPI cards
   document.getElementById('kpi-members').textContent = d.members ?? '—';
   document.getElementById('kpi-hubs').textContent = d.hubs ?? '—';
   document.getElementById('kpi-threats').textContent =
-    ((d.features?.AntiNuke||0) + (d.features?.["Scam Catcher"]||0));
+    ((d.features?.AntiNuke || 0) + (d.features?.["Scam Catcher"] || 0));
   document.getElementById('kpi-verify').textContent = d.verification?.passed ?? 0;
   document.getElementById('mini-an').textContent = d.features?.AntiNuke ?? 0;
   document.getElementById('mini-sc').textContent = d.features?.["Scam Catcher"] ?? 0;
 
-  // Sparklines
   renderSpark('spark-members', d.weekly.map(w=>w.value), BLUE);
   renderSpark('spark-hubs', d.hourly.slice(-12), GREEN);
   renderSpark('spark-threats', d.weekly.map(w=>w.value/2), RED);
   renderSpark('spark-verify', d.weekly.map(w=>w.value), PURPLE);
 
-  // Hourly line chart
-  renderLine('chart-hourly',
-    Array.from({length:24},(_,i)=>i+':00'),
-    d.hourly || [],
-    BLUE, GREEN);
+  renderLine('chart-hourly', Array.from({length:24},(_,i)=>i+':00'), d.hourly || [], BLUE, GREEN);
+  renderDonut('chart-donut', ['Passed','Failed'],
+    [d.verification?.passed || 0, d.verification?.failed || 0], [GREEN, RED]);
 
-  // Donut verification
-  renderDonut('chart-donut',
-    ['Passed','Failed'],
-    [d.verification?.passed||0, d.verification?.failed||0],
-    [GREEN, RED]);
   document.getElementById('donut-legend').innerHTML = `
     <div class="donut-legend-item"><span class="donut-legend-dot" style="background:${GREEN}"></span>Passed<span class="donut-legend-value">${d.verification?.passed||0}</span></div>
     <div class="donut-legend-item"><span class="donut-legend-dot" style="background:${RED}"></span>Failed<span class="donut-legend-value">${d.verification?.failed||0}</span></div>`;
 
-  // Feature bars
   const f = d.features || {};
-  renderBars('chart-bars',
-    Object.keys(f), Object.values(f),
-    [GREEN, BLUE, PURPLE, YELLOW, RED]);
-
-  // Weekly line
-  renderLine('chart-weekly',
-    (d.weekly||[]).map(w=>w.day),
-    (d.weekly||[]).map(w=>w.value),
-    GREEN, BLUE);
+  renderBars('chart-bars', Object.keys(f), Object.values(f), [GREEN, BLUE, PURPLE, YELLOW, RED]);
+  renderLine('chart-weekly', (d.weekly||[]).map(w=>w.day), (d.weekly||[]).map(w=>w.value), GREEN, BLUE);
 }
 
 function renderSpark(id, data, colour){
-  const el = document.getElementById(id);
-  if(!el) return;
+  const el = document.getElementById(id); if(!el) return;
   if(charts[id]) charts[id].destroy();
   charts[id] = new Chart(el, {
     type: 'line',
-    data: {
-      labels: data.map((_,i)=>i),
-      datasets: [{
-        data: data,
-        borderColor: colour,
-        backgroundColor: colour + '22',
-        borderWidth: 2,
-        fill: true,
-        tension: .35,
-        pointRadius: 0,
-      }]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
+    data: { labels: data.map((_,i)=>i),
+      datasets: [{ data, borderColor: colour, backgroundColor: colour+'22',
+        borderWidth: 2, fill: true, tension: .35, pointRadius: 0 }] },
+    options: { responsive: true, maintainAspectRatio: false,
       plugins: { legend: { display: false }, tooltip: { enabled: false } },
       scales: { x: { display: false }, y: { display: false } },
-      elements: { point: { radius: 0 } },
-    }
+      elements: { point: { radius: 0 } } }
   });
 }
-
 function renderLine(id, labels, data, colour, second){
-  const el = document.getElementById(id);
-  if(!el) return;
+  const el = document.getElementById(id); if(!el) return;
   if(charts[id]) charts[id].destroy();
   const datasets = [{
-    data: data,
-    borderColor: colour,
-    backgroundColor: colour + '22',
-    borderWidth: 2.5,
-    fill: true,
-    tension: .35,
-    pointRadius: 0,
-    pointHoverRadius: 5,
-    pointHoverBackgroundColor: colour,
+    data, borderColor: colour, backgroundColor: colour+'22', borderWidth: 2.5,
+    fill: true, tension: .35, pointRadius: 0, pointHoverRadius: 5, pointHoverBackgroundColor: colour,
   }];
   if(second){
-    const mirrored = data.map(v=> Math.max(0, v * 0.6 + Math.random()*2));
-    datasets.push({
-      data: mirrored,
-      borderColor: second,
-      backgroundColor: 'transparent',
-      borderWidth: 2,
-      borderDash: [4,4],
-      fill: false,
-      tension: .35,
-      pointRadius: 0,
-    });
+    const mirrored = data.map(v=> Math.max(0, v*0.6 + Math.random()*2));
+    datasets.push({ data: mirrored, borderColor: second, backgroundColor: 'transparent',
+      borderWidth: 2, borderDash: [4,4], fill: false, tension: .35, pointRadius: 0 });
   }
   charts[id] = new Chart(el, {
     type: 'line',
     data: { labels, datasets },
-    options: {
-      responsive: true, maintainAspectRatio: false,
+    options: { responsive: true, maintainAspectRatio: false,
       plugins: { legend: { display: false } },
       interaction: { intersect: false, mode: 'index' },
       scales: {
         x: { grid: { display: false }, ticks: { maxRotation: 0, autoSkipPadding: 20 } },
         y: { grid: { color: 'rgba(255,255,255,.05)' }, beginAtZero: true, ticks: { precision: 0 } },
-      },
-    }
+      } }
   });
 }
-
 function renderDonut(id, labels, data, colours){
-  const el = document.getElementById(id);
-  if(!el) return;
+  const el = document.getElementById(id); if(!el) return;
   if(charts[id]) charts[id].destroy();
   charts[id] = new Chart(el, {
     type: 'doughnut',
     data: { labels, datasets: [{ data, backgroundColor: colours, borderWidth: 0, hoverOffset: 8 }] },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      cutout: '68%',
-      plugins: { legend: { display: false } },
-    }
+    options: { responsive: true, maintainAspectRatio: false, cutout: '68%',
+      plugins: { legend: { display: false } } }
   });
 }
-
 function renderBars(id, labels, data, colours){
-  const el = document.getElementById(id);
-  if(!el) return;
+  const el = document.getElementById(id); if(!el) return;
   if(charts[id]) charts[id].destroy();
   charts[id] = new Chart(el, {
     type: 'bar',
-    data: {
-      labels,
-      datasets: [{
-        data,
-        backgroundColor: colours,
-        borderRadius: 6,
-        barThickness: 28,
-      }]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
+    data: { labels, datasets: [{ data, backgroundColor: colours, borderRadius: 6, barThickness: 28 }] },
+    options: { responsive: true, maintainAspectRatio: false,
       plugins: { legend: { display: false } },
       scales: {
         x: { grid: { display: false } },
         y: { grid: { color: 'rgba(255,255,255,.05)' }, beginAtZero: true, ticks: { precision: 0 } },
-      },
-    }
+      } }
   });
 }
 
-/* ═══ LIVE STATUS ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   LIVE STATUS
+   ═══════════════════════════════════════════════════════════════ */
 async function loadStatus(){
   try{
-    const r=await fetch(BOT_API+'/api/status',{headers:hdr()});
+    const r = await fetch(BOT_API+'/api/status',{headers:hdr()});
     if(!r.ok) return;
-    const d=await r.json();
-    document.getElementById('st-ping').textContent=d.ping_ms+'ms';
-    document.getElementById('st-cpu').textContent=d.cpu+'%';
-    document.getElementById('st-mem').textContent=d.mem_mb+'MB';
-    const h=Math.floor(d.uptime/3600), m=Math.floor((d.uptime%3600)/60);
-    document.getElementById('st-up').textContent=h+'h '+m+'m';
+    const d = await r.json();
+    document.getElementById('st-ping').textContent = d.ping_ms + 'ms';
+    document.getElementById('st-cpu').textContent = d.cpu + '%';
+    document.getElementById('st-mem').textContent = d.mem_mb + 'MB';
+    const h = Math.floor(d.uptime/3600), m = Math.floor((d.uptime%3600)/60);
+    document.getElementById('st-up').textContent = h + 'h ' + m + 'm';
 
-    statusHist.push({t:Date.now(), cpu:d.cpu, mem:d.mem_mb});
-    if(statusHist.length>20) statusHist.shift();
+    statusHist.push({t: Date.now(), cpu: d.cpu, mem: d.mem_mb});
+    if(statusHist.length > 20) statusHist.shift();
     const labels = statusHist.map((_,i)=>i);
     const cpus = statusHist.map(s=>s.cpu);
     const mems = statusHist.map(s=>s.mem);
@@ -1572,79 +1778,65 @@ async function loadStatus(){
     charts['chart-load'] = new Chart(el, {
       type: 'line',
       data: { labels, datasets: [
-        { label:'CPU %', data: cpus, borderColor: BLUE, backgroundColor: BLUE+'22', fill:true, tension:.35, borderWidth:2, pointRadius:0 },
-        { label:'MEM MB', data: mems, borderColor: GREEN, backgroundColor:'transparent', fill:false, tension:.35, borderWidth:2, pointRadius:0 },
-      ]},
-      options: {
-        responsive:true, maintainAspectRatio:false,
+        { label: 'CPU %', data: cpus, borderColor: BLUE, backgroundColor: BLUE+'22', fill: true, tension: .35, borderWidth: 2, pointRadius: 0 },
+        { label: 'MEM MB', data: mems, borderColor: GREEN, backgroundColor: 'transparent', fill: false, tension: .35, borderWidth: 2, pointRadius: 0 },
+      ] },
+      options: { responsive: true, maintainAspectRatio: false,
         plugins: { legend: { display: false } },
-        scales: {
-          x: { display: false },
-          y: { grid:{ color:'rgba(255,255,255,.05)' }, beginAtZero: true },
-        },
-      }
+        scales: { x: { display: false }, y: { grid: { color: 'rgba(255,255,255,.05)' }, beginAtZero: true } } }
     });
 
     const g = document.getElementById('chart-guild');
     if(charts['chart-guild']) charts['chart-guild'].destroy();
     charts['chart-guild'] = new Chart(g, {
       type: 'doughnut',
-      data: {
-        labels: ['Channels','Roles','Members','Hubs'],
-        datasets: [{
-          data: [d.channels||0, d.roles||0, d.members||0, d.hubs||0],
-          backgroundColor: [BLUE, PURPLE, GREEN, YELLOW],
-          borderWidth: 0,
-          hoverOffset: 6,
-        }]
-      },
-      options: {
-        responsive:true, maintainAspectRatio:false,
-        cutout:'65%',
-        plugins:{ legend:{ position:'bottom', labels:{ padding:14, boxWidth:10, boxHeight:10, usePointStyle:true, pointStyle:'circle' } } },
-      }
+      data: { labels: ['Channels','Roles','Members','Hubs'],
+        datasets: [{ data: [d.channels||0, d.roles||0, d.members||0, d.hubs||0],
+          backgroundColor: [BLUE, PURPLE, GREEN, YELLOW], borderWidth: 0, hoverOffset: 6 }] },
+      options: { responsive: true, maintainAspectRatio: false, cutout: '65%',
+        plugins: { legend: { position: 'bottom', labels: { padding: 14, boxWidth: 10, boxHeight: 10, usePointStyle: true, pointStyle: 'circle' } } } }
     });
   }catch(e){}
 }
 
-/* ═══ LOGS ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   LOGS / AUDIT
+   ═══════════════════════════════════════════════════════════════ */
 async function loadLogs(){
   try{
-    const r=await fetch(BOT_API+'/api/logs',{headers:hdr()});
+    const r = await fetch(BOT_API+'/api/logs',{headers:hdr()});
     if(!r.ok) return;
-    const d=await r.json();
-    const el=document.getElementById('logs-list');
-    if(!d.logs||!d.logs.length){
-      el.innerHTML='<div style="color:var(--text3);text-align:center;padding:40px 0;">No recent activity</div>';
+    const d = await r.json();
+    const el = document.getElementById('logs-list');
+    if(!d.logs || !d.logs.length){
+      el.innerHTML = '<div style="color:var(--text3);text-align:center;padding:40px 0;">No recent activity</div>';
       return;
     }
-    el.innerHTML=d.logs.map(l=>{
-      const ts=new Date(l.time*1000).toLocaleTimeString();
-      const kind = (l.kind||'event').toLowerCase();
+    el.innerHTML = d.logs.map(l=>{
+      const ts = new Date(l.time*1000).toLocaleTimeString();
+      const kind = (l.kind || 'event').toLowerCase();
       return `<div class="log-item"><div class="log-time">${ts}</div><div class="log-kind ${kind}">${l.kind||'event'}</div><div class="log-text">${l.text||''}</div></div>`;
     }).join('');
   }catch(e){}
 }
-
-/* ═══ AUDIT ═══ */
 async function loadAudit(){
   try{
-    const r=await fetch(BOT_API+'/api/audit?limit=40',{headers:hdr()});
-    const el=document.getElementById('audit-list');
+    const r = await fetch(BOT_API+'/api/audit?limit=40',{headers:hdr()});
+    const el = document.getElementById('audit-list');
     if(!r.ok){
-      const d=await r.json().catch(()=>({}));
-      el.innerHTML=`<div style="color:var(--red);text-align:center;padding:40px 0;">${d.error||'Failed to load audit log'}</div>`;
+      const d = await r.json().catch(()=>({}));
+      el.innerHTML = `<div style="color:var(--red);text-align:center;padding:40px 0;">${d.error || 'Failed to load audit log'}</div>`;
       return;
     }
-    const d=await r.json();
-    if(!d.entries||!d.entries.length){
-      el.innerHTML='<div style="color:var(--text3);text-align:center;padding:40px 0;">No entries</div>';
+    const d = await r.json();
+    if(!d.entries || !d.entries.length){
+      el.innerHTML = '<div style="color:var(--text3);text-align:center;padding:40px 0;">No entries</div>';
       return;
     }
-    el.innerHTML=d.entries.map(e=>{
-      const av=e.user_avatar||'';
-      const reason=e.reason?`<span class="audit-meta">· ${e.reason}</span>`:'';
-      const target=e.target?`<span class="audit-meta">→ ${e.target}</span>`:'';
+    el.innerHTML = d.entries.map(e=>{
+      const av = e.user_avatar || '';
+      const reason = e.reason ? `<span class="audit-meta">· ${e.reason}</span>` : '';
+      const target = e.target ? `<span class="audit-meta">→ ${e.target}</span>` : '';
       return `<div class="audit-row">
         <img class="audit-av" src="${av}" onerror="this.style.display='none'">
         <div style="flex:1;min-width:0;">
@@ -1655,172 +1847,277 @@ async function loadAudit(){
       </div>`;
     }).join('');
   }catch(e){
-    document.getElementById('audit-list').innerHTML='<div style="color:var(--red);text-align:center;padding:40px 0;">Error loading audit log</div>';
+    document.getElementById('audit-list').innerHTML = '<div style="color:var(--red);text-align:center;padding:40px 0;">Error loading audit log</div>';
   }
 }
 
-/* ═══ WHITELIST ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   WHITELIST
+   ═══════════════════════════════════════════════════════════════ */
 async function loadWhitelist(){
   try{
-    const r=await fetch(BOT_API+'/api/whitelist',{headers:hdr()});
+    const r = await fetch(BOT_API+'/api/whitelist',{headers:hdr()});
     if(!r.ok) return;
-    const d=await r.json();
+    const d = await r.json();
     document.getElementById('wl-enabled').checked = d.enabled !== false;
-    const tb=document.getElementById('wl-rows');
-    if(!d.whitelist||!d.whitelist.length){
-      tb.innerHTML='<tr><td colspan="5" style="color:var(--text3);text-align:center;padding:20px 0;">No whitelisted members</td></tr>';
+    const tb = document.getElementById('wl-rows');
+    if(!d.whitelist || !d.whitelist.length){
+      tb.innerHTML = '<tr><td colspan="5" style="color:var(--text3);text-align:center;padding:20px 0;">No whitelisted members</td></tr>';
       return;
     }
-    tb.innerHTML=d.whitelist.map(w=>`
+    tb.innerHTML = d.whitelist.map(w=>`
       <tr>
         <td><code style="font-family:'JetBrains Mono',monospace;font-size:12px">${w.id}</code></td>
         <td>${w.username||'—'}</td>
-        <td style="color:var(--text2);font-size:12px">${w.added_by_name||w.added_by||'—'}</td>
+        <td style="color:var(--text2);font-size:12px">${w.added_by_name || w.added_by || '—'}</td>
         <td style="color:var(--text2);font-size:12px">${w.reason||'—'}</td>
         <td><button class="btn btn-danger btn-sm" onclick="removeWhitelist('${w.id}')">Remove</button></td>
       </tr>`).join('');
   }catch(e){}
 }
 
-/* ═══ NAV ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   NAV
+   ═══════════════════════════════════════════════════════════════ */
 function nav(page){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   document.getElementById('page-'+page)?.classList.add('active');
   document.querySelector('.nav-item[data-page="'+page+'"]')?.classList.add('active');
-  const t={overview:'Dashboard',status:'Live Status',logs:'Activity',audit:'Audit Log',
+  const t = {overview:'Dashboard',status:'Live Status',logs:'Activity',audit:'Audit Log',
     messaging:'Messaging',moderation:'Moderation',channels:'Channels',roles:'Roles',
     admin:'Admin Actions',whitelist:'Whitelist',hub:'Join-to-Create',verify:'Voice Verify',
     antinuke:'AntiNuke',scam:'Scam Catcher',backup:'Backup System',ai:'AI Chat',
     music:'Music Player','status-cfg':'Server Status',presence:'Presence & Bio',staff:'Staff Access'};
-  document.getElementById('topbar-title').textContent=t[page]||'Dashboard';
+  document.getElementById('topbar-title').textContent = t[page] || 'Dashboard';
 
   [statusTimer,logsTimer,auditTimer].forEach(timer=>{ if(timer) clearInterval(timer); });
-  statusTimer=logsTimer=auditTimer=null;
-  if(page==='status'){ statusHist=[]; loadStatus(); statusTimer=setInterval(loadStatus,5000); }
-  if(page==='logs'){ loadLogs(); logsTimer=setInterval(loadLogs,10000); }
-  if(page==='audit'){ loadAudit(); auditTimer=setInterval(loadAudit,15000); }
-  if(page==='whitelist'){ loadWhitelist(); }
-  if(page==='overview'){ loadAnalytics(); }
+  statusTimer = logsTimer = auditTimer = null;
+  if(page === 'status'){ statusHist = []; loadStatus(); statusTimer = setInterval(loadStatus, 5000); }
+  if(page === 'logs'){ loadLogs(); logsTimer = setInterval(loadLogs, 10000); }
+  if(page === 'audit'){ loadAudit(); auditTimer = setInterval(loadAudit, 15000); }
+  if(page === 'whitelist'){ loadWhitelist(); }
+  if(page === 'overview'){ loadAnalytics(); }
+  if(page === 'ai'){ loadAiPanel(); }
 }
 
 function refreshAll(){
   loadProfile(); loadLiveServer(); loadConfig(); loadAnalytics();
-  const p=document.querySelector('.page.active')?.id;
-  if(p==='page-status') loadStatus();
-  if(p==='page-logs') loadLogs();
-  if(p==='page-audit') loadAudit();
-  if(p==='page-whitelist') loadWhitelist();
+  const p = document.querySelector('.page.active')?.id;
+  if(p === 'page-status') loadStatus();
+  if(p === 'page-logs') loadLogs();
+  if(p === 'page-audit') loadAudit();
+  if(p === 'page-whitelist') loadWhitelist();
+  if(p === 'page-ai') loadAiPanel();
 }
 
-/* ═══ SAVE ═══ */
-function markDirty(){ dirty=true; document.getElementById('save-bar').classList.add('visible'); }
-function discardChanges(){ dirty=false; document.getElementById('save-bar').classList.remove('visible'); loadConfig(); }
+/* ═══════════════════════════════════════════════════════════════
+   SAVE
+   ═══════════════════════════════════════════════════════════════ */
+function markDirty(){ dirty = true; document.getElementById('save-bar').classList.add('visible'); }
+function discardChanges(){ dirty = false; document.getElementById('save-bar').classList.remove('visible'); loadConfig(); }
 
 async function saveAll(){
-  const payload={};
+  const payload = {};
   document.querySelectorAll('[data-key]').forEach(el=>{
-    const k=el.dataset.key;
-    if(el.type==='checkbox') payload[k]=el.checked;
-    else if(el.type==='number') payload[k]=Number(el.value);
-    else payload[k]=el.value;
+    const k = el.dataset.key;
+    if(el.type === 'checkbox') payload[k] = el.checked;
+    else if(el.type === 'number') payload[k] = Number(el.value);
+    else payload[k] = el.value;
   });
+  // comma-separated lists handled here
+  if(document.getElementById('ai-trigger-words')){
+    const raw = document.getElementById('ai-trigger-words').value.trim();
+    payload.ai_trigger_words = raw ? raw.split(',').map(s=>s.trim()).filter(Boolean) : [];
+  }
+  if(document.getElementById('ai-channel-ids')){
+    const raw = document.getElementById('ai-channel-ids').value.trim();
+    payload.ai_channel_ids = raw
+      ? raw.split(',').map(s=>parseInt(s.trim(), 10)).filter(n=>Number.isFinite(n))
+      : [];
+  }
   try{
-    const r=await fetch(BOT_API+'/api/config',{method:'POST',headers:hdr(),body:JSON.stringify(payload)});
-    if(!r.ok){ toast('Bot rejected the save',false); return; }
-    dirty=false; document.getElementById('save-bar').classList.remove('visible');
+    const r = await fetch(BOT_API+'/api/config',{method:'POST',headers:hdr(),body:JSON.stringify(payload)});
+    if(!r.ok){ toast('Bot rejected the save', false); return; }
+    dirty = false;
+    document.getElementById('save-bar').classList.remove('visible');
     toast('✓ Configuration saved');
-  }catch(e){ toast('Save failed',false); }
+  }catch(e){ toast('Save failed', false); }
 }
 
-/* ═══ ACTION HELPER ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   ACTION HELPER
+   ═══════════════════════════════════════════════════════════════ */
 async function post(path, body){
   try{
-    const r=await fetch(BOT_API+path,{method:'POST',headers:hdr(),body:JSON.stringify(body)});
-    const d=await r.json();
-    if(!r.ok){ toast(d.error||'Failed',false); return null; }
+    const r = await fetch(BOT_API+path,{method:'POST',headers:hdr(),body:JSON.stringify(body)});
+    const d = await r.json().catch(()=>({}));
+    if(!r.ok){ toast(d.error || 'Failed', false); return null; }
     return d;
-  }catch(e){ toast('Request failed',false); return null; }
+  }catch(e){ toast('Request failed', false); return null; }
 }
 
-async function sendMessage(){ const r=await post('/api/action/message',{channel_id:val('msg-ch'),content:val('msg-content')}); if(r){ toast('✓ Message sent'); document.getElementById('msg-content').value=''; } }
-async function sendEmbed(){ const r=await post('/api/action/embed',{channel_id:val('em-ch'),colour:val('em-colour'),title:val('em-title'),description:val('em-desc'),image:val('em-image'),thumbnail:val('em-thumb'),footer:val('em-footer')}); if(r){ toast('✓ Embed sent'); ['em-title','em-desc','em-image','em-thumb','em-footer'].forEach(i=>document.getElementById(i).value=''); } }
-async function sendDM(){ const r=await post('/api/action/dm',{user_id:val('dm-user'),content:val('dm-content')}); if(r){ toast('✓ DM sent'); document.getElementById('dm-content').value=''; } }
-async function punishUser(){ const a=document.getElementById('mod-action').value; const r=await post('/api/action/punish',{user_id:val('mod-user'),action:a,reason:val('mod-reason'),duration:Number(val('mod-duration'))||600}); if(r) toast('✓ '+a+' applied'); }
-async function channelAction(){ const r=await post('/api/action/channel',{channel_id:val('ch-id'),action:document.getElementById('ch-action').value,value:Number(val('ch-value'))||0}); if(r) toast('✓ Applied'); }
-async function roleAction(){ const r=await post('/api/action/role',{user_id:val('rl-user'),role_id:val('rl-role'),action:document.getElementById('rl-action').value}); if(r) toast('✓ Applied'); }
-async function runBackup(){ const r=await post('/api/action/backup',{action:'run'}); if(r) toast('✓ Backup complete: '+(r.file||'')); }
-async function restoreBackup(){ if(!confirm('Restore missing channels/roles from the latest snapshot?')) return; const r=await post('/api/action/backup',{action:'restore'}); if(r) toast('✓ Restore complete'); }
+async function sendMessage(){ const r = await post('/api/action/message',{channel_id:val('msg-ch'),content:val('msg-content')}); if(r){ toast('✓ Message sent'); document.getElementById('msg-content').value=''; } }
+async function sendEmbed(){ const r = await post('/api/action/embed',{channel_id:val('em-ch'),colour:val('em-colour'),title:val('em-title'),description:val('em-desc'),image:val('em-image'),thumbnail:val('em-thumb'),footer:val('em-footer')}); if(r){ toast('✓ Embed sent'); ['em-title','em-desc','em-image','em-thumb','em-footer'].forEach(i=>document.getElementById(i).value=''); } }
+async function sendDM(){ const r = await post('/api/action/dm',{user_id:val('dm-user'),content:val('dm-content')}); if(r){ toast('✓ DM sent'); document.getElementById('dm-content').value=''; } }
+async function punishUser(){ const a = document.getElementById('mod-action').value; const r = await post('/api/action/punish',{user_id:val('mod-user'),action:a,reason:val('mod-reason'),duration:Number(val('mod-duration'))||600}); if(r) toast('✓ '+a+' applied'); }
+async function channelAction(){ const r = await post('/api/action/channel',{channel_id:val('ch-id'),action:document.getElementById('ch-action').value,value:Number(val('ch-value'))||0}); if(r) toast('✓ Applied'); }
+async function roleAction(){ const r = await post('/api/action/role',{user_id:val('rl-user'),role_id:val('rl-role'),action:document.getElementById('rl-action').value}); if(r) toast('✓ Applied'); }
+async function runBackup(){ const r = await post('/api/action/backup',{action:'run'}); if(r) toast('✓ Backup complete: '+(r.file||'')); }
+async function restoreBackup(){ if(!confirm('Restore missing channels/roles from the latest snapshot?')) return; const r = await post('/api/action/backup',{action:'restore'}); if(r) toast('✓ Restore complete'); }
 
-async function adminCreateChannel(){ const r=await post('/api/action/admin',{action:'create_channel',name:val('adm-ch-name'),type:document.getElementById('adm-ch-type').value,category_id:val('adm-ch-cat')||0}); if(r) toast('✓ Channel created: '+r.name); }
-async function adminDeleteChannel(){ if(!confirm('Delete this channel?')) return; const r=await post('/api/action/admin',{action:'delete_channel',channel_id:val('adm-del-ch')}); if(r) toast('✓ Channel deleted'); }
-async function adminCreateRole(){ const r=await post('/api/action/admin',{action:'create_role',name:val('adm-role-name'),colour:val('adm-role-colour')}); if(r) toast('✓ Role created: '+r.name); }
-async function adminDeleteRole(){ if(!confirm('Delete this role?')) return; const r=await post('/api/action/admin',{action:'delete_role',role_id:val('adm-del-role')}); if(r) toast('✓ Role deleted'); }
-async function adminSetNick(){ const r=await post('/api/action/admin',{action:'set_nick',user_id:val('adm-nick-user'),nick:val('adm-nick-value')}); if(r) toast('✓ Nickname updated'); }
-async function adminRenameGuild(){ if(!confirm('Rename the entire server?')) return; const r=await post('/api/action/admin',{action:'rename_guild',name:val('adm-guild-name')}); if(r) toast('✓ Server renamed'); }
-async function adminPurge(){ if(!confirm('Delete this many messages? This cannot be undone.')) return; const r=await post('/api/action/admin',{action:'purge',channel_id:val('adm-purge-ch'),count:Number(val('adm-purge-count'))||50}); if(r) toast('✓ Purged '+r.deleted+' messages'); }
-async function adminKickBots(){ if(!confirm('Kick every bot except this one and whitelisted ones?')) return; const r=await post('/api/action/admin',{action:'kick_bots'}); if(r) toast('✓ Kicked '+r.count+' bots'); }
+async function adminCreateChannel(){ const r = await post('/api/action/admin',{action:'create_channel',name:val('adm-ch-name'),type:document.getElementById('adm-ch-type').value,category_id:val('adm-ch-cat')||0}); if(r) toast('✓ Channel created: '+r.name); }
+async function adminDeleteChannel(){ if(!confirm('Delete this channel?')) return; const r = await post('/api/action/admin',{action:'delete_channel',channel_id:val('adm-del-ch')}); if(r) toast('✓ Channel deleted'); }
+async function adminCreateRole(){ const r = await post('/api/action/admin',{action:'create_role',name:val('adm-role-name'),colour:val('adm-role-colour')}); if(r) toast('✓ Role created: '+r.name); }
+async function adminDeleteRole(){ if(!confirm('Delete this role?')) return; const r = await post('/api/action/admin',{action:'delete_role',role_id:val('adm-del-role')}); if(r) toast('✓ Role deleted'); }
+async function adminSetNick(){ const r = await post('/api/action/admin',{action:'set_nick',user_id:val('adm-nick-user'),nick:val('adm-nick-value')}); if(r) toast('✓ Nickname updated'); }
+async function adminRenameGuild(){ if(!confirm('Rename the entire server?')) return; const r = await post('/api/action/admin',{action:'rename_guild',name:val('adm-guild-name')}); if(r) toast('✓ Server renamed'); }
+async function adminPurge(){ if(!confirm('Delete this many messages? This cannot be undone.')) return; const r = await post('/api/action/admin',{action:'purge',channel_id:val('adm-purge-ch'),count:Number(val('adm-purge-count'))||50}); if(r) toast('✓ Purged '+r.deleted+' messages'); }
+async function adminKickBots(){ if(!confirm('Kick every bot except this one and whitelisted ones?')) return; const r = await post('/api/action/admin',{action:'kick_bots'}); if(r) toast('✓ Kicked '+r.count+' bots'); }
 
-async function addWhitelist(){ const r=await post('/api/whitelist/add',{discord_id:val('wl-add-id'),reason:val('wl-add-reason')}); if(r){ toast('✓ Added'); document.getElementById('wl-add-id').value=''; document.getElementById('wl-add-reason').value=''; loadWhitelist(); } }
-async function removeWhitelist(id){ if(!confirm('Remove this member?')) return; const r=await post('/api/whitelist/remove',{discord_id:id}); if(r){ toast('Removed'); loadWhitelist(); } }
-async function toggleWhitelist(){ const enabled=document.getElementById('wl-enabled').checked; const r=await post('/api/whitelist/toggle',{enabled}); if(r) toast('Whitelist '+(enabled?'enabled':'disabled')); }
+async function addWhitelist(){ const r = await post('/api/whitelist/add',{discord_id:val('wl-add-id'),reason:val('wl-add-reason')}); if(r){ toast('✓ Added'); document.getElementById('wl-add-id').value=''; document.getElementById('wl-add-reason').value=''; loadWhitelist(); } }
+async function removeWhitelist(id){ if(!confirm('Remove this member?')) return; const r = await post('/api/whitelist/remove',{discord_id:id}); if(r){ toast('Removed'); loadWhitelist(); } }
+async function toggleWhitelist(){ const enabled = document.getElementById('wl-enabled').checked; const r = await post('/api/whitelist/toggle',{enabled}); if(r) toast('Whitelist '+(enabled?'enabled':'disabled')); }
 
-/* ═══ STAFF ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   AI PANEL (Claude + ChatGPT)
+   ═══════════════════════════════════════════════════════════════ */
+function selectAIProvider(provider){
+  const hidden = document.getElementById('ai-provider-hidden');
+  if(hidden){ hidden.value = provider; }
+  document.querySelectorAll('.ai-provider-chip').forEach(chip=>{
+    chip.classList.toggle('selected', chip.dataset.provider === provider);
+  });
+  markDirty();
+}
+function loadAiPanel(){
+  const provider = (config.ai_provider || 'anthropic').toLowerCase();
+  const hidden = document.getElementById('ai-provider-hidden');
+  if(hidden) hidden.value = provider;
+  document.querySelectorAll('.ai-provider-chip').forEach(chip=>{
+    chip.classList.toggle('selected', chip.dataset.provider === provider);
+  });
+  const triggers = document.getElementById('ai-trigger-words');
+  if(triggers) triggers.value = Array.isArray(config.ai_trigger_words)
+    ? config.ai_trigger_words.join(', ') : '';
+  const channels = document.getElementById('ai-channel-ids');
+  if(channels) channels.value = Array.isArray(config.ai_channel_ids)
+    ? config.ai_channel_ids.join(', ') : '';
+}
+function onTriggerWordsChange(){ markDirty(); }
+function onAiChannelsChange(){ markDirty(); }
+
+async function testAI(provider){
+  const prompt = document.getElementById('ai-test-prompt').value.trim();
+  const out = document.getElementById('ai-test-output');
+  if(!prompt){ toast('Type a prompt first', false); return; }
+  out.textContent = 'Thinking…';
+  try{
+    const r = await fetch(BOT_API + '/api/ai/test', {
+      method: 'POST', headers: hdr(),
+      body: JSON.stringify({prompt, provider}),
+    });
+    const d = await r.json().catch(()=>({}));
+    if(!r.ok){ out.textContent = '⚠ ' + (d.error || 'Request failed'); return; }
+    out.textContent = `[${d.provider}]\n${d.reply}`;
+  }catch(e){
+    out.textContent = '⚠ Could not reach the bot API.';
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   STAFF
+   ═══════════════════════════════════════════════════════════════ */
 function renderPermGrid(){
-  const g=document.getElementById('perm-grid');
-  g.innerHTML='';
+  const g = document.getElementById('perm-grid');
+  g.innerHTML = '';
   PAGES.forEach(p=>{
-    const b=document.createElement('div');
-    b.className='perm-btn'+(newPerms[p]?' on':'');
-    b.textContent=p;
-    b.onclick=()=>{ newPerms[p]=!newPerms[p]; b.classList.toggle('on'); };
+    const b = document.createElement('div');
+    b.className = 'perm-btn' + (newPerms[p] ? ' on' : '');
+    b.textContent = p;
+    b.onclick = ()=>{ newPerms[p] = !newPerms[p]; b.classList.toggle('on'); };
     g.appendChild(b);
   });
 }
 async function loadStaff(){
-  if(!USER||USER.role!=='owner') return;
+  if(!USER || USER.role !== 'owner') return;
   try{
-    const r=await fetch(BOT_API+'/api/staff',{headers:hdr()});
+    const r = await fetch(BOT_API+'/api/staff',{headers:hdr()});
     if(!r.ok) return;
-    const d=await r.json();
-    const tb=document.getElementById('staff-rows');
-    if(!d.staff.length){ tb.innerHTML='<tr><td colspan="4" style="color:var(--text3);text-align:center;padding:20px 0;">No staff added yet</td></tr>'; return; }
-    tb.innerHTML=d.staff.map(s=>{
-      const pages=Object.entries(s.perms||{}).filter(([,v])=>v).map(([k])=>k).join(', ')||'—';
-      return `<tr><td><code style="font-family:'JetBrains Mono',monospace;font-size:12px">${s.id}</code></td>
-        <td>${s.name}</td><td style="color:var(--text2);font-size:12px">${pages}</td>
-        <td><button class="btn btn-danger btn-sm" onclick="removeStaff('${s.id}')">Remove</button></td></tr>`;
+    const d = await r.json();
+    const tb = document.getElementById('staff-rows');
+    if(!d.staff.length){
+      tb.innerHTML = '<tr><td colspan="4" style="color:var(--text3);text-align:center;padding:20px 0;">No staff added yet</td></tr>';
+      return;
+    }
+    tb.innerHTML = d.staff.map(s=>{
+      const pages = Object.entries(s.perms || {}).filter(([,v])=>v).map(([k])=>k).join(', ') || '—';
+      return `<tr>
+        <td><code style="font-family:'JetBrains Mono',monospace;font-size:12px">${s.id}</code></td>
+        <td>${s.name}</td>
+        <td style="color:var(--text2);font-size:12px">${pages}</td>
+        <td><button class="btn btn-danger btn-sm" onclick="removeStaff('${s.id}')">Remove</button></td>
+      </tr>`;
     }).join('');
   }catch(e){}
 }
 async function addStaff(){
-  const id=val('sf-id'), name=val('sf-name'), pw=document.getElementById('sf-pw').value;
-  if(!id||!name||!pw){ toast('All three fields are required',false); return; }
-  const r=await post('/api/staff/add',{discord_id:id,name,password:pw,perms:newPerms});
-  if(r){ toast('✓ Staff added'); ['sf-id','sf-name','sf-pw'].forEach(i=>document.getElementById(i).value=''); newPerms={}; renderPermGrid(); loadStaff(); }
+  const id = val('sf-id'), name = val('sf-name'), pw = document.getElementById('sf-pw').value;
+  if(!id || !name || !pw){ toast('All three fields are required', false); return; }
+  const r = await post('/api/staff/add',{discord_id:id,name,password:pw,perms:newPerms});
+  if(r){
+    toast('✓ Staff added');
+    ['sf-id','sf-name','sf-pw'].forEach(i=>document.getElementById(i).value='');
+    newPerms = {}; renderPermGrid(); loadStaff();
+  }
 }
-async function removeStaff(id){ if(!confirm('Remove this staff member?')) return; const r=await post('/api/staff/remove',{discord_id:id}); if(r){ toast('Removed'); loadStaff(); } }
+async function removeStaff(id){ if(!confirm('Remove this staff member?')) return; const r = await post('/api/staff/remove',{discord_id:id}); if(r){ toast('Removed'); loadStaff(); } }
 
-/* ═══ BOOT ═══ */
-window.addEventListener('load',()=>{
+/* ═══════════════════════════════════════════════════════════════
+   BOOT
+   ═══════════════════════════════════════════════════════════════ */
+window.addEventListener('load', async () => {
   renderPermGrid();
-  liveServerTimer=setInterval(()=>{loadLiveServer();loadProCenter();},5000);loadProCenter();
-  const sess=localStorage.getItem('ftw_session');
+  liveServerTimer = setInterval(() => { loadLiveServer(); loadProCenter(); }, 5000);
+  loadProCenter();
+
+  // Fetch public OAuth metadata for the button
+  await loadOauthConfig();
+
+  // Handle Discord OAuth redirect (?code= or ?error=)
+  const url = new URL(window.location.href);
+  const code = url.searchParams.get('code');
+  const oauthError = url.searchParams.get('error');
+  if(code || oauthError){
+    window.history.replaceState({}, document.title, url.pathname + url.hash);
+    document.getElementById('auth-screen').style.display = 'flex';
+    document.getElementById('app').classList.remove('visible');
+    if(code) await handleOAuthCallback(code);
+    else showAuthError('Discord authorization was cancelled.');
+    return;
+  }
+
+  // Restore existing session
+  const sess = localStorage.getItem('ftw_session');
   if(sess){
-    SESSION=sess;
-    fetch(BOT_API+'/api/me',{headers:hdr()}).then(r=>{ if(!r.ok) throw 0; return r.json(); })
-    .then(u=>{
-      USER=u;
-      document.getElementById('auth-screen').style.display='none';
-      document.getElementById('app').classList.add('visible');
-      applyUser();
-      Promise.all([loadProfile(), loadLiveServer(), loadConfig(), loadHealth(), loadAnalytics()]);
-      if(u.role==='owner') loadStaff();
-    }).catch(()=>{ localStorage.removeItem('ftw_session'); });
+    SESSION = sess;
+    fetch(BOT_API+'/api/me',{headers:hdr()})
+      .then(r=>{ if(!r.ok) throw 0; return r.json(); })
+      .then(u=>{
+        USER = u;
+        document.getElementById('auth-screen').style.display = 'none';
+        document.getElementById('app').classList.add('visible');
+        applyUser();
+        Promise.all([loadProfile(), loadLiveServer(), loadConfig(), loadHealth(), loadAnalytics(), loadAiPanel()]);
+        if(u.role === 'owner') loadStaff();
+      })
+      .catch(()=>{ localStorage.removeItem('ftw_session'); });
   }
 });
 
-/* ═══ ADVANCED UX / ANIMATION LAYER ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   ADVANCED UX / ANIMATION LAYER
+   ═══════════════════════════════════════════════════════════════ */
 (function(){
   const pageNames = {
     overview:'Dashboard',status:'Live Status',logs:'Activity',audit:'Audit Log',
@@ -1836,162 +2133,164 @@ window.addEventListener('load',()=>{
   };
 
   window.toggleSidebar = function(open){
-    const sidebar=document.getElementById('sidebar');
-    const overlay=document.getElementById('mobile-overlay');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('mobile-overlay');
     if(!sidebar) return;
     sidebar.classList.toggle('open', open);
     overlay?.classList.toggle('open', open);
   };
 
-  window.closeCommandPalette=function(){
-    const p=document.getElementById('command-palette');
+  window.closeCommandPalette = function(){
+    const p = document.getElementById('command-palette');
     if(!p) return;
     p.classList.remove('open'); p.setAttribute('aria-hidden','true');
   };
 
   function commandItems(query=''){
-    const q=query.trim().toLowerCase();
+    const q = query.trim().toLowerCase();
     return [...document.querySelectorAll('.nav-item[data-page]')]
       .filter(n=>!n.classList.contains('hidden'))
-      .map(n=>({page:n.dataset.page,name:pageNames[n.dataset.page]||n.dataset.page}))
+      .map(n=>({page:n.dataset.page, name:pageNames[n.dataset.page] || n.dataset.page}))
       .filter(x=>!q || x.name.toLowerCase().includes(q) || x.page.includes(q));
   }
-
   function renderCommands(query=''){
-    const list=document.getElementById('command-list');
+    const list = document.getElementById('command-list');
     if(!list) return;
-    const items=commandItems(query);
-    list.innerHTML=items.length ? items.map((x,i)=>`
-      <div class="command-item ${i===0?'selected':''}" data-page="${x.page}" tabindex="0">
-        <span>${pageIcons[x.page]||'•'}</span><strong>${x.name}</strong><span class="command-key">${x.page}</span>
-      </div>`).join('') :
-      '<div class="empty-state"><strong>No matches</strong>Try another page name.</div>';
+    const items = commandItems(query);
+    list.innerHTML = items.length
+      ? items.map((x,i)=>`
+        <div class="command-item ${i===0?'selected':''}" data-page="${x.page}" tabindex="0">
+          <span>${pageIcons[x.page] || '•'}</span>
+          <strong>${x.name}</strong>
+          <span class="command-key">${x.page}</span>
+        </div>`).join('')
+      : '<div class="empty-state"><strong>No matches</strong>Try another page name.</div>';
     list.querySelectorAll('.command-item').forEach(item=>{
-      item.onclick=()=>{ nav(item.dataset.page); closeCommandPalette(); };
-      item.onkeydown=e=>{if(e.key==='Enter'){nav(item.dataset.page);closeCommandPalette()}};
+      item.onclick = ()=>{ nav(item.dataset.page); closeCommandPalette(); };
+      item.onkeydown = e=>{ if(e.key==='Enter'){ nav(item.dataset.page); closeCommandPalette(); } };
     });
   }
 
-  window.openCommandPalette=function(){
-    const p=document.getElementById('command-palette'), input=document.getElementById('command-input');
+  window.openCommandPalette = function(){
+    const p = document.getElementById('command-palette'), input = document.getElementById('command-input');
     if(!p) return;
     p.classList.add('open'); p.setAttribute('aria-hidden','false');
-    renderCommands(); input.value=''; requestAnimationFrame(()=>input.focus());
+    renderCommands(); input.value = ''; requestAnimationFrame(()=>input.focus());
   };
 
   function addTopbarControls(){
-    const top=document.querySelector('.topbar-actions');
+    const top = document.querySelector('.topbar-actions');
     if(!top || document.getElementById('quick-search')) return;
-    const search=document.createElement('button');
-    search.id='quick-search'; search.className='topbar-search';
-    search.innerHTML='<span>⌕ Quick navigation</span><kbd>Ctrl K</kbd>';
-    search.onclick=openCommandPalette;
+    const search = document.createElement('button');
+    search.id = 'quick-search'; search.className = 'topbar-search';
+    search.innerHTML = '<span>⌕ Quick navigation</span><kbd>Ctrl K</kbd>';
+    search.onclick = openCommandPalette;
     top.prepend(search);
 
-    const menu=document.createElement('button');
-    menu.className='btn btn-secondary mobile-menu'; menu.setAttribute('aria-label','Open navigation');
-    menu.textContent='☰'; menu.onclick=()=>toggleSidebar(true);
+    const menu = document.createElement('button');
+    menu.className = 'btn btn-secondary mobile-menu';
+    menu.setAttribute('aria-label','Open navigation');
+    menu.textContent = '☰';
+    menu.onclick = ()=>toggleSidebar(true);
     document.getElementById('topbar').prepend(menu);
 
-    const chip=document.createElement('span');
-    chip.id='session-chip'; chip.textContent='Secure session';
+    const chip = document.createElement('span');
+    chip.id = 'session-chip'; chip.textContent = 'Secure session';
     top.appendChild(chip);
   }
 
   function animateNumber(el, next){
-    if(!el || next==null || next==='—') return;
-    const target=Number(String(next).replace(/[^\d.-]/g,'')); 
-    if(!Number.isFinite(target)){el.textContent=next;return}
-    const start=Number(el.dataset.num||0), duration=650, t0=performance.now();
-    el.dataset.num=target;
+    if(!el || next == null || next === '—') return;
+    const target = Number(String(next).replace(/[^\d.-]/g,''));
+    if(!Number.isFinite(target)){ el.textContent = next; return; }
+    const start = Number(el.dataset.num || 0), duration = 650, t0 = performance.now();
+    el.dataset.num = target;
     el.classList.remove('kpi-bump'); void el.offsetWidth; el.classList.add('kpi-bump');
     function tick(t){
-      const p=Math.min(1,(t-t0)/duration), eased=1-Math.pow(1-p,3);
-      el.textContent=Math.round(start+(target-start)*eased).toLocaleString();
-      if(p<1) requestAnimationFrame(tick);
+      const p = Math.min(1, (t - t0)/duration), eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(start + (target - start) * eased).toLocaleString();
+      if(p < 1) requestAnimationFrame(tick);
     }
     requestAnimationFrame(tick);
   }
 
   function observeKpis(){
     ['kpi-members','kpi-hubs','kpi-threats','kpi-verify','mini-an','mini-sc'].forEach(id=>{
-      const el=document.getElementById(id); if(!el) return;
-      const obs=new MutationObserver(()=>{
-        const txt=el.textContent.trim();
-        if(txt && txt!=='—' && !el.dataset.animating){
-          const n=Number(txt.replace(/[^\d.-]/g,''));
+      const el = document.getElementById(id); if(!el) return;
+      const obs = new MutationObserver(()=>{
+        const txt = el.textContent.trim();
+        if(txt && txt !== '—' && !el.dataset.animating){
+          const n = Number(txt.replace(/[^\d.-]/g,''));
           if(Number.isFinite(n)){
-            el.dataset.animating='1'; animateNumber(el,n);
-            setTimeout(()=>delete el.dataset.animating,80);
+            el.dataset.animating = '1'; animateNumber(el, n);
+            setTimeout(()=>delete el.dataset.animating, 80);
           }
         }
       });
-      obs.observe(el,{childList:true,characterData:true,subtree:true});
+      obs.observe(el, {childList:true, characterData:true, subtree:true});
     });
   }
 
   function decoratePages(){
     document.querySelectorAll('.page').forEach(page=>{
-      const id=page.id.replace('page-','');
-      page.setAttribute('aria-label',pageNames[id]||id);
+      const id = page.id.replace('page-','');
+      page.setAttribute('aria-label', pageNames[id] || id);
     });
     document.querySelectorAll('table').forEach(t=>{
       if(t.parentElement.classList.contains('table-scroll')) return;
-      const wrap=document.createElement('div'); wrap.className='table-scroll';
-      t.parentNode.insertBefore(wrap,t); wrap.appendChild(t);
+      const wrap = document.createElement('div'); wrap.className = 'table-scroll';
+      t.parentNode.insertBefore(wrap, t); wrap.appendChild(t);
     });
   }
 
   function wireKeyboard(){
-    const input=document.getElementById('command-input');
-    input?.addEventListener('input',()=>renderCommands(input.value));
-    document.addEventListener('keydown',e=>{
-      if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='k'){
+    const input = document.getElementById('command-input');
+    input?.addEventListener('input', ()=>renderCommands(input.value));
+    document.addEventListener('keydown', e=>{
+      if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k'){
         e.preventDefault(); openCommandPalette();
       }
-      if(e.key==='Escape'){
-        closeCommandPalette(); toggleSidebar(false);
-      }
-      if(e.key==='Enter' && document.activeElement?.id==='in-pw') doLogin();
+      if(e.key === 'Escape'){ closeCommandPalette(); toggleSidebar(false); }
+      if(e.key === 'Enter' && document.activeElement?.id === 'in-pw') doLogin();
     });
-    const list=document.getElementById('command-list');
-    document.addEventListener('keydown',e=>{
+    const list = document.getElementById('command-list');
+    document.addEventListener('keydown', e=>{
       if(!document.getElementById('command-palette')?.classList.contains('open')) return;
-      const items=[...list.querySelectorAll('.command-item')]; if(!items.length) return;
-      let idx=items.findIndex(x=>x.classList.contains('selected'));
-      if(e.key==='ArrowDown'){e.preventDefault();idx=(idx+1)%items.length}
-      else if(e.key==='ArrowUp'){e.preventDefault();idx=(idx-1+items.length)%items.length}
+      const items = [...list.querySelectorAll('.command-item')]; if(!items.length) return;
+      let idx = items.findIndex(x=>x.classList.contains('selected'));
+      if(e.key === 'ArrowDown'){ e.preventDefault(); idx = (idx + 1) % items.length; }
+      else if(e.key === 'ArrowUp'){ e.preventDefault(); idx = (idx - 1 + items.length) % items.length; }
       else return;
-      items.forEach(x=>x.classList.remove('selected'));items[idx].classList.add('selected');items[idx].focus();
+      items.forEach(x=>x.classList.remove('selected'));
+      items[idx].classList.add('selected'); items[idx].focus();
     });
   }
 
   function addLoadingState(){
     document.querySelectorAll('#logs-list,#audit-list').forEach(el=>{
-      if(el && !el.dataset.loaded) el.innerHTML='<div class="empty-state skeleton" style="height:72px"></div>';
+      if(el && !el.dataset.loaded) el.innerHTML = '<div class="empty-state skeleton" style="height:72px"></div>';
     });
   }
 
-  const originalNav=window.nav;
-  if(typeof originalNav==='function'){
-    window.nav=function(page){
+  const originalNav = window.nav;
+  if(typeof originalNav === 'function'){
+    window.nav = function(page){
       originalNav(page);
       toggleSidebar(false);
-      const active=document.getElementById('page-'+page);
+      const active = document.getElementById('page-' + page);
       if(active) active.scrollIntoView({block:'nearest'});
     };
   }
-
-  const originalToast=window.toast;
-  if(typeof originalToast==='function'){
-    window.toast=function(message,ok=true){
-      originalToast(message,ok);
-      const el=document.getElementById('toast');
-      if(el){el.setAttribute('role',ok?'status':'alert');}
+  const originalToast = window.toast;
+  if(typeof originalToast === 'function'){
+    window.toast = function(message, ok = true){
+      originalToast(message, ok);
+      const el = document.getElementById('toast');
+      if(el) el.setAttribute('role', ok ? 'status' : 'alert');
     };
   }
 
-  window.addEventListener('load',()=>{
+  window.addEventListener('load', ()=>{
     addTopbarControls();
     decoratePages();
     observeKpis();
@@ -2000,18 +2299,16 @@ window.addEventListener('load',()=>{
     renderCommands();
   });
 
-  /* Enhance existing chart defaults without replacing API behavior. */
-  window.addEventListener('load',()=>{
+  window.addEventListener('load', ()=>{
     if(window.Chart){
-      Chart.defaults.animation.duration=900;
-      Chart.defaults.animation.easing='easeOutQuart';
-      Chart.defaults.plugins.tooltip.padding=10;
-      Chart.defaults.plugins.tooltip.cornerRadius=8;
-      Chart.defaults.plugins.tooltip.displayColors=true;
+      Chart.defaults.animation.duration = 900;
+      Chart.defaults.animation.easing = 'easeOutQuart';
+      Chart.defaults.plugins.tooltip.padding = 10;
+      Chart.defaults.plugins.tooltip.cornerRadius = 8;
+      Chart.defaults.plugins.tooltip.displayColors = true;
     }
   });
 })();
-
 </script>
 </body>
 </html>
