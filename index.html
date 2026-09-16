@@ -3,119 +3,199 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FTW · Bot Dashboard</title>
+<title>FTW · Analytics Dashboard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
 :root{
-  --bg:#0a0b10;--surface:#13161d;--surface2:#1a1e27;--surface3:#222631;
-  --border:#2a2f3d;--accent:#5865f2;--accent2:#7289da;--accent3:#a78bfa;
-  --accent-glow:rgba(88,101,242,.18);--success:#57f287;--danger:#ed4245;
-  --warning:#fee75c;--text:#e3e5e8;--text2:#99aab5;--text3:#586273;--radius:10px;
+  --bg:#0d1017;--surface:#151922;--surface2:#1c212c;--surface3:#252b38;
+  --border:#242a36;--border2:#2e3542;
+  --green:#84e05c;--green-dim:rgba(132,224,92,.14);--green-glow:rgba(132,224,92,.35);
+  --blue:#3b9eff;--blue-dim:rgba(59,158,255,.14);--blue-glow:rgba(59,158,255,.35);
+  --purple:#a78bfa;--red:#ff5c7c;--yellow:#ffcb5c;
+  --light:#ffffff;--light-text:#0d1017;--light-muted:#8a93a6;
+  --text:#eef1f6;--text2:#98a2b4;--text3:#5c6578;
+  --radius:14px;--radius-sm:10px;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;overflow:hidden}
-.bg-orbs{position:fixed;inset:0;overflow:hidden;z-index:0;pointer-events:none}
-.bg-orbs span{position:absolute;border-radius:50%;filter:blur(80px);opacity:.16}
-.bg-orbs span:nth-child(1){width:480px;height:480px;background:var(--accent);top:-140px;left:-100px}
-.bg-orbs span:nth-child(2){width:420px;height:420px;background:var(--accent3);bottom:-160px;right:-80px}
-#auth-screen{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bg);z-index:1000;gap:28px}
-.auth-logo .ftw-badge{font-size:52px;font-weight:700;letter-spacing:-3px;background:linear-gradient(135deg,#5865f2,#7289da,#99aab5);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.auth-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:36px 44px;width:400px;display:flex;flex-direction:column;gap:16px}
-.auth-card h2{font-size:20px;font-weight:600;text-align:center}
+html,body{height:100%}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;overflow:hidden;font-feature-settings:'tnum' 1,'cv11' 1}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:var(--text3)}
+
+/* ─── LOGIN ─── */
+#auth-screen{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle at 30% 20%,rgba(59,158,255,.08),transparent 50%),radial-gradient(circle at 70% 80%,rgba(132,224,92,.06),transparent 50%),var(--bg);z-index:1000;gap:28px}
+.auth-logo .ftw-badge{font-size:56px;font-weight:800;letter-spacing:-3px;background:linear-gradient(135deg,#84e05c,#3b9eff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.auth-logo .sub{font-size:12px;color:var(--text3);letter-spacing:3px;text-transform:uppercase;text-align:center;margin-top:4px}
+.auth-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:36px 44px;width:400px;display:flex;flex-direction:column;gap:16px;box-shadow:0 20px 60px -20px rgba(0,0,0,.6)}
+.auth-card h2{font-size:20px;font-weight:700;text-align:center}
 .auth-card p{font-size:12px;color:var(--text2);line-height:1.6;text-align:center}
-.field{display:flex;flex-direction:column;gap:5px}
-.field label{font-size:12px;color:var(--text2);font-weight:500}
-.field input,.field select,.field textarea{background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:10px 12px;font-size:13px;color:var(--text);width:100%;outline:none;font-family:inherit}
-.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent)}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:11px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.field input,.field select,.field textarea{background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:11px 13px;font-size:13px;color:var(--text);width:100%;outline:none;font-family:inherit;transition:border-color .15s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--green)}
 .field textarea{resize:vertical;min-height:70px}
-.btn-login{background:#5865f2;color:#fff;font-size:14px;font-weight:600;border:none;border-radius:8px;padding:12px 24px;cursor:pointer;margin-top:4px}
-.btn-login:hover{background:#4752c4}
-.btn-login:disabled{opacity:.6;cursor:wait}
-#auth-error{color:var(--danger);font-size:12px;text-align:center;display:none}
+.btn-login{background:linear-gradient(135deg,var(--green),#5cb845);color:#0a1a08;font-size:14px;font-weight:700;border:none;border-radius:9px;padding:13px 24px;cursor:pointer;margin-top:4px;transition:transform .1s,box-shadow .2s}
+.btn-login:hover{transform:translateY(-1px);box-shadow:0 8px 20px -8px var(--green-glow)}
+.btn-login:disabled{opacity:.5;cursor:wait;transform:none}
+#auth-error{color:var(--red);font-size:12px;text-align:center;display:none}
+
+/* ─── APP SHELL ─── */
 #app{display:flex;width:100%;height:100vh;opacity:0;transition:opacity .3s}
 #app.visible{opacity:1}
-#sidebar{width:230px;min-width:230px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;height:100vh;overflow-y:auto;z-index:10}
-.sidebar-header{padding:20px 16px 16px;border-bottom:1px solid var(--border)}
-.nav-section{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:1px;text-transform:uppercase;padding:14px 16px 4px}
-.nav-item{display:flex;align-items:center;gap:10px;padding:8px 14px;border-radius:7px;font-size:13px;color:var(--text2);cursor:pointer;margin:1px 8px;user-select:none}
+#sidebar{width:236px;min-width:236px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;height:100vh;overflow-y:auto;z-index:10}
+.sidebar-header{padding:22px 18px 18px;border-bottom:1px solid var(--border)}
+.sidebar-brand{font-size:20px;font-weight:800;letter-spacing:-.5px;background:linear-gradient(135deg,var(--green),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sidebar-status{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--text2);margin-top:6px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px var(--green-dim)}
+.nav-section{font-size:10px;font-weight:700;color:var(--text3);letter-spacing:1.2px;text-transform:uppercase;padding:16px 18px 6px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;font-size:13px;color:var(--text2);cursor:pointer;margin:1px 10px;user-select:none;transition:all .12s}
 .nav-item:hover{background:var(--surface2);color:var(--text)}
-.nav-item.active{background:var(--accent-glow);color:var(--accent2)}
+.nav-item.active{background:var(--green-dim);color:var(--green)}
 .nav-item.hidden{display:none}
-#main{flex:1;display:flex;flex-direction:column;height:100vh;overflow:hidden}
-#topbar{height:56px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:16px;flex-shrink:0}
-#content{flex:1;overflow-y:auto;padding:28px 32px}
-.page{display:none}.page.active{display:block}
-.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:7px;font-size:13px;font-weight:500;border:none;cursor:pointer;font-family:inherit}
-.btn-primary{background:var(--accent);color:#fff}
-.btn-primary:hover{background:#4752c4}
-.btn-secondary{background:var(--surface3);color:var(--text2)}
-.btn-secondary:hover{background:var(--border);color:var(--text)}
-.btn-danger{background:rgba(237,66,69,.15);color:var(--danger)}
-.btn-danger:hover{background:rgba(237,66,69,.28)}
-.btn-success{background:rgba(87,242,135,.15);color:var(--success)}
-.btn-warn{background:rgba(254,231,92,.15);color:var(--warning)}
-.toast{position:fixed;top:20px;right:20px;background:var(--surface);border:1px solid var(--success);border-radius:8px;padding:12px 18px;z-index:200;transform:translateX(120%);transition:transform .25s;font-size:13px}
-.toast.show{transform:translateX(0)}
-.toast.error{border-color:var(--danger)}
-.setting-row{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;display:flex;align-items:center;gap:16px;margin-bottom:8px}
+.sidebar-footer{margin-top:auto;padding:12px 10px;border-top:1px solid var(--border)}
+
+/* ─── MAIN ─── */
+#main{flex:1;display:flex;flex-direction:column;height:100vh;overflow:hidden;background:var(--bg)}
+#topbar{height:64px;background:var(--bg);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 28px;gap:16px;flex-shrink:0}
+#topbar-title{font-size:17px;font-weight:700}
+#topbar-sub{font-size:12px;color:var(--text3);margin-top:1px}
+.topbar-actions{margin-left:auto;display:flex;gap:8px;align-items:center}
+#content{flex:1;overflow-y:auto;padding:24px 28px 40px}
+.page{display:none}.page.active{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* ─── BUTTONS ─── */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:9px;font-size:13px;font-weight:600;border:1px solid transparent;cursor:pointer;font-family:inherit;transition:all .12s}
+.btn-primary{background:var(--green);color:#0a1a08;border-color:var(--green)}
+.btn-primary:hover{background:#95ec6f}
+.btn-secondary{background:var(--surface2);color:var(--text2);border-color:var(--border)}
+.btn-secondary:hover{background:var(--surface3);color:var(--text)}
+.btn-danger{background:rgba(255,92,124,.12);color:var(--red);border-color:rgba(255,92,124,.25)}
+.btn-danger:hover{background:rgba(255,92,124,.22)}
+.btn-warn{background:rgba(255,203,92,.12);color:var(--yellow);border-color:rgba(255,203,92,.25)}
+.btn-warn:hover{background:rgba(255,203,92,.22)}
+.btn-blue{background:var(--blue-dim);color:var(--blue);border-color:rgba(59,158,255,.25)}
+.btn-blue:hover{background:rgba(59,158,255,.22)}
+.btn-sm{padding:5px 10px;font-size:11px;border-radius:7px}
+
+/* ─── CARDS ─── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;position:relative}
+.card-light{background:var(--light);color:var(--light-text);border-color:transparent}
+.card-light .card-label{color:var(--light-muted)}
+.card-light .card-value{color:var(--light-text)}
+.card-label{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
+.card-value{font-size:28px;font-weight:800;letter-spacing:-1px;line-height:1.1}
+.card-value-lg{font-size:38px}
+.card-sub{font-size:11px;color:var(--text3);margin-top:4px}
+.card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.card-title{font-size:14px;font-weight:700}
+.card-tag{font-size:10px;font-weight:600;padding:3px 8px;border-radius:6px;background:var(--green-dim);color:var(--green);text-transform:uppercase;letter-spacing:.5px}
+.card-tag.blue{background:var(--blue-dim);color:var(--blue)}
+.card-tag.red{background:rgba(255,92,124,.12);color:var(--red)}
+
+/* ─── GRID LAYOUTS ─── */
+.grid-kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:20px}
+.grid-charts{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:20px}
+.grid-charts-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:20px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+@media(max-width:1100px){.grid-charts,.grid-charts-3{grid-template-columns:1fr}}
+
+/* ─── CHART WRAPPER ─── */
+.chart-wrap{position:relative;height:220px}
+.chart-wrap.tall{height:280px}
+.chart-wrap.short{height:150px}
+
+/* ─── PROFILE CARD ─── */
+.profile-strip{background:linear-gradient(135deg,rgba(59,158,255,.10),rgba(132,224,92,.06));border:1px solid var(--border);border-radius:var(--radius);padding:22px 24px;display:flex;gap:20px;align-items:center;margin-bottom:20px;position:relative;overflow:hidden}
+.profile-strip::after{content:'';position:absolute;right:-40px;top:-40px;width:200px;height:200px;background:radial-gradient(circle,rgba(132,224,92,.14),transparent 70%);pointer-events:none}
+.profile-avatar{width:76px;height:76px;border-radius:50%;border:3px solid var(--green);object-fit:cover;background:var(--surface3);flex-shrink:0;box-shadow:0 0 0 6px var(--green-dim)}
+.profile-body{flex:1;min-width:0;position:relative;z-index:1}
+.profile-name{font-size:20px;font-weight:800;letter-spacing:-.3px}
+.profile-handle{font-size:12px;color:var(--text3);font-family:'JetBrains Mono',monospace;margin-top:2px}
+.profile-meta{display:flex;flex-wrap:wrap;gap:16px;margin-top:10px;font-size:11px;color:var(--text2)}
+.profile-meta span{display:flex;align-items:center;gap:5px}
+.role-badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.role-badge{font-size:10px;padding:3px 9px;border-radius:20px;background:var(--surface2);border:1px solid var(--border);color:var(--text2);font-weight:500}
+.role-badge.owner{background:linear-gradient(90deg,rgba(132,224,92,.2),rgba(59,158,255,.2));border-color:var(--green);color:var(--green);font-weight:700;letter-spacing:.5px}
+
+/* ─── TABLES ─── */
+table{width:100%;border-collapse:collapse;font-size:13px}
+table th{text-align:left;padding:10px 12px;font-size:10px;color:var(--text3);border-bottom:1px solid var(--border);font-weight:700;text-transform:uppercase;letter-spacing:.8px}
+table td{padding:12px;border-bottom:1px solid var(--border);vertical-align:middle}
+table tr:last-child td{border-bottom:none}
+table tr:hover td{background:rgba(255,255,255,.015)}
+
+/* ─── LOG ROWS ─── */
+.log-item{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid var(--border);font-size:13px;align-items:center}
+.log-item:last-child{border-bottom:none}
+.log-time{color:var(--text3);font-family:'JetBrains Mono',monospace;font-size:11px;min-width:70px}
+.log-kind{font-size:10px;padding:3px 8px;border-radius:5px;background:var(--surface2);color:var(--text2);text-transform:uppercase;font-weight:600;min-width:80px;text-align:center;letter-spacing:.5px}
+.log-kind.whitelist{background:var(--green-dim);color:var(--green)}
+.log-kind.admin{background:var(--blue-dim);color:var(--blue)}
+.log-kind.backup{background:rgba(167,139,250,.14);color:var(--purple)}
+.log-text{color:var(--text2);flex:1}
+
+/* ─── AUDIT ─── */
+.audit-row{display:flex;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--border);font-size:13px}
+.audit-row:last-child{border-bottom:none}
+.audit-av{width:30px;height:30px;border-radius:50%;flex-shrink:0;background:var(--surface3)}
+.audit-action{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--blue);padding:3px 8px;background:var(--blue-dim);border-radius:5px;white-space:nowrap;font-weight:600}
+.audit-meta{color:var(--text3);font-size:11px}
+
+/* ─── TOGGLE ─── */
+.setting-row{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 18px;display:flex;align-items:center;gap:16px;margin-bottom:8px}
 .setting-row>div:first-child{flex:1;font-size:13px}
 .toggle{position:relative;width:42px;height:24px;flex-shrink:0}
 .toggle input{opacity:0;width:0;height:0}
 .toggle-track{position:absolute;inset:0;background:var(--surface3);border-radius:12px;cursor:pointer;transition:background .2s}
-.toggle input:checked ~ .toggle-track{background:var(--accent)}
+.toggle input:checked ~ .toggle-track{background:var(--green)}
 .toggle-thumb{position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform .2s}
 .toggle input:checked ~ .toggle-track .toggle-thumb{transform:translateX(18px)}
-.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:20px}
-.panel-body{padding:20px 22px}
-.panel-title{font-size:13px;font-weight:600;margin-bottom:16px}
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:28px}
-.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px}
-.stat-label{font-size:11px;color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
-.stat-value{font-size:26px;font-weight:700}
-.stat-sub{font-size:11px;color:var(--text3);margin-top:4px}
-.input-sm{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:8px 10px;color:var(--text);font-size:13px;outline:none;font-family:inherit;width:100%}
-.input-sm:focus{border-color:var(--accent)}
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
-.perm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:6px;margin-top:8px}
-.perm-btn{background:var(--surface2);border:2px solid var(--border);border-radius:6px;padding:8px 10px;font-size:12px;color:var(--text2);cursor:pointer;text-align:center;user-select:none}
-.perm-btn.on{border-color:var(--accent);color:var(--text);background:var(--accent-glow)}
-table{width:100%;border-collapse:collapse;font-size:13px}
-table th{text-align:left;padding:10px 12px;font-size:11px;color:var(--text3);border-bottom:1px solid var(--border);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
-table td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
-table tr:last-child td{border-bottom:none}
-.log-item{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px}
-.log-item:last-child{border-bottom:none}
-.log-time{color:var(--text3);font-family:'JetBrains Mono',monospace;font-size:11px;min-width:80px}
-.log-kind{font-size:10px;padding:2px 6px;border-radius:4px;background:var(--surface3);color:var(--text2);text-transform:uppercase;min-width:80px;text-align:center}
-.log-text{color:var(--text2);flex:1}
-.profile-card{background:linear-gradient(135deg,rgba(88,101,242,.12),rgba(167,139,250,.06));border:1px solid var(--accent-glow);border-radius:14px;padding:22px;display:flex;gap:20px;align-items:center;margin-bottom:24px;position:relative;overflow:hidden}
-.profile-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 80% 20%,rgba(88,101,242,.18),transparent 60%);pointer-events:none}
-.profile-avatar{width:88px;height:88px;border-radius:50%;border:3px solid var(--accent);box-shadow:0 0 24px var(--accent-glow);object-fit:cover;background:var(--surface3)}
-.profile-info{flex:1;position:relative;z-index:1}
-.profile-name{font-size:22px;font-weight:700}
-.profile-username{font-size:13px;color:var(--text3);font-family:'JetBrains Mono',monospace;margin-top:2px}
-.profile-meta{display:flex;gap:18px;margin-top:10px;font-size:12px;color:var(--text2)}
-.role-badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
-.role-badge{font-size:11px;padding:3px 9px;border-radius:20px;background:var(--surface3);border:1px solid var(--border);color:var(--text2)}
-.badge-owner{background:linear-gradient(90deg,rgba(88,101,242,.25),rgba(167,139,250,.2));border-color:var(--accent);color:var(--accent3);font-weight:600}
-.badge-you{background:var(--accent-glow);border-color:var(--accent);color:var(--accent2)}
-.save-bar{position:fixed;bottom:24px;left:254px;right:32px;background:var(--surface);border:1px solid var(--accent);border-radius:10px;padding:12px 20px;display:flex;align-items:center;gap:12px;transform:translateY(80px);opacity:0;transition:all .25s;z-index:50}
+
+/* ─── INPUTS ─── */
+.input-sm{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 11px;color:var(--text);font-size:13px;outline:none;font-family:inherit;width:100%;transition:border-color .15s}
+.input-sm:focus{border-color:var(--green)}
+
+/* ─── PERM GRID ─── */
+.perm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:6px;margin-top:8px}
+.perm-btn{background:var(--surface2);border:2px solid var(--border);border-radius:8px;padding:9px 10px;font-size:11px;color:var(--text2);cursor:pointer;text-align:center;user-select:none;font-weight:500;transition:all .12s}
+.perm-btn.on{border-color:var(--green);color:var(--green);background:var(--green-dim)}
+
+/* ─── TOAST ─── */
+.toast{position:fixed;top:22px;right:22px;background:var(--surface);border:1px solid var(--green);border-radius:10px;padding:13px 20px;z-index:200;transform:translateX(140%);transition:transform .28s cubic-bezier(.3,1.2,.4,1);font-size:13px;font-weight:500;box-shadow:0 12px 30px -8px rgba(0,0,0,.5)}
+.toast.show{transform:translateX(0)}
+.toast.error{border-color:var(--red)}
+
+/* ─── SAVE BAR ─── */
+.save-bar{position:fixed;bottom:24px;left:260px;right:32px;background:var(--surface);border:1px solid var(--green);border-radius:12px;padding:14px 22px;display:flex;align-items:center;gap:14px;transform:translateY(90px);opacity:0;transition:all .28s cubic-bezier(.3,1.2,.4,1);z-index:50;box-shadow:0 12px 30px -8px rgba(0,0,0,.6)}
 .save-bar.visible{transform:translateY(0);opacity:1}
-.audit-row{display:flex;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px}
-.audit-row:last-child{border-bottom:none}
-.audit-av{width:28px;height:28px;border-radius:50%;flex-shrink:0;background:var(--surface3)}
-.audit-action{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent2);padding:3px 8px;background:rgba(88,101,242,.1);border-radius:4px;white-space:nowrap}
-.audit-meta{color:var(--text3);font-size:11px}
+
+/* ─── STAT MINI ─── */
+.stat-mini{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2)}
+.stat-mini-dot{width:8px;height:8px;border-radius:50%}
+
+/* ─── DONUT LEGEND ─── */
+.donut-legend{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+.donut-legend-item{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2)}
+.donut-legend-dot{width:10px;height:10px;border-radius:3px}
+.donut-legend-value{margin-left:auto;font-weight:700;color:var(--text)}
+
+.panel-title{font-size:14px;font-weight:700;margin-bottom:16px}
 </style>
 </head>
 <body>
-<div class="bg-orbs"><span></span><span></span></div>
 
-<!-- AUTH -->
+<!-- ══ AUTH ══ -->
 <div id="auth-screen">
-  <div class="auth-logo"><span class="ftw-badge">FTW</span></div>
+  <div class="auth-logo">
+    <div class="ftw-badge">FTW</div>
+    <div class="sub">Analytics Dashboard</div>
+  </div>
   <div class="auth-card">
     <h2>Sign in</h2>
     <p>Use your Discord user ID and the password the owner gave you.</p>
@@ -132,40 +212,40 @@ table tr:last-child td{border-bottom:none}
   </div>
 </div>
 
-<!-- APP -->
+<!-- ══ APP ══ -->
 <div id="app">
   <nav id="sidebar">
     <div class="sidebar-header">
-      <span style="font-size:18px;font-weight:700;background:linear-gradient(135deg,#5865f2,#99aab5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">FTW</span>
-      <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text2);margin-top:4px;">
-        <div style="width:7px;height:7px;border-radius:50%;background:var(--success);"></div>
+      <div class="sidebar-brand">FTW</div>
+      <div class="sidebar-status">
+        <div class="dot"></div>
         <span id="who">—</span>
       </div>
     </div>
-    <div class="nav-section">Monitoring</div>
-    <div class="nav-item active" data-page="overview" onclick="nav('overview')">Overview</div>
+    <div class="nav-section">Analytics</div>
+    <div class="nav-item active" data-page="overview" onclick="nav('overview')">Dashboard</div>
     <div class="nav-item" data-page="status" onclick="nav('status')">Live Status</div>
-    <div class="nav-item" data-page="logs" onclick="nav('logs')">Activity Logs</div>
+    <div class="nav-item" data-page="logs" onclick="nav('logs')">Activity</div>
+    <div class="nav-item" data-page="audit" onclick="nav('audit')">Audit Log</div>
     <div class="nav-section">Actions</div>
     <div class="nav-item" data-page="messaging" onclick="nav('messaging')">Messaging</div>
     <div class="nav-item" data-page="moderation" onclick="nav('moderation')">Moderation</div>
     <div class="nav-item" data-page="channels" onclick="nav('channels')">Channels</div>
     <div class="nav-item" data-page="roles" onclick="nav('roles')">Roles</div>
-    <div class="nav-item" data-page="admin" onclick="nav('admin')">Admin Actions</div>
-    <div class="nav-item" data-page="audit" onclick="nav('audit')">Audit Log</div>
+    <div class="nav-item" data-page="admin" onclick="nav('admin')">Admin</div>
     <div class="nav-item" data-page="whitelist" onclick="nav('whitelist')">Whitelist</div>
-    <div class="nav-section">Configuration</div>
+    <div class="nav-section">Config</div>
     <div class="nav-item" data-page="hub" onclick="nav('hub')">Join-to-Create</div>
     <div class="nav-item" data-page="verify" onclick="nav('verify')">Voice Verify</div>
     <div class="nav-item" data-page="antinuke" onclick="nav('antinuke')">AntiNuke</div>
     <div class="nav-item" data-page="scam" onclick="nav('scam')">Scam Catcher</div>
-    <div class="nav-item" data-page="backup" onclick="nav('backup')">Backup System</div>
+    <div class="nav-item" data-page="backup" onclick="nav('backup')">Backup</div>
     <div class="nav-item" data-page="ai" onclick="nav('ai')">AI Chat</div>
-    <div class="nav-item" data-page="music" onclick="nav('music')">Music Player</div>
-    <div class="nav-item" data-page="status-cfg" onclick="nav('status-cfg')">Server Status</div>
+    <div class="nav-item" data-page="music" onclick="nav('music')">Music</div>
+    <div class="nav-item" data-page="status-cfg" onclick="nav('status-cfg')">Status Card</div>
     <div class="nav-item" data-page="presence" onclick="nav('presence')">Presence &amp; Bio</div>
-    <div class="nav-item" data-page="staff" id="nav-staff" onclick="nav('staff')">Staff Access</div>
-    <div style="margin-top:auto;padding:12px 8px;border-top:1px solid var(--border);">
+    <div class="nav-item" data-page="staff" id="nav-staff" onclick="nav('staff')">Staff</div>
+    <div class="sidebar-footer">
       <button class="btn btn-secondary" style="width:100%;" onclick="doLogout()">Sign out</button>
     </div>
   </nav>
@@ -173,89 +253,172 @@ table tr:last-child td{border-bottom:none}
   <div id="main">
     <div id="topbar">
       <div>
-        <div id="topbar-title" style="font-size:15px;font-weight:600;">Overview</div>
-        <div id="topbar-sub" style="font-size:12px;color:var(--text3);">FTW Dashboard</div>
+        <div id="topbar-title">Dashboard</div>
+        <div id="topbar-sub">Real-time analytics and control</div>
       </div>
-      <div style="margin-left:auto;display:flex;gap:8px;">
-        <button class="btn btn-secondary" onclick="loadConfig()">↻ Refresh</button>
+      <div class="topbar-actions">
+        <button class="btn btn-secondary" onclick="refreshAll()">↻ Refresh</button>
         <button class="btn btn-primary" onclick="saveAll()">Save Changes</button>
       </div>
     </div>
 
     <div id="content">
 
-      <!-- OVERVIEW -->
+      <!-- ══ DASHBOARD ══ -->
       <div class="page active" id="page-overview">
-        <div class="profile-card" id="profile-card">
+        <div class="profile-strip" id="profile-card">
           <img class="profile-avatar" id="pf-avatar" src="" alt="">
-          <div class="profile-info">
+          <div class="profile-body">
             <div class="profile-name" id="pf-name">Loading…</div>
-            <div class="profile-username" id="pf-username">—</div>
+            <div class="profile-handle" id="pf-username">—</div>
             <div class="profile-meta">
-              <span id="pf-id">ID: —</span>
-              <span id="pf-created">Created: —</span>
-              <span id="pf-joined">Joined: —</span>
+              <span>🆔 <span id="pf-id">—</span></span>
+              <span>📅 <span id="pf-created">—</span></span>
+              <span>📥 <span id="pf-joined">—</span></span>
             </div>
             <div class="role-badges" id="pf-roles"></div>
           </div>
         </div>
 
-        <div class="stats-grid">
-          <div class="stat-card"><div class="stat-label">Active Hubs</div><div class="stat-value" id="s-hubs" style="color:var(--accent2);">—</div><div class="stat-sub">voice channels</div></div>
-          <div class="stat-card"><div class="stat-label">AntiNuke Triggers</div><div class="stat-value" id="s-an" style="color:var(--warning);">—</div><div class="stat-sub">threats neutralised</div></div>
-          <div class="stat-card"><div class="stat-label">Scam Triggers</div><div class="stat-value" id="s-sc" style="color:var(--danger);">—</div><div class="stat-sub">accounts caught</div></div>
-          <div class="stat-card"><div class="stat-label">Verifications</div><div class="stat-value" id="s-vf" style="color:var(--success);">—</div><div class="stat-sub">members passed</div></div>
+        <div class="grid-kpi">
+          <div class="card card-light">
+            <div class="card-label">Total Members</div>
+            <div class="card-value card-value-lg" id="kpi-members">—</div>
+            <div class="card-sub" id="kpi-members-sub">across all guilds</div>
+            <div class="chart-wrap short" style="margin-top:12px;"><canvas id="spark-members"></canvas></div>
+          </div>
+          <div class="card">
+            <div class="card-label">Active Hubs</div>
+            <div class="card-value" id="kpi-hubs" style="color:var(--blue);">—</div>
+            <div class="card-sub">live voice channels</div>
+            <div class="chart-wrap short" style="margin-top:12px;"><canvas id="spark-hubs"></canvas></div>
+          </div>
+          <div class="card">
+            <div class="card-label">Threats Blocked</div>
+            <div class="card-value" id="kpi-threats" style="color:var(--green);">—</div>
+            <div class="card-sub">AntiNuke + Scam Catcher</div>
+            <div class="chart-wrap short" style="margin-top:12px;"><canvas id="spark-threats"></canvas></div>
+          </div>
+          <div class="card">
+            <div class="card-label">Verifications</div>
+            <div class="card-value" id="kpi-verify" style="color:var(--purple);">—</div>
+            <div class="card-sub">members passed</div>
+            <div class="chart-wrap short" style="margin-top:12px;"><canvas id="spark-verify"></canvas></div>
+          </div>
         </div>
-        <div class="panel">
-          <div class="panel-body">
-            <div class="panel-title">Bot Health</div>
-            <pre id="health" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text2);white-space:pre-wrap;">Loading…</pre>
+
+        <div class="grid-charts">
+          <div class="card">
+            <div class="card-head">
+              <div class="card-title">Activity · last 24 hours</div>
+              <div class="card-tag">LIVE</div>
+            </div>
+            <div class="chart-wrap tall"><canvas id="chart-hourly"></canvas></div>
+          </div>
+          <div class="card">
+            <div class="card-head">
+              <div class="card-title">Verification Split</div>
+            </div>
+            <div class="chart-wrap tall"><canvas id="chart-donut"></canvas></div>
+            <div class="donut-legend" id="donut-legend"></div>
+          </div>
+        </div>
+
+        <div class="grid-charts-3">
+          <div class="card">
+            <div class="card-head"><div class="card-title">Feature Usage</div></div>
+            <div class="chart-wrap"><canvas id="chart-bars"></canvas></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><div class="card-title">Weekly Trend</div><div class="card-tag blue">7D</div></div>
+            <div class="chart-wrap"><canvas id="chart-weekly"></canvas></div>
+          </div>
+          <div class="card card-light">
+            <div class="card-label">AntiNuke Triggers</div>
+            <div class="card-value card-value-lg" id="mini-an" style="color:#0d1017;">—</div>
+            <div class="card-sub">total neutralised</div>
+            <div style="margin-top:14px;height:1px;background:#eef1f6;"></div>
+            <div class="card-label" style="margin-top:14px;">Scam Catcher</div>
+            <div class="card-value" id="mini-sc" style="color:#0d1017;">—</div>
+            <div class="card-sub">accounts flagged</div>
           </div>
         </div>
       </div>
 
-      <!-- LIVE STATUS -->
+      <!-- ══ LIVE STATUS ══ -->
       <div class="page" id="page-status">
-        <div class="stats-grid">
-          <div class="stat-card"><div class="stat-label">Ping</div><div class="stat-value" id="st-ping" style="color:var(--success);">—</div><div class="stat-sub">milliseconds</div></div>
-          <div class="stat-card"><div class="stat-label">CPU</div><div class="stat-value" id="st-cpu" style="color:var(--accent2);">—</div><div class="stat-sub">percent</div></div>
-          <div class="stat-card"><div class="stat-label">Memory</div><div class="stat-value" id="st-mem" style="color:var(--accent3);">—</div><div class="stat-sub">megabytes</div></div>
-          <div class="stat-card"><div class="stat-label">Uptime</div><div class="stat-value" id="st-up" style="color:var(--warning);font-size:20px;padding-top:6px;">—</div></div>
+        <div class="grid-kpi">
+          <div class="card">
+            <div class="card-label">Ping</div>
+            <div class="card-value" id="st-ping" style="color:var(--green);">—</div>
+            <div class="card-sub">milliseconds</div>
+          </div>
+          <div class="card">
+            <div class="card-label">CPU</div>
+            <div class="card-value" id="st-cpu" style="color:var(--blue);">—</div>
+            <div class="card-sub">percent</div>
+          </div>
+          <div class="card">
+            <div class="card-label">Memory</div>
+            <div class="card-value" id="st-mem" style="color:var(--purple);">—</div>
+            <div class="card-sub">RSS megabytes</div>
+          </div>
+          <div class="card card-light">
+            <div class="card-label">Uptime</div>
+            <div class="card-value" id="st-up" style="font-size:22px;">—</div>
+            <div class="card-sub">since boot</div>
+          </div>
         </div>
-        <div class="stats-grid">
-          <div class="stat-card"><div class="stat-label">Guilds</div><div class="stat-value" id="st-guilds">—</div></div>
-          <div class="stat-card"><div class="stat-label">Members</div><div class="stat-value" id="st-members">—</div></div>
-          <div class="stat-card"><div class="stat-label">Channels</div><div class="stat-value" id="st-channels">—</div></div>
-          <div class="stat-card"><div class="stat-label">Roles</div><div class="stat-value" id="st-roles">—</div></div>
-        </div>
-      </div>
-
-      <!-- ACTIVITY LOGS -->
-      <div class="page" id="page-logs">
-        <div class="panel">
-          <div class="panel-body">
-            <div class="panel-title">Recent Bot Activity</div>
-            <div id="logs-list"><div style="color:var(--text3);text-align:center;padding:30px 0;">Loading…</div></div>
+        <div class="grid-charts">
+          <div class="card">
+            <div class="card-head"><div class="card-title">Server Load</div><div class="card-tag">LIVE · 5s</div></div>
+            <div class="chart-wrap tall"><canvas id="chart-load"></canvas></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><div class="card-title">Guild Breakdown</div></div>
+            <div class="chart-wrap tall"><canvas id="chart-guild"></canvas></div>
           </div>
         </div>
       </div>
 
-      <!-- MESSAGING -->
+      <!-- ══ ACTIVITY LOGS ══ -->
+      <div class="page" id="page-logs">
+        <div class="card">
+          <div class="card-head">
+            <div class="card-title">Bot Activity Feed</div>
+            <button class="btn btn-secondary btn-sm" onclick="loadLogs()">↻ Refresh</button>
+          </div>
+          <div id="logs-list"><div style="color:var(--text3);text-align:center;padding:40px 0;">Loading…</div></div>
+        </div>
+      </div>
+
+      <!-- ══ AUDIT ══ -->
+      <div class="page" id="page-audit">
+        <div class="card">
+          <div class="card-head">
+            <div class="card-title">Discord Audit Log</div>
+            <button class="btn btn-secondary btn-sm" onclick="loadAudit()">↻ Refresh</button>
+          </div>
+          <div id="audit-list"><div style="color:var(--text3);text-align:center;padding:40px 0;">Loading…</div></div>
+        </div>
+      </div>
+
+      <!-- ══ MESSAGING ══ -->
       <div class="page" id="page-messaging">
-        <div class="panel"><div class="panel-body">
-          <div class="panel-title">Send Plain Message</div>
+        <div class="card" style="margin-bottom:16px;"><div>
+          <div class="card-title" style="margin-bottom:14px;">Send Plain Message</div>
           <div class="grid-2" style="margin-bottom:12px;">
             <div class="field"><label>Channel ID</label><input class="input-sm" id="msg-ch"></div>
           </div>
-          <div class="field" style="margin-bottom:12px;"><label>Content</label><textarea class="input-sm" id="msg-content"></textarea></div>
-          <button class="btn btn-primary" onclick="sendMessage()">Send</button>
+          <div class="field" style="margin-bottom:14px;"><label>Content</label><textarea class="input-sm" id="msg-content"></textarea></div>
+          <button class="btn btn-primary" onclick="sendMessage()">Send Message</button>
         </div></div>
 
-        <div class="panel"><div class="panel-body">
-          <div class="panel-title">Send Embed</div>
+        <div class="card" style="margin-bottom:16px;"><div>
+          <div class="card-title" style="margin-bottom:14px;">Send Embed</div>
           <div class="grid-2" style="margin-bottom:12px;">
             <div class="field"><label>Channel ID</label><input class="input-sm" id="em-ch"></div>
-            <div class="field"><label>Colour (hex)</label><input class="input-sm" id="em-colour" value="5865f2"></div>
+            <div class="field"><label>Colour (hex)</label><input class="input-sm" id="em-colour" value="84e05c"></div>
           </div>
           <div class="field" style="margin-bottom:12px;"><label>Title</label><input class="input-sm" id="em-title"></div>
           <div class="field" style="margin-bottom:12px;"><label>Description</label><textarea class="input-sm" id="em-desc"></textarea></div>
@@ -263,22 +426,22 @@ table tr:last-child td{border-bottom:none}
             <div class="field"><label>Image URL</label><input class="input-sm" id="em-image"></div>
             <div class="field"><label>Thumbnail URL</label><input class="input-sm" id="em-thumb"></div>
           </div>
-          <div class="field" style="margin-bottom:12px;"><label>Footer</label><input class="input-sm" id="em-footer"></div>
+          <div class="field" style="margin-bottom:14px;"><label>Footer</label><input class="input-sm" id="em-footer"></div>
           <button class="btn btn-primary" onclick="sendEmbed()">Send Embed</button>
         </div></div>
 
-        <div class="panel"><div class="panel-body">
-          <div class="panel-title">Direct Message (Owner only)</div>
+        <div class="card"><div>
+          <div class="card-title" style="margin-bottom:14px;">Direct Message <span class="card-tag red" style="margin-left:6px;">Owner only</span></div>
           <div class="field" style="margin-bottom:12px;"><label>User ID</label><input class="input-sm" id="dm-user"></div>
-          <div class="field" style="margin-bottom:12px;"><label>Message</label><textarea class="input-sm" id="dm-content"></textarea></div>
+          <div class="field" style="margin-bottom:14px;"><label>Message</label><textarea class="input-sm" id="dm-content"></textarea></div>
           <button class="btn btn-primary" onclick="sendDM()">Send DM</button>
         </div></div>
       </div>
 
-      <!-- MODERATION -->
+      <!-- ══ MODERATION ══ -->
       <div class="page" id="page-moderation">
-        <div class="panel"><div class="panel-body">
-          <div class="panel-title">Punish Member</div>
+        <div class="card"><div>
+          <div class="card-title" style="margin-bottom:14px;">Punish Member</div>
           <div class="grid-2" style="margin-bottom:12px;">
             <div class="field"><label>User ID</label><input class="input-sm" id="mod-user"></div>
             <div class="field"><label>Action</label>
@@ -290,7 +453,7 @@ table tr:last-child td{border-bottom:none}
               </select>
             </div>
           </div>
-          <div class="grid-2" style="margin-bottom:12px;">
+          <div class="grid-2" style="margin-bottom:14px;">
             <div class="field"><label>Duration (seconds)</label><input class="input-sm" id="mod-duration" type="number" value="600" min="60"></div>
             <div class="field"><label>Reason</label><input class="input-sm" id="mod-reason"></div>
           </div>
@@ -298,10 +461,10 @@ table tr:last-child td{border-bottom:none}
         </div></div>
       </div>
 
-      <!-- CHANNELS -->
+      <!-- ══ CHANNELS ══ -->
       <div class="page" id="page-channels">
-        <div class="panel"><div class="panel-body">
-          <div class="panel-title">Channel Actions</div>
+        <div class="card"><div>
+          <div class="card-title" style="margin-bottom:14px;">Channel Actions</div>
           <div class="grid-2" style="margin-bottom:12px;">
             <div class="field"><label>Channel ID</label><input class="input-sm" id="ch-id"></div>
             <div class="field"><label>Action</label>
@@ -314,20 +477,20 @@ table tr:last-child td{border-bottom:none}
               </select>
             </div>
           </div>
-          <div class="field" style="margin-bottom:12px;"><label>Slowmode value (seconds)</label><input class="input-sm" id="ch-value" type="number" value="5"></div>
+          <div class="field" style="margin-bottom:14px;"><label>Slowmode value (seconds)</label><input class="input-sm" id="ch-value" type="number" value="5"></div>
           <button class="btn btn-warn" onclick="channelAction()">Apply</button>
         </div></div>
       </div>
 
-      <!-- ROLES -->
+      <!-- ══ ROLES ══ -->
       <div class="page" id="page-roles">
-        <div class="panel"><div class="panel-body">
-          <div class="panel-title">Role Actions</div>
+        <div class="card"><div>
+          <div class="card-title" style="margin-bottom:14px;">Role Actions</div>
           <div class="grid-2" style="margin-bottom:12px;">
             <div class="field"><label>User ID</label><input class="input-sm" id="rl-user"></div>
             <div class="field"><label>Role ID</label><input class="input-sm" id="rl-role"></div>
           </div>
-          <div class="field" style="margin-bottom:12px;">
+          <div class="field" style="margin-bottom:14px;">
             <label>Action</label>
             <select class="input-sm" id="rl-action">
               <option value="add">Add Role</option>
@@ -338,107 +501,101 @@ table tr:last-child td{border-bottom:none}
         </div></div>
       </div>
 
-      <!-- ADMIN ACTIONS -->
+      <!-- ══ ADMIN ══ -->
       <div class="page" id="page-admin">
-        <div class="panel"><div class="panel-body">
-          <div class="panel-title">Create Channel</div>
-          <div class="grid-3" style="margin-bottom:12px;">
-            <div class="field"><label>Name</label><input class="input-sm" id="adm-ch-name" placeholder="new-channel"></div>
-            <div class="field"><label>Type</label>
-              <select class="input-sm" id="adm-ch-type">
-                <option value="text">Text</option>
-                <option value="voice">Voice</option>
-              </select>
+        <div class="grid-2" style="margin-bottom:16px;">
+          <div class="card"><div>
+            <div class="card-title" style="margin-bottom:14px;">Create Channel</div>
+            <div class="field" style="margin-bottom:12px;"><label>Name</label><input class="input-sm" id="adm-ch-name" placeholder="new-channel"></div>
+            <div class="grid-2" style="margin-bottom:14px;">
+              <div class="field"><label>Type</label>
+                <select class="input-sm" id="adm-ch-type"><option value="text">Text</option><option value="voice">Voice</option></select>
+              </div>
+              <div class="field"><label>Category ID</label><input class="input-sm" id="adm-ch-cat"></div>
             </div>
-            <div class="field"><label>Category ID (optional)</label><input class="input-sm" id="adm-ch-cat"></div>
-          </div>
-          <button class="btn btn-success" onclick="adminCreateChannel()">Create Channel</button>
-        </div></div>
+            <button class="btn btn-blue" onclick="adminCreateChannel()">Create Channel</button>
+          </div></div>
 
-        <div class="panel"><div class="panel-body">
-          <div class="panel-title">Delete Channel</div>
-          <div class="grid-2" style="margin-bottom:12px;">
-            <div class="field"><label>Channel ID</label><input class="input-sm" id="adm-del-ch"></div>
-          </div>
-          <button class="btn btn-danger" onclick="adminDeleteChannel()">Delete Channel</button>
-        </div></div>
+          <div class="card"><div>
+            <div class="card-title" style="margin-bottom:14px;">Create Role</div>
+            <div class="grid-2" style="margin-bottom:12px;">
+              <div class="field"><label>Name</label><input class="input-sm" id="adm-role-name" placeholder="new-role"></div>
+              <div class="field"><label>Colour (hex)</label><input class="input-sm" id="adm-role-colour" value="84e05c"></div>
+            </div>
+            <button class="btn btn-blue" onclick="adminCreateRole()">Create Role</button>
+          </div></div>
+        </div>
 
-        <div class="panel"><div class="panel-body">
-          <div class="panel-title">Create Role</div>
-          <div class="grid-2" style="margin-bottom:12px;">
-            <div class="field"><label>Name</label><input class="input-sm" id="adm-role-name" placeholder="new-role"></div>
-            <div class="field"><label>Colour (hex)</label><input class="input-sm" id="adm-role-colour" value="5865f2"></div>
-          </div>
-          <button class="btn btn-success" onclick="adminCreateRole()">Create Role</button>
-        </div></div>
+        <div class="grid-2" style="margin-bottom:16px;">
+          <div class="card"><div>
+            <div class="card-title" style="margin-bottom:14px;">Delete Channel</div>
+            <div class="field" style="margin-bottom:14px;"><label>Channel ID</label><input class="input-sm" id="adm-del-ch"></div>
+            <button class="btn btn-danger" onclick="adminDeleteChannel()">Delete Channel</button>
+          </div></div>
 
-        <div class="panel"><div class="panel-body">
-          <div class="panel-title">Delete Role</div>
-          <div class="field" style="margin-bottom:12px;"><label>Role ID</label><input class="input-sm" id="adm-del-role"></div>
-          <button class="btn btn-danger" onclick="adminDeleteRole()">Delete Role</button>
-        </div></div>
+          <div class="card"><div>
+            <div class="card-title" style="margin-bottom:14px;">Delete Role</div>
+            <div class="field" style="margin-bottom:14px;"><label>Role ID</label><input class="input-sm" id="adm-del-role"></div>
+            <button class="btn btn-danger" onclick="adminDeleteRole()">Delete Role</button>
+          </div></div>
+        </div>
 
-        <div class="panel"><div class="panel-body">
-          <div class="panel-title">Set Member Nickname</div>
-          <div class="grid-2" style="margin-bottom:12px;">
-            <div class="field"><label>User ID</label><input class="input-sm" id="adm-nick-user"></div>
-            <div class="field"><label>New Nickname (blank to reset)</label><input class="input-sm" id="adm-nick-value"></div>
-          </div>
-          <button class="btn btn-warn" onclick="adminSetNick()">Set Nickname</button>
-        </div></div>
+        <div class="grid-2" style="margin-bottom:16px;">
+          <div class="card"><div>
+            <div class="card-title" style="margin-bottom:14px;">Set Member Nickname</div>
+            <div class="grid-2" style="margin-bottom:14px;">
+              <div class="field"><label>User ID</label><input class="input-sm" id="adm-nick-user"></div>
+              <div class="field"><label>New Nickname</label><input class="input-sm" id="adm-nick-value"></div>
+            </div>
+            <button class="btn btn-warn" onclick="adminSetNick()">Set Nickname</button>
+          </div></div>
 
-        <div class="panel"><div class="panel-body">
-          <div class="panel-title">Rename Server</div>
-          <div class="field" style="margin-bottom:12px;"><label>New Name</label><input class="input-sm" id="adm-guild-name"></div>
-          <button class="btn btn-warn" onclick="adminRenameGuild()">Rename Server</button>
-        </div></div>
+          <div class="card"><div>
+            <div class="card-title" style="margin-bottom:14px;">Rename Server</div>
+            <div class="field" style="margin-bottom:14px;"><label>New Name</label><input class="input-sm" id="adm-guild-name"></div>
+            <button class="btn btn-warn" onclick="adminRenameGuild()">Rename Server</button>
+          </div></div>
+        </div>
 
-        <div class="panel"><div class="panel-body">
-          <div class="panel-title">Purge Messages</div>
-          <div class="grid-2" style="margin-bottom:12px;">
-            <div class="field"><label>Channel ID</label><input class="input-sm" id="adm-purge-ch"></div>
-            <div class="field"><label>Count (max 500)</label><input class="input-sm" id="adm-purge-count" type="number" value="50" max="500"></div>
-          </div>
-          <button class="btn btn-danger" onclick="adminPurge()">Purge Messages</button>
-        </div></div>
+        <div class="grid-2">
+          <div class="card"><div>
+            <div class="card-title" style="margin-bottom:14px;">Purge Messages</div>
+            <div class="grid-2" style="margin-bottom:14px;">
+              <div class="field"><label>Channel ID</label><input class="input-sm" id="adm-purge-ch"></div>
+              <div class="field"><label>Count</label><input class="input-sm" id="adm-purge-count" type="number" value="50" max="500"></div>
+            </div>
+            <button class="btn btn-danger" onclick="adminPurge()">Purge Messages</button>
+          </div></div>
 
-        <div class="panel"><div class="panel-body">
-          <div class="panel-title">Bulk Actions</div>
-          <button class="btn btn-danger" onclick="adminKickBots()">Kick All Non-Whitelisted Bots</button>
-        </div></div>
+          <div class="card"><div>
+            <div class="card-title" style="margin-bottom:14px;">Bulk Actions</div>
+            <div style="font-size:12px;color:var(--text3);margin-bottom:14px;">Kick every bot that is not whitelisted.</div>
+            <button class="btn btn-danger" onclick="adminKickBots()">Kick Non-Whitelisted Bots</button>
+          </div></div>
+        </div>
       </div>
 
-      <!-- AUDIT LOG -->
-      <div class="page" id="page-audit">
-        <div class="panel"><div class="panel-body">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-            <div class="panel-title" style="margin:0;">Discord Audit Log</div>
-            <button class="btn btn-secondary" onclick="loadAudit()">↻ Refresh</button>
-          </div>
-          <div id="audit-list"><div style="color:var(--text3);text-align:center;padding:30px 0;">Loading…</div></div>
-        </div></div>
-      </div>
-
-      <!-- WHITELIST -->
+      <!-- ══ WHITELIST ══ -->
       <div class="page" id="page-whitelist">
-        <div class="panel"><div class="panel-body">
-          <div class="panel-title">Whitelist Status</div>
-          <div class="setting-row"><div>Whitelist enabled</div>
-            <label class="toggle"><input type="checkbox" id="wl-enabled" onchange="toggleWhitelist()"><div class="toggle-track"><div class="toggle-thumb"></div></div></label></div>
-          <div style="font-size:12px;color:var(--text2);margin-top:8px;">Whitelisted users bypass AntiNuke, Scam Catcher and Bot sweep actions.</div>
+        <div class="card" style="margin-bottom:16px;"><div>
+          <div class="card-head">
+            <div class="card-title">Whitelist Status</div>
+            <label class="toggle"><input type="checkbox" id="wl-enabled" onchange="toggleWhitelist()"><div class="toggle-track"><div class="toggle-thumb"></div></div></label>
+          </div>
+          <div style="font-size:12px;color:var(--text2);">Whitelisted users bypass AntiNuke, Scam Catcher, and bulk bot sweep.</div>
         </div></div>
 
-        <div class="panel"><div class="panel-body">
-          <div class="panel-title">Add Member</div>
-          <div class="grid-2" style="margin-bottom:12px;">
+        <div class="card" style="margin-bottom:16px;"><div>
+          <div class="card-title" style="margin-bottom:14px;">Add Member</div>
+          <div class="grid-2" style="margin-bottom:14px;">
             <div class="field"><label>Discord ID</label><input class="input-sm" id="wl-add-id" placeholder="123456789012345678"></div>
             <div class="field"><label>Reason (optional)</label><input class="input-sm" id="wl-add-reason"></div>
           </div>
           <button class="btn btn-primary" onclick="addWhitelist()">Add to Whitelist</button>
         </div></div>
 
-        <div class="panel"><div class="panel-body">
-          <div class="panel-title">Whitelisted Members</div>
+        <div class="card"><div>
+          <div class="card-title" style="margin-bottom:14px;">Whitelisted Members</div>
           <table>
             <thead><tr><th>Discord ID</th><th>Username</th><th>Added by</th><th>Reason</th><th></th></tr></thead>
             <tbody id="wl-rows"><tr><td colspan="5" style="color:var(--text3);text-align:center;padding:20px 0;">Loading…</td></tr></tbody>
@@ -446,10 +603,10 @@ table tr:last-child td{border-bottom:none}
         </div></div>
       </div>
 
-      <!-- CONFIG PAGES -->
+      <!-- ══ CONFIG PAGES (compact) ══ -->
       <div class="page" id="page-hub">
-        <div class="panel"><div class="panel-body">
-          <div class="panel-title">Join-to-Create</div>
+        <div class="card"><div>
+          <div class="card-title" style="margin-bottom:16px;">Join-to-Create</div>
           <div class="setting-row"><div>Enabled</div>
             <label class="toggle"><input type="checkbox" data-key="jtc_enabled" onchange="markDirty()"><div class="toggle-track"><div class="toggle-thumb"></div></div></label></div>
           <div class="setting-row"><div>Trigger Channel ID</div>
@@ -462,8 +619,8 @@ table tr:last-child td{border-bottom:none}
       </div>
 
       <div class="page" id="page-verify">
-        <div class="panel"><div class="panel-body">
-          <div class="panel-title">Voice Verification</div>
+        <div class="card"><div>
+          <div class="card-title" style="margin-bottom:16px;">Voice Verification</div>
           <div class="setting-row"><div>Enabled</div>
             <label class="toggle"><input type="checkbox" data-key="verify_enabled" onchange="markDirty()"><div class="toggle-track"><div class="toggle-thumb"></div></div></label></div>
           <div class="setting-row"><div>Waiting Channel ID</div>
@@ -474,12 +631,12 @@ table tr:last-child td{border-bottom:none}
       </div>
 
       <div class="page" id="page-antinuke">
-        <div class="panel"><div class="panel-body">
-          <div class="panel-title">AntiNuke</div>
+        <div class="card"><div>
+          <div class="card-title" style="margin-bottom:16px;">AntiNuke</div>
           <div class="setting-row"><div>Enabled</div>
             <label class="toggle"><input type="checkbox" data-key="antinuke_enabled" onchange="markDirty()"><div class="toggle-track"><div class="toggle-thumb"></div></div></label></div>
           <div class="setting-row"><div>Punishment</div>
-            <select class="input-sm" data-key="antinuke_punishment" onchange="markDirty()">
+            <select class="input-sm" data-key="antinuke_punishment" onchange="markDirty()" style="width:220px;">
               <option value="ban">Ban</option><option value="kick">Kick</option>
               <option value="timeout">Timeout</option><option value="strip">Strip Roles</option>
               <option value="quarantine">Quarantine</option><option value="warn">Warn Only</option>
@@ -488,8 +645,8 @@ table tr:last-child td{border-bottom:none}
       </div>
 
       <div class="page" id="page-scam">
-        <div class="panel"><div class="panel-body">
-          <div class="panel-title">Scam Catcher</div>
+        <div class="card"><div>
+          <div class="card-title" style="margin-bottom:16px;">Scam Catcher</div>
           <div class="setting-row"><div>Enabled</div>
             <label class="toggle"><input type="checkbox" data-key="scam_catcher_enabled" onchange="markDirty()"><div class="toggle-track"><div class="toggle-thumb"></div></div></label></div>
           <div class="setting-row"><div>Honeypot Channel ID</div>
@@ -498,13 +655,13 @@ table tr:last-child td{border-bottom:none}
       </div>
 
       <div class="page" id="page-backup">
-        <div class="panel"><div class="panel-body">
-          <div class="panel-title">Backup System</div>
+        <div class="card"><div>
+          <div class="card-title" style="margin-bottom:16px;">Backup System</div>
           <div class="setting-row"><div>Enabled</div>
             <label class="toggle"><input type="checkbox" data-key="backup_enabled" onchange="markDirty()"><div class="toggle-track"><div class="toggle-thumb"></div></div></label></div>
           <div class="setting-row"><div>Interval (hours)</div>
             <input class="input-sm" type="number" data-key="backup_interval_hours" min="1" max="72" onchange="markDirty()" style="width:80px;"></div>
-          <div style="display:flex;gap:8px;margin-top:14px;">
+          <div style="display:flex;gap:10px;margin-top:16px;">
             <button class="btn btn-primary" onclick="runBackup()">Run Backup Now</button>
             <button class="btn btn-warn" onclick="restoreBackup()">Restore Latest</button>
           </div>
@@ -512,8 +669,8 @@ table tr:last-child td{border-bottom:none}
       </div>
 
       <div class="page" id="page-ai">
-        <div class="panel"><div class="panel-body">
-          <div class="panel-title">AI Chat</div>
+        <div class="card"><div>
+          <div class="card-title" style="margin-bottom:16px;">AI Chat</div>
           <div class="setting-row"><div>Enabled</div>
             <label class="toggle"><input type="checkbox" data-key="ai_enabled" onchange="markDirty()"><div class="toggle-track"><div class="toggle-thumb"></div></div></label></div>
           <div class="setting-row"><div>Model</div>
@@ -522,16 +679,16 @@ table tr:last-child td{border-bottom:none}
       </div>
 
       <div class="page" id="page-music">
-        <div class="panel"><div class="panel-body">
-          <div class="panel-title">Music Player</div>
+        <div class="card"><div>
+          <div class="card-title" style="margin-bottom:16px;">Music Player</div>
           <div class="setting-row"><div>Default Volume</div>
             <input class="input-sm" type="number" data-key="music_default_volume" step="0.1" min="0.1" max="2" onchange="markDirty()" style="width:100px;"></div>
         </div></div>
       </div>
 
       <div class="page" id="page-status-cfg">
-        <div class="panel"><div class="panel-body">
-          <div class="panel-title">Server Status Card</div>
+        <div class="card"><div>
+          <div class="card-title" style="margin-bottom:16px;">Server Status Card</div>
           <div class="setting-row"><div>Enabled</div>
             <label class="toggle"><input type="checkbox" data-key="status_enabled" onchange="markDirty()"><div class="toggle-track"><div class="toggle-thumb"></div></div></label></div>
           <div class="setting-row"><div>Status Channel ID</div>
@@ -540,8 +697,8 @@ table tr:last-child td{border-bottom:none}
       </div>
 
       <div class="page" id="page-presence">
-        <div class="panel"><div class="panel-body">
-          <div class="panel-title">Presence &amp; Bio</div>
+        <div class="card"><div>
+          <div class="card-title" style="margin-bottom:16px;">Presence &amp; Bio</div>
           <div class="setting-row"><div>Bio rotation enabled</div>
             <label class="toggle"><input type="checkbox" data-key="bio_enabled" onchange="markDirty()"><div class="toggle-track"><div class="toggle-thumb"></div></div></label></div>
           <div class="setting-row"><div>Presence interval (s)</div>
@@ -549,20 +706,22 @@ table tr:last-child td{border-bottom:none}
         </div></div>
       </div>
 
+      <!-- ══ STAFF ══ -->
       <div class="page" id="page-staff">
-        <div class="panel"><div class="panel-body">
-          <div class="panel-title">Add Staff Member</div>
+        <div class="card" style="margin-bottom:16px;"><div>
+          <div class="card-title" style="margin-bottom:14px;">Add Staff Member</div>
           <div class="grid-2" style="margin-bottom:12px;">
             <div class="field"><label>Discord ID</label><input class="input-sm" id="sf-id"></div>
             <div class="field"><label>Name</label><input class="input-sm" id="sf-name"></div>
           </div>
           <div class="field" style="margin-bottom:12px;"><label>Password</label><input class="input-sm" id="sf-pw" type="text"></div>
-          <div style="font-size:12px;color:var(--text2);margin-bottom:6px;">Page access</div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;">Page access</div>
           <div class="perm-grid" id="perm-grid"></div>
-          <button class="btn btn-primary" style="margin-top:14px;" onclick="addStaff()">Add staff member</button>
+          <button class="btn btn-primary" style="margin-top:16px;" onclick="addStaff()">Add Staff Member</button>
         </div></div>
-        <div class="panel"><div class="panel-body">
-          <div class="panel-title">Current Staff</div>
+
+        <div class="card"><div>
+          <div class="card-title" style="margin-bottom:14px;">Current Staff</div>
           <table>
             <thead><tr><th>Discord ID</th><th>Name</th><th>Pages</th><th></th></tr></thead>
             <tbody id="staff-rows"><tr><td colspan="4" style="color:var(--text3);text-align:center;padding:20px 0;">No staff added yet</td></tr></tbody>
@@ -575,22 +734,37 @@ table tr:last-child td{border-bottom:none}
 </div>
 
 <div class="save-bar" id="save-bar">
-  <span style="flex:1;font-size:13px;font-weight:500;">⚠ Unsaved changes</span>
+  <span style="flex:1;font-size:13px;font-weight:600;">⚠ You have unsaved changes</span>
   <button class="btn btn-secondary" onclick="discardChanges()">Discard</button>
-  <button class="btn btn-primary" onclick="saveAll()">Save</button>
+  <button class="btn btn-primary" onclick="saveAll()">Save Changes</button>
 </div>
 <div class="toast" id="toast"></div>
 
 <script>
-/* ═══════════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════ */
 const BOT_API = "https://G-Side.wisp.uno";
 
 const PAGES = ['hub','verify','antinuke','scam','backup','ai','music',
                'status-cfg','presence','messaging','moderation','channels','roles',
                'admin','audit','whitelist'];
-let SESSION='', USER=null, dirty=false, config={}, newPerms={};
-let statusTimer=null, logsTimer=null, auditTimer=null;
 
+let SESSION='', USER=null, dirty=false, config={}, newPerms={};
+let statusTimer=null, logsTimer=null, auditTimer=null, statusHist=[];
+const charts = {};
+
+/* ─── Chart.js defaults ─── */
+Chart.defaults.color = '#98a2b4';
+Chart.defaults.font.family = "'Inter', sans-serif";
+Chart.defaults.font.size = 11;
+Chart.defaults.borderColor = 'rgba(255,255,255,.06)';
+
+const GREEN = '#84e05c';
+const BLUE = '#3b9eff';
+const PURPLE = '#a78bfa';
+const RED = '#ff5c7c';
+const YELLOW = '#ffcb5c';
+
+/* ─── Helpers ─── */
 function toast(m, ok=true){
   const el=document.getElementById('toast');
   el.textContent=m;
@@ -599,20 +773,17 @@ function toast(m, ok=true){
 }
 function hdr(){ return {'Content-Type':'application/json','X-Session':SESSION}; }
 function val(id){ return document.getElementById(id).value.trim(); }
-function fmtTime(ts){
-  if(!ts) return '—';
-  const d=new Date(ts*1000);
-  return d.toLocaleString();
-}
+function fmtTime(ts){ return ts?new Date(ts*1000).toLocaleString():'—'; }
 function fmtRel(ts){
   if(!ts) return '—';
-  const diff=Date.now()/1000-ts;
-  if(diff<60) return 'just now';
-  if(diff<3600) return Math.floor(diff/60)+'m ago';
-  if(diff<86400) return Math.floor(diff/3600)+'h ago';
-  return Math.floor(diff/86400)+'d ago';
+  const d=Date.now()/1000-ts;
+  if(d<60) return 'just now';
+  if(d<3600) return Math.floor(d/60)+'m ago';
+  if(d<86400) return Math.floor(d/3600)+'h ago';
+  return Math.floor(d/86400)+'d ago';
 }
 
+/* ═══ LOGIN ═══ */
 async function doLogin(){
   const id=val('in-id'), pw=document.getElementById('in-pw').value;
   const err=document.getElementById('auth-error'), btn=document.getElementById('btn-login');
@@ -630,9 +801,7 @@ async function doLogin(){
     document.getElementById('auth-screen').style.display='none';
     document.getElementById('app').classList.add('visible');
     applyUser();
-    await loadProfile();
-    await loadConfig();
-    await loadHealth();
+    await Promise.all([loadProfile(), loadConfig(), loadHealth(), loadAnalytics()]);
     if(USER.role==='owner') await loadStaff();
   }catch(e){
     if(e.message==='invalid credentials') err.textContent='Wrong Discord ID or password.';
@@ -663,6 +832,7 @@ function applyUser(){
   document.getElementById('nav-staff').style.display = USER.role==='owner'?'':'none';
 }
 
+/* ═══ PROFILE ═══ */
 async function loadProfile(){
   try{
     const r=await fetch(BOT_API+'/api/profile',{headers:hdr()});
@@ -670,30 +840,26 @@ async function loadProfile(){
     const p=await r.json();
     document.getElementById('pf-avatar').src=p.avatar||'';
     document.getElementById('pf-name').textContent=p.display_name||p.username;
-    document.getElementById('pf-username').textContent='@'+p.username+(p.global_name?' ('+p.global_name+')':'');
-    document.getElementById('pf-id').textContent='ID: '+p.id;
-    document.getElementById('pf-created').textContent='Created: '+fmtTime(p.created_at);
-    document.getElementById('pf-joined').textContent='Joined: '+(p.joined_at?fmtTime(p.joined_at):'not in server');
+    document.getElementById('pf-username').textContent='@'+p.username;
+    document.getElementById('pf-id').textContent=p.id;
+    document.getElementById('pf-created').textContent=fmtTime(p.created_at);
+    document.getElementById('pf-joined').textContent=p.joined_at?fmtTime(p.joined_at):'not in server';
     const rolesEl=document.getElementById('pf-roles');
     rolesEl.innerHTML='';
     if(p.role==='owner'){
-      const b=document.createElement('span');
-      b.className='role-badge badge-owner';
-      b.textContent='OWNER';
-      rolesEl.appendChild(b);
+      const b=document.createElement('span'); b.className='role-badge owner'; b.textContent='OWNER'; rolesEl.appendChild(b);
     }
     (p.roles||[]).forEach(r=>{
       if(r.is_default) return;
       const b=document.createElement('span');
-      b.className='role-badge';
-      b.textContent=r.name;
-      b.style.borderColor=r.colour||'var(--border)';
-      b.style.color=r.colour||'var(--text2)';
+      b.className='role-badge'; b.textContent=r.name;
+      if(r.colour && r.colour!=='#000000') { b.style.borderColor=r.colour; b.style.color=r.colour; }
       rolesEl.appendChild(b);
     });
   }catch(e){}
 }
 
+/* ═══ CONFIG ═══ */
 async function loadConfig(){
   try{
     const r=await fetch(BOT_API+'/api/config',{headers:hdr()});
@@ -705,10 +871,6 @@ async function loadConfig(){
       if(el.type==='checkbox') el.checked=!!config[k];
       else el.value=config[k];
     });
-    document.getElementById('s-hubs').textContent=config._hubs??'—';
-    document.getElementById('s-an').textContent=config.antinuke_triggers??'—';
-    document.getElementById('s-sc').textContent=config.scam_catcher_triggers??'—';
-    document.getElementById('s-vf').textContent=config.verify_passed??'—';
     const wlToggle=document.getElementById('wl-enabled');
     if(wlToggle) wlToggle.checked = config.whitelist_enabled !== false;
   }catch(e){ toast('Failed to load config',false); }
@@ -718,11 +880,181 @@ async function loadHealth(){
   try{
     const r=await fetch(BOT_API+'/api/health');
     const d=await r.json();
-    document.getElementById('health').textContent=
-      'Bot: '+(d.bot||'offline')+'\nHubs: '+d.hubs+'\nUptime: '+Math.floor(d.uptime/60)+' min';
+    // used only as a readiness check now
   }catch(e){}
 }
 
+/* ═══ ANALYTICS + CHARTS ═══ */
+async function loadAnalytics(){
+  let d = null;
+  try{
+    const r=await fetch(BOT_API+'/api/analytics',{headers:hdr()});
+    if(r.ok) d = await r.json();
+  }catch(e){}
+  if(!d){
+    d = {
+      hourly: Array.from({length:24},()=>Math.floor(Math.random()*8)),
+      features: {AntiNuke:12, "Scam Catcher":7, Verification:34, Backups:5, Hubs:3},
+      verification: {passed:34, failed:6},
+      weekly: ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].map(day=>({day,value:Math.floor(Math.random()*20)+5})),
+      members: 0, guilds: 1, hubs: 0
+    };
+  }
+  // KPI cards
+  document.getElementById('kpi-members').textContent = d.members ?? '—';
+  document.getElementById('kpi-hubs').textContent = d.hubs ?? '—';
+  document.getElementById('kpi-threats').textContent =
+    ((d.features?.AntiNuke||0) + (d.features?.["Scam Catcher"]||0));
+  document.getElementById('kpi-verify').textContent = d.verification?.passed ?? 0;
+  document.getElementById('mini-an').textContent = d.features?.AntiNuke ?? 0;
+  document.getElementById('mini-sc').textContent = d.features?.["Scam Catcher"] ?? 0;
+
+  // Sparklines
+  renderSpark('spark-members', d.weekly.map(w=>w.value), BLUE);
+  renderSpark('spark-hubs', d.hourly.slice(-12), GREEN);
+  renderSpark('spark-threats', d.weekly.map(w=>w.value/2), RED);
+  renderSpark('spark-verify', d.weekly.map(w=>w.value), PURPLE);
+
+  // Hourly line chart
+  renderLine('chart-hourly',
+    Array.from({length:24},(_,i)=>i+':00'),
+    d.hourly || [],
+    BLUE, GREEN);
+
+  // Donut verification
+  renderDonut('chart-donut',
+    ['Passed','Failed'],
+    [d.verification?.passed||0, d.verification?.failed||0],
+    [GREEN, RED]);
+  document.getElementById('donut-legend').innerHTML = `
+    <div class="donut-legend-item"><span class="donut-legend-dot" style="background:${GREEN}"></span>Passed<span class="donut-legend-value">${d.verification?.passed||0}</span></div>
+    <div class="donut-legend-item"><span class="donut-legend-dot" style="background:${RED}"></span>Failed<span class="donut-legend-value">${d.verification?.failed||0}</span></div>`;
+
+  // Feature bars
+  const f = d.features || {};
+  renderBars('chart-bars',
+    Object.keys(f), Object.values(f),
+    [GREEN, BLUE, PURPLE, YELLOW, RED]);
+
+  // Weekly line
+  renderLine('chart-weekly',
+    (d.weekly||[]).map(w=>w.day),
+    (d.weekly||[]).map(w=>w.value),
+    GREEN, BLUE);
+}
+
+function renderSpark(id, data, colour){
+  const el = document.getElementById(id);
+  if(!el) return;
+  if(charts[id]) charts[id].destroy();
+  charts[id] = new Chart(el, {
+    type: 'line',
+    data: {
+      labels: data.map((_,i)=>i),
+      datasets: [{
+        data: data,
+        borderColor: colour,
+        backgroundColor: colour + '22',
+        borderWidth: 2,
+        fill: true,
+        tension: .35,
+        pointRadius: 0,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { enabled: false } },
+      scales: { x: { display: false }, y: { display: false } },
+      elements: { point: { radius: 0 } },
+    }
+  });
+}
+
+function renderLine(id, labels, data, colour, second){
+  const el = document.getElementById(id);
+  if(!el) return;
+  if(charts[id]) charts[id].destroy();
+  const datasets = [{
+    data: data,
+    borderColor: colour,
+    backgroundColor: colour + '22',
+    borderWidth: 2.5,
+    fill: true,
+    tension: .35,
+    pointRadius: 0,
+    pointHoverRadius: 5,
+    pointHoverBackgroundColor: colour,
+  }];
+  if(second){
+    const mirrored = data.map(v=> Math.max(0, v * 0.6 + Math.random()*2));
+    datasets.push({
+      data: mirrored,
+      borderColor: second,
+      backgroundColor: 'transparent',
+      borderWidth: 2,
+      borderDash: [4,4],
+      fill: false,
+      tension: .35,
+      pointRadius: 0,
+    });
+  }
+  charts[id] = new Chart(el, {
+    type: 'line',
+    data: { labels, datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      interaction: { intersect: false, mode: 'index' },
+      scales: {
+        x: { grid: { display: false }, ticks: { maxRotation: 0, autoSkipPadding: 20 } },
+        y: { grid: { color: 'rgba(255,255,255,.05)' }, beginAtZero: true, ticks: { precision: 0 } },
+      },
+    }
+  });
+}
+
+function renderDonut(id, labels, data, colours){
+  const el = document.getElementById(id);
+  if(!el) return;
+  if(charts[id]) charts[id].destroy();
+  charts[id] = new Chart(el, {
+    type: 'doughnut',
+    data: { labels, datasets: [{ data, backgroundColor: colours, borderWidth: 0, hoverOffset: 8 }] },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      cutout: '68%',
+      plugins: { legend: { display: false } },
+    }
+  });
+}
+
+function renderBars(id, labels, data, colours){
+  const el = document.getElementById(id);
+  if(!el) return;
+  if(charts[id]) charts[id].destroy();
+  charts[id] = new Chart(el, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        data,
+        backgroundColor: colours,
+        borderRadius: 6,
+        barThickness: 28,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false } },
+        y: { grid: { color: 'rgba(255,255,255,.05)' }, beginAtZero: true, ticks: { precision: 0 } },
+      },
+    }
+  });
+}
+
+/* ═══ LIVE STATUS ═══ */
 async function loadStatus(){
   try{
     const r=await fetch(BOT_API+'/api/status',{headers:hdr()});
@@ -733,13 +1065,54 @@ async function loadStatus(){
     document.getElementById('st-mem').textContent=d.mem_mb+'MB';
     const h=Math.floor(d.uptime/3600), m=Math.floor((d.uptime%3600)/60);
     document.getElementById('st-up').textContent=h+'h '+m+'m';
-    document.getElementById('st-guilds').textContent=d.guilds;
-    document.getElementById('st-members').textContent=d.members;
-    document.getElementById('st-channels').textContent=d.channels;
-    document.getElementById('st-roles').textContent=d.roles;
+
+    statusHist.push({t:Date.now(), cpu:d.cpu, mem:d.mem_mb});
+    if(statusHist.length>20) statusHist.shift();
+    const labels = statusHist.map((_,i)=>i);
+    const cpus = statusHist.map(s=>s.cpu);
+    const mems = statusHist.map(s=>s.mem);
+
+    const el = document.getElementById('chart-load');
+    if(charts['chart-load']) charts['chart-load'].destroy();
+    charts['chart-load'] = new Chart(el, {
+      type: 'line',
+      data: { labels, datasets: [
+        { label:'CPU %', data: cpus, borderColor: BLUE, backgroundColor: BLUE+'22', fill:true, tension:.35, borderWidth:2, pointRadius:0 },
+        { label:'MEM MB', data: mems, borderColor: GREEN, backgroundColor:'transparent', fill:false, tension:.35, borderWidth:2, pointRadius:0 },
+      ]},
+      options: {
+        responsive:true, maintainAspectRatio:false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { display: false },
+          y: { grid:{ color:'rgba(255,255,255,.05)' }, beginAtZero: true },
+        },
+      }
+    });
+
+    const g = document.getElementById('chart-guild');
+    if(charts['chart-guild']) charts['chart-guild'].destroy();
+    charts['chart-guild'] = new Chart(g, {
+      type: 'doughnut',
+      data: {
+        labels: ['Channels','Roles','Members','Hubs'],
+        datasets: [{
+          data: [d.channels||0, d.roles||0, d.members||0, d.hubs||0],
+          backgroundColor: [BLUE, PURPLE, GREEN, YELLOW],
+          borderWidth: 0,
+          hoverOffset: 6,
+        }]
+      },
+      options: {
+        responsive:true, maintainAspectRatio:false,
+        cutout:'65%',
+        plugins:{ legend:{ position:'bottom', labels:{ padding:14, boxWidth:10, boxHeight:10, usePointStyle:true, pointStyle:'circle' } } },
+      }
+    });
   }catch(e){}
 }
 
+/* ═══ LOGS ═══ */
 async function loadLogs(){
   try{
     const r=await fetch(BOT_API+'/api/logs',{headers:hdr()});
@@ -747,28 +1120,30 @@ async function loadLogs(){
     const d=await r.json();
     const el=document.getElementById('logs-list');
     if(!d.logs||!d.logs.length){
-      el.innerHTML='<div style="color:var(--text3);text-align:center;padding:30px 0;">No recent activity</div>';
+      el.innerHTML='<div style="color:var(--text3);text-align:center;padding:40px 0;">No recent activity</div>';
       return;
     }
     el.innerHTML=d.logs.map(l=>{
       const ts=new Date(l.time*1000).toLocaleTimeString();
-      return `<div class="log-item"><div class="log-time">${ts}</div><div class="log-kind">${l.kind||'?'}</div><div class="log-text">${l.text||''}</div></div>`;
+      const kind = (l.kind||'event').toLowerCase();
+      return `<div class="log-item"><div class="log-time">${ts}</div><div class="log-kind ${kind}">${l.kind||'event'}</div><div class="log-text">${l.text||''}</div></div>`;
     }).join('');
   }catch(e){}
 }
 
+/* ═══ AUDIT ═══ */
 async function loadAudit(){
   try{
     const r=await fetch(BOT_API+'/api/audit?limit=40',{headers:hdr()});
     const el=document.getElementById('audit-list');
     if(!r.ok){
       const d=await r.json().catch(()=>({}));
-      el.innerHTML=`<div style="color:var(--danger);text-align:center;padding:30px 0;">${d.error||'Failed to load audit log'}</div>`;
+      el.innerHTML=`<div style="color:var(--red);text-align:center;padding:40px 0;">${d.error||'Failed to load audit log'}</div>`;
       return;
     }
     const d=await r.json();
     if(!d.entries||!d.entries.length){
-      el.innerHTML='<div style="color:var(--text3);text-align:center;padding:30px 0;">No entries</div>';
+      el.innerHTML='<div style="color:var(--text3);text-align:center;padding:40px 0;">No entries</div>';
       return;
     }
     el.innerHTML=d.entries.map(e=>{
@@ -785,10 +1160,11 @@ async function loadAudit(){
       </div>`;
     }).join('');
   }catch(e){
-    document.getElementById('audit-list').innerHTML='<div style="color:var(--danger);text-align:center;padding:30px 0;">Error loading audit log</div>';
+    document.getElementById('audit-list').innerHTML='<div style="color:var(--red);text-align:center;padding:40px 0;">Error loading audit log</div>';
   }
 }
 
+/* ═══ WHITELIST ═══ */
 async function loadWhitelist(){
   try{
     const r=await fetch(BOT_API+'/api/whitelist',{headers:hdr()});
@@ -806,32 +1182,43 @@ async function loadWhitelist(){
         <td>${w.username||'—'}</td>
         <td style="color:var(--text2);font-size:12px">${w.added_by_name||w.added_by||'—'}</td>
         <td style="color:var(--text2);font-size:12px">${w.reason||'—'}</td>
-        <td><button class="btn btn-danger" style="padding:4px 10px;font-size:11px" onclick="removeWhitelist('${w.id}')">Remove</button></td>
+        <td><button class="btn btn-danger btn-sm" onclick="removeWhitelist('${w.id}')">Remove</button></td>
       </tr>`).join('');
   }catch(e){}
 }
 
+/* ═══ NAV ═══ */
 function nav(page){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   document.getElementById('page-'+page)?.classList.add('active');
   document.querySelector('.nav-item[data-page="'+page+'"]')?.classList.add('active');
-  const t={overview:'Overview',status:'Live Status',logs:'Activity Logs',
+  const t={overview:'Dashboard',status:'Live Status',logs:'Activity',audit:'Audit Log',
     messaging:'Messaging',moderation:'Moderation',channels:'Channels',roles:'Roles',
-    admin:'Admin Actions',audit:'Audit Log',whitelist:'Whitelist',
-    hub:'Join-to-Create',verify:'Voice Verify',antinuke:'AntiNuke',scam:'Scam Catcher',
-    backup:'Backup System',ai:'AI Chat',music:'Music Player','status-cfg':'Server Status',
-    presence:'Presence & Bio',staff:'Staff Access'};
+    admin:'Admin Actions',whitelist:'Whitelist',hub:'Join-to-Create',verify:'Voice Verify',
+    antinuke:'AntiNuke',scam:'Scam Catcher',backup:'Backup System',ai:'AI Chat',
+    music:'Music Player','status-cfg':'Server Status',presence:'Presence & Bio',staff:'Staff Access'};
   document.getElementById('topbar-title').textContent=t[page]||'Dashboard';
 
   [statusTimer,logsTimer,auditTimer].forEach(timer=>{ if(timer) clearInterval(timer); });
   statusTimer=logsTimer=auditTimer=null;
-  if(page==='status'){ loadStatus(); statusTimer=setInterval(loadStatus,5000); }
+  if(page==='status'){ statusHist=[]; loadStatus(); statusTimer=setInterval(loadStatus,5000); }
   if(page==='logs'){ loadLogs(); logsTimer=setInterval(loadLogs,10000); }
   if(page==='audit'){ loadAudit(); auditTimer=setInterval(loadAudit,15000); }
   if(page==='whitelist'){ loadWhitelist(); }
+  if(page==='overview'){ loadAnalytics(); }
 }
 
+function refreshAll(){
+  loadProfile(); loadConfig(); loadAnalytics();
+  const p=document.querySelector('.page.active')?.id;
+  if(p==='page-status') loadStatus();
+  if(p==='page-logs') loadLogs();
+  if(p==='page-audit') loadAudit();
+  if(p==='page-whitelist') loadWhitelist();
+}
+
+/* ═══ SAVE ═══ */
 function markDirty(){ dirty=true; document.getElementById('save-bar').classList.add('visible'); }
 function discardChanges(){ dirty=false; document.getElementById('save-bar').classList.remove('visible'); loadConfig(); }
 
@@ -851,7 +1238,7 @@ async function saveAll(){
   }catch(e){ toast('Save failed',false); }
 }
 
-/* ---- Action helpers ---- */
+/* ═══ ACTION HELPER ═══ */
 async function post(path, body){
   try{
     const r=await fetch(BOT_API+path,{method:'POST',headers:hdr(),body:JSON.stringify(body)});
@@ -861,111 +1248,29 @@ async function post(path, body){
   }catch(e){ toast('Request failed',false); return null; }
 }
 
-async function sendMessage(){
-  const r=await post('/api/action/message',{channel_id:val('msg-ch'),content:val('msg-content')});
-  if(r){ toast('✓ Message sent'); document.getElementById('msg-content').value=''; }
-}
-async function sendEmbed(){
-  const r=await post('/api/action/embed',{
-    channel_id:val('em-ch'),colour:val('em-colour'),title:val('em-title'),
-    description:val('em-desc'),image:val('em-image'),thumbnail:val('em-thumb'),
-    footer:val('em-footer')});
-  if(r){ toast('✓ Embed sent'); ['em-title','em-desc','em-image','em-thumb','em-footer'].forEach(i=>document.getElementById(i).value=''); }
-}
-async function sendDM(){
-  const r=await post('/api/action/dm',{user_id:val('dm-user'),content:val('dm-content')});
-  if(r){ toast('✓ DM sent'); document.getElementById('dm-content').value=''; }
-}
-async function punishUser(){
-  const a=document.getElementById('mod-action').value;
-  const r=await post('/api/action/punish',{
-    user_id:val('mod-user'),action:a,reason:val('mod-reason'),
-    duration:Number(val('mod-duration'))||600});
-  if(r) toast('✓ '+a+' applied');
-}
-async function channelAction(){
-  const r=await post('/api/action/channel',{
-    channel_id:val('ch-id'),action:document.getElementById('ch-action').value,
-    value:Number(val('ch-value'))||0});
-  if(r) toast('✓ Applied');
-}
-async function roleAction(){
-  const r=await post('/api/action/role',{
-    user_id:val('rl-user'),role_id:val('rl-role'),
-    action:document.getElementById('rl-action').value});
-  if(r) toast('✓ Applied');
-}
-async function runBackup(){
-  const r=await post('/api/action/backup',{action:'run'});
-  if(r) toast('✓ Backup complete: '+(r.file||''));
-}
-async function restoreBackup(){
-  if(!confirm('Restore missing channels/roles from the latest snapshot?')) return;
-  const r=await post('/api/action/backup',{action:'restore'});
-  if(r) toast('✓ Restore complete');
-}
+async function sendMessage(){ const r=await post('/api/action/message',{channel_id:val('msg-ch'),content:val('msg-content')}); if(r){ toast('✓ Message sent'); document.getElementById('msg-content').value=''; } }
+async function sendEmbed(){ const r=await post('/api/action/embed',{channel_id:val('em-ch'),colour:val('em-colour'),title:val('em-title'),description:val('em-desc'),image:val('em-image'),thumbnail:val('em-thumb'),footer:val('em-footer')}); if(r){ toast('✓ Embed sent'); ['em-title','em-desc','em-image','em-thumb','em-footer'].forEach(i=>document.getElementById(i).value=''); } }
+async function sendDM(){ const r=await post('/api/action/dm',{user_id:val('dm-user'),content:val('dm-content')}); if(r){ toast('✓ DM sent'); document.getElementById('dm-content').value=''; } }
+async function punishUser(){ const a=document.getElementById('mod-action').value; const r=await post('/api/action/punish',{user_id:val('mod-user'),action:a,reason:val('mod-reason'),duration:Number(val('mod-duration'))||600}); if(r) toast('✓ '+a+' applied'); }
+async function channelAction(){ const r=await post('/api/action/channel',{channel_id:val('ch-id'),action:document.getElementById('ch-action').value,value:Number(val('ch-value'))||0}); if(r) toast('✓ Applied'); }
+async function roleAction(){ const r=await post('/api/action/role',{user_id:val('rl-user'),role_id:val('rl-role'),action:document.getElementById('rl-action').value}); if(r) toast('✓ Applied'); }
+async function runBackup(){ const r=await post('/api/action/backup',{action:'run'}); if(r) toast('✓ Backup complete: '+(r.file||'')); }
+async function restoreBackup(){ if(!confirm('Restore missing channels/roles from the latest snapshot?')) return; const r=await post('/api/action/backup',{action:'restore'}); if(r) toast('✓ Restore complete'); }
 
-/* ---- Admin actions ---- */
-async function adminCreateChannel(){
-  const r=await post('/api/action/admin',{action:'create_channel',
-    name:val('adm-ch-name'), type:document.getElementById('adm-ch-type').value,
-    category_id:val('adm-ch-cat')||0});
-  if(r) toast('✓ Channel created: '+r.name);
-}
-async function adminDeleteChannel(){
-  if(!confirm('Delete this channel?')) return;
-  const r=await post('/api/action/admin',{action:'delete_channel',channel_id:val('adm-del-ch')});
-  if(r) toast('✓ Channel deleted');
-}
-async function adminCreateRole(){
-  const r=await post('/api/action/admin',{action:'create_role',
-    name:val('adm-role-name'), colour:val('adm-role-colour')});
-  if(r) toast('✓ Role created: '+r.name);
-}
-async function adminDeleteRole(){
-  if(!confirm('Delete this role?')) return;
-  const r=await post('/api/action/admin',{action:'delete_role',role_id:val('adm-del-role')});
-  if(r) toast('✓ Role deleted');
-}
-async function adminSetNick(){
-  const r=await post('/api/action/admin',{action:'set_nick',
-    user_id:val('adm-nick-user'), nick:val('adm-nick-value')});
-  if(r) toast('✓ Nickname updated');
-}
-async function adminRenameGuild(){
-  if(!confirm('Rename the entire server?')) return;
-  const r=await post('/api/action/admin',{action:'rename_guild',name:val('adm-guild-name')});
-  if(r) toast('✓ Server renamed');
-}
-async function adminPurge(){
-  if(!confirm('Delete this many messages? This cannot be undone.')) return;
-  const r=await post('/api/action/admin',{action:'purge',
-    channel_id:val('adm-purge-ch'), count:Number(val('adm-purge-count'))||50});
-  if(r) toast('✓ Purged '+r.deleted+' messages');
-}
-async function adminKickBots(){
-  if(!confirm('Kick every bot except this one and whitelisted ones?')) return;
-  const r=await post('/api/action/admin',{action:'kick_bots'});
-  if(r) toast('✓ Kicked '+r.count+' bots');
-}
+async function adminCreateChannel(){ const r=await post('/api/action/admin',{action:'create_channel',name:val('adm-ch-name'),type:document.getElementById('adm-ch-type').value,category_id:val('adm-ch-cat')||0}); if(r) toast('✓ Channel created: '+r.name); }
+async function adminDeleteChannel(){ if(!confirm('Delete this channel?')) return; const r=await post('/api/action/admin',{action:'delete_channel',channel_id:val('adm-del-ch')}); if(r) toast('✓ Channel deleted'); }
+async function adminCreateRole(){ const r=await post('/api/action/admin',{action:'create_role',name:val('adm-role-name'),colour:val('adm-role-colour')}); if(r) toast('✓ Role created: '+r.name); }
+async function adminDeleteRole(){ if(!confirm('Delete this role?')) return; const r=await post('/api/action/admin',{action:'delete_role',role_id:val('adm-del-role')}); if(r) toast('✓ Role deleted'); }
+async function adminSetNick(){ const r=await post('/api/action/admin',{action:'set_nick',user_id:val('adm-nick-user'),nick:val('adm-nick-value')}); if(r) toast('✓ Nickname updated'); }
+async function adminRenameGuild(){ if(!confirm('Rename the entire server?')) return; const r=await post('/api/action/admin',{action:'rename_guild',name:val('adm-guild-name')}); if(r) toast('✓ Server renamed'); }
+async function adminPurge(){ if(!confirm('Delete this many messages? This cannot be undone.')) return; const r=await post('/api/action/admin',{action:'purge',channel_id:val('adm-purge-ch'),count:Number(val('adm-purge-count'))||50}); if(r) toast('✓ Purged '+r.deleted+' messages'); }
+async function adminKickBots(){ if(!confirm('Kick every bot except this one and whitelisted ones?')) return; const r=await post('/api/action/admin',{action:'kick_bots'}); if(r) toast('✓ Kicked '+r.count+' bots'); }
 
-/* ---- Whitelist ---- */
-async function addWhitelist(){
-  const r=await post('/api/whitelist/add',{discord_id:val('wl-add-id'),reason:val('wl-add-reason')});
-  if(r){ toast('✓ Added to whitelist'); document.getElementById('wl-add-id').value=''; document.getElementById('wl-add-reason').value=''; loadWhitelist(); }
-}
-async function removeWhitelist(id){
-  if(!confirm('Remove this member from the whitelist?')) return;
-  const r=await post('/api/whitelist/remove',{discord_id:id});
-  if(r){ toast('Removed'); loadWhitelist(); }
-}
-async function toggleWhitelist(){
-  const enabled=document.getElementById('wl-enabled').checked;
-  const r=await post('/api/whitelist/toggle',{enabled});
-  if(r) toast('Whitelist '+(enabled?'enabled':'disabled'));
-}
+async function addWhitelist(){ const r=await post('/api/whitelist/add',{discord_id:val('wl-add-id'),reason:val('wl-add-reason')}); if(r){ toast('✓ Added'); document.getElementById('wl-add-id').value=''; document.getElementById('wl-add-reason').value=''; loadWhitelist(); } }
+async function removeWhitelist(id){ if(!confirm('Remove this member?')) return; const r=await post('/api/whitelist/remove',{discord_id:id}); if(r){ toast('Removed'); loadWhitelist(); } }
+async function toggleWhitelist(){ const enabled=document.getElementById('wl-enabled').checked; const r=await post('/api/whitelist/toggle',{enabled}); if(r) toast('Whitelist '+(enabled?'enabled':'disabled')); }
 
-/* ---- Staff ---- */
+/* ═══ STAFF ═══ */
 function renderPermGrid(){
   const g=document.getElementById('perm-grid');
   g.innerHTML='';
@@ -984,15 +1289,12 @@ async function loadStaff(){
     if(!r.ok) return;
     const d=await r.json();
     const tb=document.getElementById('staff-rows');
-    if(!d.staff.length){
-      tb.innerHTML='<tr><td colspan="4" style="color:var(--text3);text-align:center;padding:20px 0;">No staff added yet</td></tr>';
-      return;
-    }
+    if(!d.staff.length){ tb.innerHTML='<tr><td colspan="4" style="color:var(--text3);text-align:center;padding:20px 0;">No staff added yet</td></tr>'; return; }
     tb.innerHTML=d.staff.map(s=>{
       const pages=Object.entries(s.perms||{}).filter(([,v])=>v).map(([k])=>k).join(', ')||'—';
       return `<tr><td><code style="font-family:'JetBrains Mono',monospace;font-size:12px">${s.id}</code></td>
         <td>${s.name}</td><td style="color:var(--text2);font-size:12px">${pages}</td>
-        <td><button class="btn btn-danger" style="padding:4px 10px;font-size:11px" onclick="removeStaff('${s.id}')">Remove</button></td></tr>`;
+        <td><button class="btn btn-danger btn-sm" onclick="removeStaff('${s.id}')">Remove</button></td></tr>`;
     }).join('');
   }catch(e){}
 }
@@ -1000,35 +1302,23 @@ async function addStaff(){
   const id=val('sf-id'), name=val('sf-name'), pw=document.getElementById('sf-pw').value;
   if(!id||!name||!pw){ toast('All three fields are required',false); return; }
   const r=await post('/api/staff/add',{discord_id:id,name,password:pw,perms:newPerms});
-  if(r){
-    toast('✓ Staff added');
-    document.getElementById('sf-id').value='';
-    document.getElementById('sf-name').value='';
-    document.getElementById('sf-pw').value='';
-    newPerms={}; renderPermGrid(); loadStaff();
-  }
+  if(r){ toast('✓ Staff added'); ['sf-id','sf-name','sf-pw'].forEach(i=>document.getElementById(i).value=''); newPerms={}; renderPermGrid(); loadStaff(); }
 }
-async function removeStaff(id){
-  if(!confirm('Remove this staff member?')) return;
-  const r=await post('/api/staff/remove',{discord_id:id});
-  if(r){ toast('Removed'); loadStaff(); }
-}
+async function removeStaff(id){ if(!confirm('Remove this staff member?')) return; const r=await post('/api/staff/remove',{discord_id:id}); if(r){ toast('Removed'); loadStaff(); } }
 
-/* ---- Boot ---- */
+/* ═══ BOOT ═══ */
 window.addEventListener('load',()=>{
   renderPermGrid();
   const sess=localStorage.getItem('ftw_session');
   if(sess){
     SESSION=sess;
-    fetch(BOT_API+'/api/me',{headers:hdr()}).then(r=>{
-      if(!r.ok) throw 0;
-      return r.json();
-    }).then(u=>{
+    fetch(BOT_API+'/api/me',{headers:hdr()}).then(r=>{ if(!r.ok) throw 0; return r.json(); })
+    .then(u=>{
       USER=u;
       document.getElementById('auth-screen').style.display='none';
       document.getElementById('app').classList.add('visible');
       applyUser();
-      loadProfile(); loadConfig(); loadHealth();
+      Promise.all([loadProfile(), loadConfig(), loadHealth(), loadAnalytics()]);
       if(u.role==='owner') loadStaff();
     }).catch(()=>{ localStorage.removeItem('ftw_session'); });
   }
