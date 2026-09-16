@@ -11,8 +11,7 @@
   --bg:#0a0b10;--surface:#13161d;--surface2:#1a1e27;--surface3:#222631;
   --border:#2a2f3d;--accent:#5865f2;--accent2:#7289da;--accent3:#a78bfa;
   --accent-glow:rgba(88,101,242,.18);--success:#57f287;--danger:#ed4245;
-  --warning:#fee75c;--text:#e3e5e8;--text2:#99aab5;--text3:#586273;
-  --radius:10px;--sidebar:224px;
+  --warning:#fee75c;--text:#e3e5e8;--text2:#99aab5;--text3:#586273;--radius:10px;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;overflow:hidden}
@@ -21,92 +20,118 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .bg-orbs span:nth-child(1){width:480px;height:480px;background:var(--accent);top:-140px;left:-100px}
 .bg-orbs span:nth-child(2){width:420px;height:420px;background:var(--accent3);bottom:-160px;right:-80px}
 @keyframes drift{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(3%,-4%) scale(1.05)}}
-#auth-screen{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bg);z-index:1000;gap:32px}
+#auth-screen{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bg);z-index:1000;gap:28px}
 .auth-logo .ftw-badge{font-size:52px;font-weight:700;letter-spacing:-3px;background:linear-gradient(135deg,#5865f2,#7289da,#99aab5);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.auth-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:40px 48px;width:380px;text-align:center;display:flex;flex-direction:column;gap:20px}
-.btn-discord{display:flex;align-items:center;justify-content:center;gap:10px;background:#5865f2;color:#fff;font-size:15px;font-weight:600;border:none;border-radius:8px;padding:14px 24px;cursor:pointer}
-.field input{background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:9px 12px;font-size:13px;color:var(--text);width:100%;outline:none}
+.auth-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:36px 44px;width:400px;display:flex;flex-direction:column;gap:16px}
+.auth-card h2{font-size:20px;font-weight:600;text-align:center}
+.auth-card p{font-size:12px;color:var(--text2);line-height:1.6;text-align:center}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:12px;color:var(--text2);font-weight:500}
+.field input{background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:10px 12px;font-size:13px;color:var(--text);width:100%;outline:none;font-family:inherit}
+.field input:focus{border-color:var(--accent)}
+.btn-login{background:#5865f2;color:#fff;font-size:14px;font-weight:600;border:none;border-radius:8px;padding:12px 24px;cursor:pointer;margin-top:4px}
+.btn-login:hover{background:#4752c4}
+.btn-login:disabled{opacity:.6;cursor:wait}
+#auth-error{color:var(--danger);font-size:12px;text-align:center;display:none}
 #app{display:flex;width:100%;height:100vh;opacity:0;transition:opacity .3s}
 #app.visible{opacity:1}
-#sidebar{width:var(--sidebar);min-width:var(--sidebar);background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;height:100vh;overflow-y:auto;z-index:10}
+#sidebar{width:224px;min-width:224px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;height:100vh;overflow-y:auto;z-index:10}
 .sidebar-header{padding:20px 16px 16px;border-bottom:1px solid var(--border)}
-.nav-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:7px;font-size:13px;color:var(--text2);cursor:pointer;margin-bottom:1px}
-.nav-item:hover,.nav-item.active{background:var(--accent-glow);color:var(--accent2)}
+.nav-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:7px;font-size:13px;color:var(--text2);cursor:pointer;margin-bottom:1px;user-select:none}
+.nav-item:hover{background:var(--surface2);color:var(--text)}
+.nav-item.active{background:var(--accent-glow);color:var(--accent2)}
+.nav-item.hidden{display:none}
 #main{flex:1;display:flex;flex-direction:column;height:100vh;overflow:hidden}
 #topbar{height:52px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:16px}
 #content{flex:1;overflow-y:auto;padding:28px 32px}
 .page{display:none}.page.active{display:block}
 .btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:7px;font-size:13px;font-weight:500;border:none;cursor:pointer}
 .btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:#4752c4}
 .btn-secondary{background:var(--surface3);color:var(--text2)}
-.save-bar{position:fixed;bottom:24px;left:calc(var(--sidebar) + 32px);right:32px;background:var(--surface);border:1px solid var(--accent);border-radius:10px;padding:12px 20px;display:flex;align-items:center;gap:12px;transform:translateY(80px);opacity:0;transition:all .25s;z-index:50}
+.btn-secondary:hover{background:var(--border);color:var(--text)}
+.btn-danger{background:rgba(237,66,69,.15);color:var(--danger)}
+.save-bar{position:fixed;bottom:24px;left:248px;right:32px;background:var(--surface);border:1px solid var(--accent);border-radius:10px;padding:12px 20px;display:flex;align-items:center;gap:12px;transform:translateY(80px);opacity:0;transition:all .25s;z-index:50}
 .save-bar.visible{transform:translateY(0);opacity:1}
-.toast{position:fixed;top:20px;right:20px;background:var(--surface);border:1px solid var(--success);border-radius:8px;padding:12px 18px;z-index:200;transform:translateX(120%);transition:transform .25s}
+.toast{position:fixed;top:20px;right:20px;background:var(--surface);border:1px solid var(--success);border-radius:8px;padding:12px 18px;z-index:200;transform:translateX(120%);transition:transform .25s;font-size:13px}
 .toast.show{transform:translateX(0)}
 .toast.error{border-color:var(--danger)}
 .setting-row{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;display:flex;align-items:center;gap:16px;margin-bottom:8px}
-.toggle{position:relative;width:42px;height:24px}
+.setting-row>div:first-child{flex:1;font-size:13px}
+.toggle{position:relative;width:42px;height:24px;flex-shrink:0}
 .toggle input{opacity:0;width:0;height:0}
 .toggle-track{position:absolute;inset:0;background:var(--surface3);border-radius:12px;cursor:pointer;transition:background .2s}
 .toggle input:checked ~ .toggle-track{background:var(--accent)}
 .toggle-thumb{position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform .2s}
 .toggle input:checked ~ .toggle-track .toggle-thumb{transform:translateX(18px)}
 .panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius)}
-.panel-body{padding:16px 18px}
+.panel-body{padding:18px 20px}
 .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:28px}
 .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px}
 .stat-label{font-size:11px;color:var(--text3);margin-bottom:6px}
 .stat-value{font-size:26px;font-weight:700}
+.input-sm{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:8px 10px;color:var(--text);font-size:13px;outline:none;font-family:inherit}
+.input-sm:focus{border-color:var(--accent)}
+.perm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:6px;margin-top:8px}
+.perm-btn{background:var(--surface2);border:2px solid var(--border);border-radius:6px;padding:8px 10px;font-size:12px;color:var(--text2);cursor:pointer;text-align:center;user-select:none}
+.perm-btn.on{border-color:var(--accent);color:var(--text);background:var(--accent-glow)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+table th{text-align:left;padding:10px 12px;font-size:11px;color:var(--text3);border-bottom:1px solid var(--border);font-weight:600}
+table td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
+table tr:last-child td{border-bottom:none}
 </style>
 </head>
 <body>
+<div class="bg-orbs"><span></span><span></span></div>
 
-<div class="bg-orbs" aria-hidden="true"><span></span><span></span></div>
-
+<!-- AUTH -->
 <div id="auth-screen">
   <div class="auth-logo"><span class="ftw-badge">FTW</span></div>
   <div class="auth-card">
-    <h2 style="font-size:20px;font-weight:600;">Connect to your bot</h2>
-    <p style="font-size:13px;color:var(--text2);line-height:1.6;">
-      Enter the API endpoint and token that match your bot's <code>.env</code> file.
-      These are stored in your browser only.
-    </p>
-    <div class="field" style="text-align:left;">
-      <label style="font-size:12px;color:var(--text2);">Bot API URL</label>
-      <input type="text" id="auth-api-url" placeholder="http://your-bot-host:8080">
+    <h2>Sign in</h2>
+    <p>Use your Discord user ID and the password the owner gave you.</p>
+    <div class="field">
+      <label>Bot API URL</label>
+      <input type="text" id="in-api" placeholder="http://78.154.103.24:13506">
     </div>
-    <div class="field" style="text-align:left;">
-      <label style="font-size:12px;color:var(--text2);">Dashboard Token</label>
-      <input type="password" id="auth-token" placeholder="DASHBOARD_TOKEN from .env">
+    <div class="field">
+      <label>Discord ID</label>
+      <input type="text" id="in-id" placeholder="267052792693129217" inputmode="numeric">
     </div>
-    <button class="btn-discord" onclick="fakeLogin()">Connect</button>
-    <span id="auth-error" style="color:var(--danger);display:none;font-size:12px;"></span>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="in-pw" placeholder="••••">
+    </div>
+    <button class="btn-login" id="btn-login" onclick="doLogin()">Sign in</button>
+    <div id="auth-error"></div>
   </div>
 </div>
 
+<!-- APP -->
 <div id="app">
   <nav id="sidebar">
     <div class="sidebar-header">
       <span style="font-size:18px;font-weight:700;background:linear-gradient(135deg,#5865f2,#99aab5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">FTW</span>
       <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text2);margin-top:4px;">
-        <div style="width:7px;height:7px;border-radius:50%;background:var(--success);" id="bot-status-dot"></div>
-        <span id="bot-status-text">Connected</span>
+        <div style="width:7px;height:7px;border-radius:50%;background:var(--success);"></div>
+        <span id="who">—</span>
       </div>
     </div>
     <div style="padding:16px 8px 4px;">
-      <div class="nav-item active" onclick="nav('overview')">Overview</div>
-      <div class="nav-item" onclick="nav('hub')">Join-to-Create</div>
-      <div class="nav-item" onclick="nav('verify')">Voice Verify</div>
-      <div class="nav-item" onclick="nav('antinuke')">AntiNuke</div>
-      <div class="nav-item" onclick="nav('scam')">Scam Catcher</div>
-      <div class="nav-item" onclick="nav('backup')">Backup System</div>
-      <div class="nav-item" onclick="nav('ai')">AI Chat</div>
-      <div class="nav-item" onclick="nav('music')">Music Player</div>
-      <div class="nav-item" onclick="nav('status')">Server Status</div>
-      <div class="nav-item" onclick="nav('presence')">Presence &amp; Bio</div>
+      <div class="nav-item active" data-page="overview" onclick="nav('overview')">Overview</div>
+      <div class="nav-item" data-page="hub" onclick="nav('hub')">Join-to-Create</div>
+      <div class="nav-item" data-page="verify" onclick="nav('verify')">Voice Verify</div>
+      <div class="nav-item" data-page="antinuke" onclick="nav('antinuke')">AntiNuke</div>
+      <div class="nav-item" data-page="scam" onclick="nav('scam')">Scam Catcher</div>
+      <div class="nav-item" data-page="backup" onclick="nav('backup')">Backup System</div>
+      <div class="nav-item" data-page="ai" onclick="nav('ai')">AI Chat</div>
+      <div class="nav-item" data-page="music" onclick="nav('music')">Music Player</div>
+      <div class="nav-item" data-page="status" onclick="nav('status')">Server Status</div>
+      <div class="nav-item" data-page="presence" onclick="nav('presence')">Presence &amp; Bio</div>
+      <div class="nav-item" data-page="staff" id="nav-staff" onclick="nav('staff')">Staff Access</div>
     </div>
     <div style="margin-top:auto;padding:12px;border-top:1px solid var(--border);">
-      <button class="btn btn-secondary" style="width:100%;" onclick="logout()">Disconnect</button>
+      <button class="btn btn-secondary" style="width:100%;" onclick="doLogout()">Sign out</button>
     </div>
   </nav>
 
@@ -125,47 +150,45 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
     <div id="content">
       <div class="page active" id="page-overview">
         <div class="stats-grid">
-          <div class="stat-card"><div class="stat-label">Active Hubs</div><div class="stat-value" id="stat-hubs" style="color:var(--accent2);">—</div></div>
-          <div class="stat-card"><div class="stat-label">AntiNuke Triggers</div><div class="stat-value" id="stat-antinuke" style="color:var(--warning);">—</div></div>
-          <div class="stat-card"><div class="stat-label">Scam Triggers</div><div class="stat-value" id="stat-scam" style="color:var(--danger);">—</div></div>
-          <div class="stat-card"><div class="stat-label">Verifications</div><div class="stat-value" id="stat-verified" style="color:var(--success);">—</div></div>
+          <div class="stat-card"><div class="stat-label">Active Hubs</div><div class="stat-value" id="s-hubs" style="color:var(--accent2);">—</div></div>
+          <div class="stat-card"><div class="stat-label">AntiNuke Triggers</div><div class="stat-value" id="s-an" style="color:var(--warning);">—</div></div>
+          <div class="stat-card"><div class="stat-label">Scam Triggers</div><div class="stat-value" id="s-sc" style="color:var(--danger);">—</div></div>
+          <div class="stat-card"><div class="stat-label">Verifications</div><div class="stat-value" id="s-vf" style="color:var(--success);">—</div></div>
         </div>
-        <div class="panel">
-          <div class="panel-body">
-            <h3 style="font-size:14px;margin-bottom:12px;">Bot Health</h3>
-            <pre id="health-output" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text2);"></pre>
-          </div>
-        </div>
+        <div class="panel"><div class="panel-body">
+          <h3 style="font-size:14px;margin-bottom:12px;">Bot Health</h3>
+          <pre id="health" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text2);white-space:pre-wrap;"></pre>
+        </div></div>
       </div>
 
       <div class="page" id="page-hub">
         <h3 style="margin-bottom:16px;">Join-to-Create</h3>
-        <div class="setting-row"><div style="flex:1;">Enabled</div>
+        <div class="setting-row"><div>Enabled</div>
           <label class="toggle"><input type="checkbox" data-key="jtc_enabled" onchange="markDirty()"><div class="toggle-track"><div class="toggle-thumb"></div></div></label></div>
-        <div class="setting-row"><div style="flex:1;">Trigger Channel ID</div>
-          <input type="text" data-key="trigger_channel_id" onchange="markDirty()" style="width:220px;padding:8px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);"></div>
-        <div class="setting-row"><div style="flex:1;">Category ID</div>
-          <input type="text" data-key="category_id" onchange="markDirty()" style="width:220px;padding:8px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);"></div>
-        <div class="setting-row"><div style="flex:1;">Channels per user</div>
-          <input type="number" data-key="channels_per_user" min="1" max="5" onchange="markDirty()" style="width:80px;padding:8px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);"></div>
+        <div class="setting-row"><div>Trigger Channel ID</div>
+          <input class="input-sm" type="text" data-key="trigger_channel_id" onchange="markDirty()" style="width:220px;"></div>
+        <div class="setting-row"><div>Category ID</div>
+          <input class="input-sm" type="text" data-key="category_id" onchange="markDirty()" style="width:220px;"></div>
+        <div class="setting-row"><div>Channels per user</div>
+          <input class="input-sm" type="number" data-key="channels_per_user" min="1" max="5" onchange="markDirty()" style="width:80px;"></div>
       </div>
 
       <div class="page" id="page-verify">
         <h3 style="margin-bottom:16px;">Voice Verification</h3>
-        <div class="setting-row"><div style="flex:1;">Enabled</div>
+        <div class="setting-row"><div>Enabled</div>
           <label class="toggle"><input type="checkbox" data-key="verify_enabled" onchange="markDirty()"><div class="toggle-track"><div class="toggle-thumb"></div></div></label></div>
-        <div class="setting-row"><div style="flex:1;">Waiting Channel ID</div>
-          <input type="text" data-key="verify_waiting_channel_id" onchange="markDirty()" style="width:220px;padding:8px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);"></div>
-        <div class="setting-row"><div style="flex:1;">Verified Role ID</div>
-          <input type="text" data-key="verified_role_id" onchange="markDirty()" style="width:220px;padding:8px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);"></div>
+        <div class="setting-row"><div>Waiting Channel ID</div>
+          <input class="input-sm" type="text" data-key="verify_waiting_channel_id" onchange="markDirty()" style="width:220px;"></div>
+        <div class="setting-row"><div>Verified Role ID</div>
+          <input class="input-sm" type="text" data-key="verified_role_id" onchange="markDirty()" style="width:220px;"></div>
       </div>
 
       <div class="page" id="page-antinuke">
         <h3 style="margin-bottom:16px;">AntiNuke</h3>
-        <div class="setting-row"><div style="flex:1;">Enabled</div>
+        <div class="setting-row"><div>Enabled</div>
           <label class="toggle"><input type="checkbox" data-key="antinuke_enabled" onchange="markDirty()"><div class="toggle-track"><div class="toggle-thumb"></div></div></label></div>
-        <div class="setting-row"><div style="flex:1;">Punishment Mode</div>
-          <select data-key="antinuke_punishment" onchange="markDirty()" style="padding:8px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);">
+        <div class="setting-row"><div>Punishment</div>
+          <select class="input-sm" data-key="antinuke_punishment" onchange="markDirty()">
             <option value="ban">Ban</option><option value="kick">Kick</option>
             <option value="timeout">Timeout</option><option value="strip">Strip Roles</option>
             <option value="quarantine">Quarantine</option><option value="warn">Warn Only</option>
@@ -174,48 +197,74 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 
       <div class="page" id="page-scam">
         <h3 style="margin-bottom:16px;">Scam Catcher</h3>
-        <div class="setting-row"><div style="flex:1;">Enabled</div>
+        <div class="setting-row"><div>Enabled</div>
           <label class="toggle"><input type="checkbox" data-key="scam_catcher_enabled" onchange="markDirty()"><div class="toggle-track"><div class="toggle-thumb"></div></div></label></div>
-        <div class="setting-row"><div style="flex:1;">Honeypot Channel ID</div>
-          <input type="text" data-key="scam_catcher_channel_id" onchange="markDirty()" style="width:220px;padding:8px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);"></div>
+        <div class="setting-row"><div>Honeypot Channel ID</div>
+          <input class="input-sm" type="text" data-key="scam_catcher_channel_id" onchange="markDirty()" style="width:220px;"></div>
       </div>
 
       <div class="page" id="page-backup">
         <h3 style="margin-bottom:16px;">Backup System</h3>
-        <div class="setting-row"><div style="flex:1;">Enabled</div>
+        <div class="setting-row"><div>Enabled</div>
           <label class="toggle"><input type="checkbox" data-key="backup_enabled" onchange="markDirty()"><div class="toggle-track"><div class="toggle-thumb"></div></div></label></div>
-        <div class="setting-row"><div style="flex:1;">Interval (hours)</div>
-          <input type="number" data-key="backup_interval_hours" min="1" max="72" onchange="markDirty()" style="width:80px;padding:8px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);"></div>
+        <div class="setting-row"><div>Interval (hours)</div>
+          <input class="input-sm" type="number" data-key="backup_interval_hours" min="1" max="72" onchange="markDirty()" style="width:80px;"></div>
       </div>
 
       <div class="page" id="page-ai">
         <h3 style="margin-bottom:16px;">AI Chat</h3>
-        <div class="setting-row"><div style="flex:1;">Enabled</div>
+        <div class="setting-row"><div>Enabled</div>
           <label class="toggle"><input type="checkbox" data-key="ai_enabled" onchange="markDirty()"><div class="toggle-track"><div class="toggle-thumb"></div></div></label></div>
-        <div class="setting-row"><div style="flex:1;">Model</div>
-          <input type="text" data-key="ai_model" onchange="markDirty()" style="width:300px;padding:8px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);"></div>
+        <div class="setting-row"><div>Model</div>
+          <input class="input-sm" type="text" data-key="ai_model" onchange="markDirty()" style="width:300px;"></div>
       </div>
 
       <div class="page" id="page-music">
         <h3 style="margin-bottom:16px;">Music Player</h3>
-        <div class="setting-row"><div style="flex:1;">Default Volume</div>
-          <input type="number" data-key="music_default_volume" step="0.1" min="0.1" max="2.0" onchange="markDirty()" style="width:100px;padding:8px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);"></div>
+        <div class="setting-row"><div>Default Volume</div>
+          <input class="input-sm" type="number" data-key="music_default_volume" step="0.1" min="0.1" max="2" onchange="markDirty()" style="width:100px;"></div>
       </div>
 
       <div class="page" id="page-status">
         <h3 style="margin-bottom:16px;">Server Status</h3>
-        <div class="setting-row"><div style="flex:1;">Enabled</div>
+        <div class="setting-row"><div>Enabled</div>
           <label class="toggle"><input type="checkbox" data-key="status_enabled" onchange="markDirty()"><div class="toggle-track"><div class="toggle-thumb"></div></div></label></div>
-        <div class="setting-row"><div style="flex:1;">Status Channel ID</div>
-          <input type="text" data-key="status_channel_id" onchange="markDirty()" style="width:220px;padding:8px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);"></div>
+        <div class="setting-row"><div>Status Channel ID</div>
+          <input class="input-sm" type="text" data-key="status_channel_id" onchange="markDirty()" style="width:220px;"></div>
       </div>
 
       <div class="page" id="page-presence">
         <h3 style="margin-bottom:16px;">Presence &amp; Bio</h3>
-        <div class="setting-row"><div style="flex:1;">Bio rotation enabled</div>
+        <div class="setting-row"><div>Bio rotation enabled</div>
           <label class="toggle"><input type="checkbox" data-key="bio_enabled" onchange="markDirty()"><div class="toggle-track"><div class="toggle-thumb"></div></div></label></div>
-        <div class="setting-row"><div style="flex:1;">Presence interval (s)</div>
-          <input type="number" data-key="presence_interval" min="5" max="600" onchange="markDirty()" style="width:100px;padding:8px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);"></div>
+        <div class="setting-row"><div>Presence interval (s)</div>
+          <input class="input-sm" type="number" data-key="presence_interval" min="5" max="600" onchange="markDirty()" style="width:100px;"></div>
+      </div>
+
+      <div class="page" id="page-staff">
+        <h3 style="margin-bottom:16px;">Staff Access</h3>
+        <div class="panel" style="margin-bottom:20px;">
+          <div class="panel-body">
+            <h4 style="font-size:13px;margin-bottom:14px;">Add staff member</h4>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+              <div class="field"><label>Discord ID</label><input class="input-sm" id="sf-id" placeholder="812345678901234567"></div>
+              <div class="field"><label>Name</label><input class="input-sm" id="sf-name" placeholder="Yuji"></div>
+            </div>
+            <div class="field" style="margin-bottom:12px;"><label>Password</label><input class="input-sm" id="sf-pw" type="text" placeholder="Set a password for them"></div>
+            <div style="font-size:12px;color:var(--text2);margin-bottom:6px;">Page access</div>
+            <div class="perm-grid" id="perm-grid"></div>
+            <button class="btn btn-primary" style="margin-top:14px;" onclick="addStaff()">Add staff member</button>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-body">
+            <h4 style="font-size:13px;margin-bottom:14px;">Current staff</h4>
+            <table>
+              <thead><tr><th>Discord ID</th><th>Name</th><th>Pages</th><th></th></tr></thead>
+              <tbody id="staff-rows"><tr><td colspan="4" style="color:var(--text3);text-align:center;padding:20px 0;">No staff added yet</td></tr></tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -229,116 +278,212 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 <div class="toast" id="toast"></div>
 
 <script>
-let API_URL = '', API_TOKEN = '', dirty = false, config = {};
+const PAGES = ['hub','verify','antinuke','scam','backup','ai','music','status','presence'];
+let API='', SESSION='', USER=null, dirty=false, config={};
+let newPerms = {};
 
-function toast(msg, ok = true) {
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.className = 'toast show' + (ok ? '' : ' error');
-  setTimeout(() => el.classList.remove('show'), 2600);
+function toast(m, ok=true){
+  const el=document.getElementById('toast');
+  el.textContent=m;
+  el.className='toast show'+(ok?'':' error');
+  setTimeout(()=>el.classList.remove('show'),2600);
 }
+function hdr(){ return {'Content-Type':'application/json','X-Session':SESSION}; }
 
-async function fakeLogin() {
-  const url = document.getElementById('auth-api-url').value.trim().replace(/\/$/, '');
-  const token = document.getElementById('auth-token').value.trim();
-  const err = document.getElementById('auth-error');
-  if (!url || !token) { err.textContent = 'Both fields are required.'; err.style.display = 'block'; return; }
-  try {
-    const res = await fetch(`${url}/api/health`);
-    if (!res.ok) throw new Error('unreachable');
-  } catch (e) {
-    err.textContent = 'Cannot reach the bot API. Check the URL.';
-    err.style.display = 'block';
-    return;
+async function doLogin(){
+  const api=document.getElementById('in-api').value.trim().replace(/\/$/,'');
+  const id=document.getElementById('in-id').value.trim();
+  const pw=document.getElementById('in-pw').value;
+  const err=document.getElementById('auth-error');
+  const btn=document.getElementById('btn-login');
+  err.style.display='none';
+  if(!api||!id||!pw){ err.textContent='All fields are required.'; err.style.display='block'; return; }
+  btn.disabled=true; btn.textContent='Signing in…';
+  try{
+    const r=await fetch(api+'/api/login',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({discord_id:id,password:pw})
+    });
+    const data=await r.json();
+    if(!r.ok){ throw new Error(data.error||'login failed'); }
+    API=api; SESSION=data.token; USER=data.user;
+    localStorage.setItem('ftw_api',api);
+    localStorage.setItem('ftw_session',SESSION);
+    document.getElementById('auth-screen').style.display='none';
+    document.getElementById('app').classList.add('visible');
+    applyUser();
+    await loadConfig();
+    await loadHealth();
+    if(USER.role==='owner') await loadStaff();
+  }catch(e){
+    err.textContent=e.message==='invalid credentials'?'Wrong Discord ID or password.':('Error: '+e.message);
+    err.style.display='block';
+  }finally{
+    btn.disabled=false; btn.textContent='Sign in';
   }
-  API_URL = url; API_TOKEN = token;
-  localStorage.setItem('ftw_api_url', url);
-  localStorage.setItem('ftw_api_token', token);
-  document.getElementById('auth-screen').style.display = 'none';
-  document.getElementById('app').classList.add('visible');
-  await loadConfig();
-  await loadHealth();
 }
 
-function logout() {
-  localStorage.removeItem('ftw_api_url');
-  localStorage.removeItem('ftw_api_token');
+function doLogout(){
+  if(SESSION) fetch(API+'/api/logout',{method:'POST',headers:hdr()}).catch(()=>{});
+  localStorage.removeItem('ftw_session');
+  localStorage.removeItem('ftw_api');
   location.reload();
 }
 
-async function loadConfig() {
-  try {
-    const res = await fetch(`${API_URL}/api/config`, { headers: { 'X-Auth': API_TOKEN } });
-    if (res.status === 401) { toast('Token rejected by the bot', false); return; }
-    config = await res.json();
-    for (const el of document.querySelectorAll('[data-key]')) {
-      const key = el.dataset.key;
-      if (!(key in config)) continue;
-      if (el.type === 'checkbox') el.checked = !!config[key];
-      else el.value = config[key];
-    }
-    document.getElementById('stat-hubs').textContent = config._hubs ?? '—';
-    document.getElementById('stat-antinuke').textContent = config.antinuke_triggers ?? '—';
-    document.getElementById('stat-scam').textContent = config.scam_catcher_triggers ?? '—';
-    document.getElementById('stat-verified').textContent = config.verify_passed ?? '—';
-  } catch (e) { toast('Failed to load config', false); }
+function applyUser(){
+  document.getElementById('who').textContent=USER.name+(USER.role==='owner'?' · Owner':' · Staff');
+  document.querySelectorAll('.nav-item[data-page]').forEach(n=>{
+    const p=n.dataset.page;
+    if(p==='overview'){ n.classList.remove('hidden'); return; }
+    if(USER.role==='owner'){ n.classList.remove('hidden'); return; }
+    if(p==='staff'){ n.classList.add('hidden'); return; }
+    n.classList.toggle('hidden', !(USER.perms||{})[p]);
+  });
+  document.getElementById('nav-staff').style.display = USER.role==='owner'?'':'none';
 }
 
-async function loadHealth() {
-  try {
-    const res = await fetch(`${API_URL}/api/health`);
-    const data = await res.json();
-    document.getElementById('health-output').textContent =
-      `Bot: ${data.bot || 'offline'}\nHubs: ${data.hubs}\nUptime: ${Math.floor(data.uptime/60)} min`;
-  } catch (e) {}
-}
-
-function nav(page) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.getElementById('page-' + page)?.classList.add('active');
-  const titles = { overview:'Overview', hub:'Join-to-Create', verify:'Voice Verify',
-    antinuke:'AntiNuke', scam:'Scam Catcher', backup:'Backup System', ai:'AI Chat',
-    music:'Music Player', status:'Server Status', presence:'Presence & Bio' };
-  document.getElementById('topbar-title').textContent = titles[page] || 'Dashboard';
-}
-
-function markDirty() { dirty = true; document.getElementById('save-bar').classList.add('visible'); }
-
-function discardChanges() {
-  dirty = false;
-  document.getElementById('save-bar').classList.remove('visible');
-  loadConfig();
-}
-
-async function saveAll() {
-  const payload = {};
-  for (const el of document.querySelectorAll('[data-key]')) {
-    const key = el.dataset.key;
-    if (el.type === 'checkbox') payload[key] = el.checked;
-    else if (el.type === 'number') payload[key] = Number(el.value);
-    else payload[key] = el.value;
-  }
-  try {
-    const res = await fetch(`${API_URL}/api/config`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Auth': API_TOKEN },
-      body: JSON.stringify(payload),
+async function loadConfig(){
+  try{
+    const r=await fetch(API+'/api/config',{headers:hdr()});
+    if(r.status===401){ toast('Session expired — sign in again',false); doLogout(); return; }
+    config=await r.json();
+    document.querySelectorAll('[data-key]').forEach(el=>{
+      const k=el.dataset.key;
+      if(!(k in config)) return;
+      if(el.type==='checkbox') el.checked=!!config[k];
+      else el.value=config[k];
     });
-    if (!res.ok) { toast('Bot rejected the save', false); return; }
-    dirty = false;
-    document.getElementById('save-bar').classList.remove('visible');
-    toast('✓ Configuration saved');
-  } catch (e) { toast('Save failed', false); }
+    document.getElementById('s-hubs').textContent=config._hubs??'—';
+    document.getElementById('s-an').textContent=config.antinuke_triggers??'—';
+    document.getElementById('s-sc').textContent=config.scam_catcher_triggers??'—';
+    document.getElementById('s-vf').textContent=config.verify_passed??'—';
+  }catch(e){ toast('Failed to load config',false); }
 }
 
-window.addEventListener('load', () => {
-  const url = localStorage.getItem('ftw_api_url');
-  const token = localStorage.getItem('ftw_api_token');
-  if (url && token) {
-    document.getElementById('auth-api-url').value = url;
-    document.getElementById('auth-token').value = token;
-    fakeLogin();
+async function loadHealth(){
+  try{
+    const r=await fetch(API+'/api/health');
+    const d=await r.json();
+    document.getElementById('health').textContent=
+      'Bot: '+(d.bot||'offline')+'\nHubs: '+d.hubs+'\nUptime: '+Math.floor(d.uptime/60)+' min';
+  }catch(e){}
+}
+
+function nav(page){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+page)?.classList.add('active');
+  document.querySelector('.nav-item[data-page="'+page+'"]')?.classList.add('active');
+  const t={overview:'Overview',hub:'Join-to-Create',verify:'Voice Verify',
+    antinuke:'AntiNuke',scam:'Scam Catcher',backup:'Backup System',ai:'AI Chat',
+    music:'Music Player',status:'Server Status',presence:'Presence & Bio',staff:'Staff Access'};
+  document.getElementById('topbar-title').textContent=t[page]||'Dashboard';
+}
+
+function markDirty(){ dirty=true; document.getElementById('save-bar').classList.add('visible'); }
+function discardChanges(){ dirty=false; document.getElementById('save-bar').classList.remove('visible'); loadConfig(); }
+
+async function saveAll(){
+  const payload={};
+  document.querySelectorAll('[data-key]').forEach(el=>{
+    const k=el.dataset.key;
+    if(el.type==='checkbox') payload[k]=el.checked;
+    else if(el.type==='number') payload[k]=Number(el.value);
+    else payload[k]=el.value;
+  });
+  try{
+    const r=await fetch(API+'/api/config',{method:'POST',headers:hdr(),body:JSON.stringify(payload)});
+    if(!r.ok){ toast('Bot rejected the save',false); return; }
+    dirty=false; document.getElementById('save-bar').classList.remove('visible');
+    toast('✓ Configuration saved');
+  }catch(e){ toast('Save failed',false); }
+}
+
+/* ---- Staff management (owner only) ---- */
+
+function renderPermGrid(){
+  const g=document.getElementById('perm-grid');
+  g.innerHTML='';
+  PAGES.forEach(p=>{
+    const b=document.createElement('div');
+    b.className='perm-btn'+(newPerms[p]?' on':'');
+    b.textContent=p;
+    b.onclick=()=>{ newPerms[p]=!newPerms[p]; b.classList.toggle('on'); };
+    g.appendChild(b);
+  });
+}
+
+async function loadStaff(){
+  if(!USER||USER.role!=='owner') return;
+  try{
+    const r=await fetch(API+'/api/staff',{headers:hdr()});
+    if(!r.ok) return;
+    const d=await r.json();
+    const tb=document.getElementById('staff-rows');
+    if(!d.staff.length){
+      tb.innerHTML='<tr><td colspan="4" style="color:var(--text3);text-align:center;padding:20px 0;">No staff added yet</td></tr>';
+      return;
+    }
+    tb.innerHTML=d.staff.map(s=>{
+      const pages=Object.entries(s.perms||{}).filter(([,v])=>v).map(([k])=>k).join(', ')||'—';
+      return `<tr><td><code style="font-family:'JetBrains Mono',monospace;font-size:12px">${s.id}</code></td>
+        <td>${s.name}</td><td style="color:var(--text2);font-size:12px">${pages}</td>
+        <td><button class="btn btn-danger" style="padding:4px 10px;font-size:11px" onclick="removeStaff('${s.id}')">Remove</button></td></tr>`;
+    }).join('');
+  }catch(e){}
+}
+
+async function addStaff(){
+  const id=document.getElementById('sf-id').value.trim();
+  const name=document.getElementById('sf-name').value.trim();
+  const pw=document.getElementById('sf-pw').value;
+  if(!id||!name||!pw){ toast('All three fields are required',false); return; }
+  try{
+    const r=await fetch(API+'/api/staff/add',{method:'POST',headers:hdr(),
+      body:JSON.stringify({discord_id:id,name,password:pw,perms:newPerms})});
+    const d=await r.json();
+    if(!r.ok){ toast(d.error||'Failed',false); return; }
+    toast('✓ Staff added');
+    document.getElementById('sf-id').value='';
+    document.getElementById('sf-name').value='';
+    document.getElementById('sf-pw').value='';
+    newPerms={}; renderPermGrid();
+    loadStaff();
+  }catch(e){ toast('Failed',false); }
+}
+
+async function removeStaff(id){
+  if(!confirm('Remove this staff member?')) return;
+  try{
+    const r=await fetch(API+'/api/staff/remove',{method:'POST',headers:hdr(),
+      body:JSON.stringify({discord_id:id})});
+    if(!r.ok){ toast('Failed',false); return; }
+    toast('Removed');
+    loadStaff();
+  }catch(e){ toast('Failed',false); }
+}
+
+/* ---- Startup ---- */
+window.addEventListener('load',()=>{
+  renderPermGrid();
+  const api=localStorage.getItem('ftw_api');
+  const sess=localStorage.getItem('ftw_session');
+  if(api&&sess){
+    API=api; SESSION=sess;
+    fetch(API+'/api/me',{headers:hdr()}).then(r=>{
+      if(!r.ok) throw 0;
+      return r.json();
+    }).then(u=>{
+      USER=u;
+      document.getElementById('auth-screen').style.display='none';
+      document.getElementById('app').classList.add('visible');
+      applyUser(); loadConfig(); loadHealth();
+      if(u.role==='owner') loadStaff();
+    }).catch(()=>{
+      localStorage.removeItem('ftw_session');
+      localStorage.removeItem('ftw_api');
+    });
   }
 });
 </script>
