@@ -386,6 +386,45 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 @media(max-width:850px){.server-grid{grid-template-columns:1fr}.server-banner-content{padding:24px 20px}.server-name{font-size:22px}.server-meta-row{gap:10px 14px}}
 @media(max-width:600px){.server-name-row{flex-direction:column}.server-live-pill{align-self:flex-start}.server-profile-body{grid-template-columns:1fr}.server-icon{width:76px;height:76px;border-radius:22px}}
 
+
+/* ─── PROFESSIONAL OPERATIONS CENTER ─── */
+.pro-control-center{margin:0 0 22px;padding:22px;border:1px solid var(--border);border-radius:18px;background:linear-gradient(145deg,rgba(255,255,255,.035),rgba(255,255,255,.012));box-shadow:0 20px 55px rgba(0,0,0,.18)}
+.pro-section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:18px}
+.pro-section-head h2{margin:3px 0 5px;font-size:21px;letter-spacing:-.5px}
+.pro-section-head p{margin:0;color:var(--text3);font-size:11px}
+.eyebrow{font-size:9px;letter-spacing:1.6px;color:var(--blue);font-weight:900}
+.pro-actions{display:flex;gap:8px}
+.pro-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}
+.pro-metric{display:flex;align-items:center;gap:11px;padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;transition:.2s}
+.pro-metric:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.14)}
+.pro-icon{width:30px;height:30px;display:grid;place-items:center;border-radius:9px;background:rgba(59,158,255,.1);color:var(--blue);font-size:14px}
+.pro-metric b{display:block;font-size:15px}.pro-metric small{display:block;color:var(--text3);font-size:9px;margin-top:2px;text-transform:uppercase;letter-spacing:.5px}
+.pro-columns{display:grid;grid-template-columns:1.1fr 1.15fr .9fr;gap:12px}
+.pro-card{background:var(--surface2);border:1px solid var(--border);border-radius:13px;padding:15px;min-width:0}
+.pro-card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;font-size:11px;font-weight:800}
+.status-chip{font-size:8px;letter-spacing:.7px;padding:4px 7px;border-radius:999px;border:1px solid var(--border);color:var(--text3)}
+.status-chip.live{color:var(--green);border-color:rgba(132,224,92,.25);background:rgba(132,224,92,.07)}
+.service-list,.security-list{display:flex;flex-direction:column;gap:9px}
+.service-row,.security-list div{display:flex;align-items:center;justify-content:space-between;font-size:10px;color:var(--text2)}
+.service-row b,.security-list b{font-size:9px;color:var(--green)}
+.svc-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--green);margin-right:8px;box-shadow:0 0 8px var(--green)}
+.quick-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.quick-grid button{border:1px solid var(--border);background:var(--surface);color:var(--text2);padding:9px 5px;border-radius:9px;font-size:9px;cursor:pointer;transition:.18s}
+.quick-grid button:hover{border-color:rgba(59,158,255,.35);color:#fff;transform:translateY(-1px)}
+.quick-grid button span{display:block;color:var(--blue);font-size:15px;margin-bottom:4px}
+.pro-bottom{display:grid;grid-template-columns:1fr 300px;gap:12px;margin-top:12px}
+.pro-timeline{background:var(--surface2);border:1px solid var(--border);border-radius:13px;padding:15px;min-width:0}
+.text-btn{border:0;background:none;color:var(--blue);font-size:9px;cursor:pointer}
+.pro-event{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.045);font-size:10px}
+.pro-event:last-child{border-bottom:0}.pro-event-time{color:var(--text3);font:9px 'JetBrains Mono',monospace;min-width:62px}.pro-event-kind{color:var(--blue);font-weight:800;min-width:52px}.pro-event-text{color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pro-empty{padding:20px 0;text-align:center;color:var(--text3);font-size:10px}
+.uptime-card{text-align:center}.runtime-ring{width:116px;height:116px;margin:9px auto 13px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--blue) 0 82%,rgba(255,255,255,.06) 82%);position:relative}
+.runtime-ring:after{content:"";position:absolute;inset:8px;border-radius:50%;background:var(--surface2)}
+.runtime-ring div{position:relative;z-index:1}.runtime-ring strong{display:block;font-size:17px}.runtime-ring small{font-size:8px;color:var(--text3);text-transform:uppercase}
+.runtime-meta{display:flex;justify-content:space-around;font-size:9px;color:var(--text3)}.runtime-meta b{color:var(--text)}
+@media(max-width:950px){.pro-columns{grid-template-columns:1fr 1fr}.pro-columns .pro-card:last-child{grid-column:1/-1}.pro-bottom{grid-template-columns:1fr}}
+@media(max-width:650px){.pro-section-head{align-items:flex-start;flex-direction:column}.pro-actions{width:100%}.pro-actions button{flex:1}.pro-metrics{grid-template-columns:1fr 1fr}.pro-columns{grid-template-columns:1fr}.pro-columns .pro-card:last-child{grid-column:auto}.pro-bottom{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
@@ -558,7 +597,76 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
           </div>
         </div>
 
-        <div class="grid-kpi">
+        
+<div class="pro-control-center">
+  <div class="pro-section-head">
+    <div>
+      <div class="eyebrow">OPERATIONS CENTER</div>
+      <h2>Professional Server Control</h2>
+      <p>Monitor Discord, bot health, security and activity from one command center.</p>
+    </div>
+    <div class="pro-actions">
+      <button class="btn btn-sm" onclick="proRefresh()">↻ Refresh all</button>
+      <button class="btn btn-primary btn-sm" onclick="nav('status')">Open live monitor</button>
+    </div>
+  </div>
+
+  <div class="pro-metrics">
+    <div class="pro-metric"><span class="pro-icon">⚡</span><div><b id="pro-latency">—</b><small>Latency</small></div></div>
+    <div class="pro-metric"><span class="pro-icon">🟢</span><div><b id="pro-health">ONLINE</b><small>Bot health</small></div></div>
+    <div class="pro-metric"><span class="pro-icon">🛡</span><div><b id="pro-security">ACTIVE</b><small>Protection</small></div></div>
+    <div class="pro-metric"><span class="pro-icon">↗</span><div><b id="pro-events">—</b><small>Recent events</small></div></div>
+  </div>
+
+  <div class="pro-columns">
+    <div class="pro-card">
+      <div class="pro-card-head"><span>Live Services</span><span class="status-chip live">OPERATIONAL</span></div>
+      <div class="service-list">
+        <div class="service-row"><span><i class="svc-dot"></i>Discord Gateway</span><b id="svc-gateway">Connected</b></div>
+        <div class="service-row"><span><i class="svc-dot"></i>Bot API</span><b id="svc-api">Connected</b></div>
+        <div class="service-row"><span><i class="svc-dot"></i>Analytics</span><b>Running</b></div>
+        <div class="service-row"><span><i class="svc-dot"></i>Audit Logging</span><b>Protected</b></div>
+        <div class="service-row"><span><i class="svc-dot"></i>Live Sync</span><b id="svc-sync">5s</b></div>
+      </div>
+    </div>
+
+    <div class="pro-card">
+      <div class="pro-card-head"><span>Quick Actions</span><span class="card-tag">ADMIN</span></div>
+      <div class="quick-grid">
+        <button onclick="nav('messaging')"><span>✉</span>Send message</button>
+        <button onclick="nav('moderation')"><span>⚖</span>Moderation</button>
+        <button onclick="nav('channels')"><span>▦</span>Channels</button>
+        <button onclick="nav('roles')"><span>♟</span>Roles</button>
+        <button onclick="nav('backup')"><span>◫</span>Backup</button>
+        <button onclick="nav('audit')"><span>◷</span>Audit log</button>
+      </div>
+    </div>
+
+    <div class="pro-card">
+      <div class="pro-card-head"><span>Security Snapshot</span><span class="status-chip live">SECURE</span></div>
+      <div class="security-list">
+        <div><span>AntiNuke</span><b>Enabled</b></div>
+        <div><span>Scam Catcher</span><b>Enabled</b></div>
+        <div><span>Whitelist</span><b id="pro-whitelist">Protected</b></div>
+        <div><span>Staff access</span><b>Permissioned</b></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pro-bottom">
+    <div class="pro-timeline">
+      <div class="pro-card-head"><span>Live Activity Stream</span><button class="text-btn" onclick="nav('logs')">View all →</button></div>
+      <div id="pro-activity"><div class="pro-empty">Waiting for live events…</div></div>
+    </div>
+    <div class="pro-card uptime-card">
+      <div class="pro-card-head"><span>Bot Runtime</span><span id="pro-runtime">—</span></div>
+      <div class="runtime-ring"><div><strong id="pro-runtime-big">—</strong><small>uptime</small></div></div>
+      <div class="runtime-meta"><span>Ping <b id="pro-ping">—</b></span><span>CPU <b id="pro-cpu">—</b></span><span>Memory <b id="pro-mem">—</b></span></div>
+    </div>
+  </div>
+</div>
+
+<div class="grid-kpi">
           <div class="card card-light">
             <div class="card-label">Total Members</div>
             <div class="card-value card-value-lg" id="kpi-members">—</div>
@@ -1079,7 +1187,7 @@ async function doLogin(){
     document.getElementById('auth-screen').style.display='none';
     document.getElementById('app').classList.add('visible');
     applyUser();
-    await Promise.all([loadProfile(), loadLiveServer(), loadConfig(), loadHealth(), loadAnalytics()]);
+    await Promise.all([loadProfile(), loadLiveServer(), loadProCenter(), loadConfig(), loadHealth(), loadAnalytics()]);
     if(USER.role==='owner') await loadStaff();
   }catch(e){
     if(e.message==='invalid credentials') err.textContent='Wrong Discord ID or password.';
@@ -1209,6 +1317,42 @@ async function loadLiveServer(){
     document.getElementById('server-last-sync').textContent='Live sync unavailable';
   }
 }
+
+
+/* ═══ PROFESSIONAL DASHBOARD LIVE LAYER ═══ */
+function proRuntime(sec){
+  sec=Number(sec)||0; const d=Math.floor(sec/86400), h=Math.floor(sec%86400/3600), m=Math.floor(sec%3600/60);
+  return d ? `${d}d ${h}h` : `${h}h ${m}m`;
+}
+function renderProEvents(logs){
+  const el=document.getElementById('pro-activity'); if(!el) return;
+  if(!logs||!logs.length){ el.innerHTML='<div class="pro-empty">No recent events</div>'; return; }
+  el.innerHTML=logs.slice(0,5).map(l=>`<div class="pro-event"><span class="pro-event-time">${new Date((l.time||Date.now()/1000)*1000).toLocaleTimeString()}</span><span class="pro-event-kind">${safeText(l.kind,'EVENT')}</span><span class="pro-event-text">${safeText(l.text,'Activity received')}</span></div>`).join('');
+}
+async function loadProCenter(){
+  try{
+    const [s,l,w]=await Promise.all([
+      fetch(BOT_API+'/api/status',{headers:hdr()}),
+      fetch(BOT_API+'/api/logs',{headers:hdr()}),
+      fetch(BOT_API+'/api/whitelist',{headers:hdr()})
+    ]);
+    const status=s.ok?await s.json():{};
+    const logs=l.ok?await l.json():{};
+    const wl=w.ok?await w.json():{};
+    document.getElementById('pro-latency').textContent=safeText(status.ping_ms,'—')+(status.ping_ms!=null?'ms':'');
+    document.getElementById('pro-events').textContent=String((logs.logs||[]).length);
+    document.getElementById('pro-ping').textContent=safeText(status.ping_ms,'—')+(status.ping_ms!=null?'ms':'');
+    document.getElementById('pro-cpu').textContent=safeText(status.cpu,'—')+(status.cpu!=null?'%':'');
+    document.getElementById('pro-mem').textContent=safeText(status.mem_mb,'—')+(status.mem_mb!=null?'MB':'');
+    document.getElementById('pro-runtime').textContent=proRuntime(status.uptime);
+    document.getElementById('pro-runtime-big').textContent=proRuntime(status.uptime);
+    document.getElementById('pro-whitelist').textContent=wl.enabled===false?'Disabled':'Protected';
+    renderProEvents(logs.logs||[]);
+  }catch(e){
+    const h=document.getElementById('pro-health'); if(h) h.textContent='CHECK';
+  }
+}
+function proRefresh(){ loadLiveServer(); loadProCenter(); loadStatus(); toast('Live dashboard refreshed'); }
 
 /* ═══ CONFIG ═══ */
 async function loadConfig(){
@@ -1660,7 +1804,7 @@ async function removeStaff(id){ if(!confirm('Remove this staff member?')) return
 /* ═══ BOOT ═══ */
 window.addEventListener('load',()=>{
   renderPermGrid();
-  liveServerTimer=setInterval(loadLiveServer,5000);
+  liveServerTimer=setInterval(()=>{loadLiveServer();loadProCenter();},5000);loadProCenter();
   const sess=localStorage.getItem('ftw_session');
   if(sess){
     SESSION=sess;
