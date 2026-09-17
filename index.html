@@ -1519,13 +1519,14 @@ table code{font-size:12.5px;color:var(--text-2)}
           </div>
           <div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:14px;">
             <button class="btn btn-primary" id="lookup-btn" onclick="lookupUser()">⌕ Look up user</button>
+            <button class="btn btn-secondary" id="scan-all-btn" onclick="scanAllServers()">⌘ Scan all supplied servers</button>
             <button class="btn btn-secondary" onclick="useConfiguredGuild()">Use configured server</button>
             <button class="btn btn-secondary" onclick="clearUserLookup()">Clear</button>
           </div>
         </div>
 
         <div class="card" id="lookup-empty">
-          <div class="empty-state"><strong>Ready to look up a member</strong>Enter a server ID and a Discord user ID, mention, username, or display name.</div>
+          <div class="empty-state"><strong>Ready to look up or scan a member</strong>Use a server ID for one server, or scan the supplied server list to see every accessible server where the user is a member and their roles.</div>
         </div>
         <div class="card" id="lookup-result" style="display:none;"></div>
       </div>
@@ -2340,6 +2341,28 @@ async function lookupUser(){
     empty.style.display='none'; result.style.display='';
   }catch(e){ toast(e.message || 'User lookup failed', false); }
   finally{ if(btn){ btn.disabled=false; btn.textContent='⌕ Look up user'; } }
+}
+
+async function scanAllServers(){
+  const query=val('lookup-user').trim();
+  const btn=document.getElementById('scan-all-btn');
+  if(!query){ toast('Enter a user ID, mention, username or display name', false); return; }
+  if(btn){ btn.disabled=true; btn.textContent='Scanning…'; }
+  try{
+    const qs=new URLSearchParams({user:query});
+    const r=await fetch(BOT_API+'/api/user-scan?'+qs.toString(),{headers:hdr()});
+    const d=await r.json().catch(()=>({}));
+    if(!r.ok) throw new Error(d.error || 'Server scan failed');
+    const result=document.getElementById('lookup-result'), empty=document.getElementById('lookup-empty');
+    const rows=(d.results||[]).map(item=>{
+      const g=item.guild||{}, m=item.member||{}, roles=item.roles||[];
+      const roleHtml=roles.length ? `<div class="lookup-role-grid">${roles.map(lookupRoleHtml).join('')}</div>` : '<div class="muted" style="margin-top:10px;">No custom roles.</div>';
+      return `<div style="padding:16px 0;border-top:1px solid var(--line);"><div class="user-lookup-hero"><div style="min-width:0"><div class="card-title">${esc(g.name||g.id||'Unknown server')}</div><div class="muted">Server ID <code class="mono">${esc(g.id||'')}</code> · ${esc(m.display_name||m.username||m.id||'Member')}</div></div><span class="status-chip live" style="margin-left:auto;">${roles.length} role${roles.length===1?'':'s'}</span></div>${roleHtml}</div>`;
+    }).join('');
+    result.innerHTML=`<div class="card-head"><div><div class="card-title">Multi-server scan</div><div class="muted" style="margin-top:4px;">Checked ${esc(String(d.checked_count||0))} accessible servers · found ${esc(String(d.found_count||0))} membership(s) · supplied list: ${esc(String(d.source_server_count||0))}</div></div></div>${rows || '<div class="empty-state"><strong>No matches found</strong>The bot could not find this user in any accessible supplied server.</div>'}`;
+    empty.style.display='none'; result.style.display='';
+  }catch(e){ toast(e.message || 'Server scan failed', false); }
+  finally{ if(btn){ btn.disabled=false; btn.textContent='⌘ Scan all supplied servers'; } }
 }
 
 /* ═══════════════════════════════════════════════════════════
