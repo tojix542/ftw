@@ -16,39 +16,40 @@
    so switching data-theme repaints the entire product.
    ═══════════════════════════════════════════════════════════ */
 :root{
-  --ink:#0A0F1E;
-  --bg:#0A0F1E;
-  --bg-elev:#0E1527;
-  --panel:#111A2E;
-  --panel-2:#16203A;
-  --panel-3:#1D2949;
-  --line:rgba(255,255,255,.075);
-  --line-2:rgba(255,255,255,.13);
+  --ink:#050E1F;
+  --bg:#070F24;
+  --bg-elev:#0A1631;
+  --panel:#0E1D3D;
+  --panel-2:#13274E;
+  --panel-3:#1B3260;
+  --line:rgba(158,232,222,.10);
+  --line-2:rgba(158,232,222,.20);
 
-  --text:#E9EDF8;
-  --text-2:#98A5C4;
-  --text-3:#66739A;
+  --text:#EAF4F2;
+  --text-2:#9BB3B8;
+  --text-3:#68838C;
 
-  --iris:#6C7BFF;
-  --iris-2:#8E93FF;
-  --iris-wash:rgba(108,123,255,.16);
-  --iris-glow:rgba(108,123,255,.45);
+  /* the house colour — Purity teal */
+  --iris:#4FD1C5;
+  --iris-2:#7BE9DD;
+  --iris-wash:rgba(79,209,197,.15);
+  --iris-glow:rgba(79,209,197,.5);
 
-  --mint:#38D9A9;
-  --mint-wash:rgba(56,217,169,.14);
-  --amber:#FFB454;
-  --amber-wash:rgba(255,180,84,.14);
+  --mint:#68D391;
+  --mint-wash:rgba(104,211,145,.15);
+  --amber:#F6C260;
+  --amber-wash:rgba(246,194,96,.15);
   --rose:#FF6B8A;
-  --rose-wash:rgba(255,107,138,.14);
-  --violet:#B08CFF;
-  --violet-wash:rgba(176,140,255,.14);
+  --rose-wash:rgba(255,107,138,.15);
+  --violet:#7551FF;
+  --violet-wash:rgba(117,81,255,.18);
 
-  --on-accent:#0A0F1E;
-  --shadow-1:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.28);
-  --shadow-2:0 24px 70px rgba(0,0,0,.5);
-  --grid-line:rgba(255,255,255,.028);
+  --on-accent:#04201D;
+  --shadow-1:0 1px 2px rgba(0,0,0,.4),0 10px 28px rgba(2,12,24,.35);
+  --shadow-2:0 26px 74px rgba(2,10,22,.55);
+  --grid-line:rgba(158,232,222,.03);
   --sheen:rgba(255,255,255,.07);
-  --scrim:rgba(4,8,18,.72);
+  --scrim:rgba(3,10,22,.74);
 
   --r-lg:20px; --r-md:14px; --r-sm:10px; --r-xs:8px;
   --ease:cubic-bezier(.22,1,.36,1);
@@ -56,39 +57,39 @@
   --rail:252px;
 }
 :root[data-theme="light"]{
-  --ink:#0F1730;
-  --bg:#EDF0F8;
-  --bg-elev:#F5F7FC;
+  --ink:#10312E;
+  --bg:#EDF6F4;
+  --bg-elev:#F6FBFA;
   --panel:#FFFFFF;
-  --panel-2:#F3F6FC;
-  --panel-3:#E7ECF7;
-  --line:rgba(15,23,48,.10);
-  --line-2:rgba(15,23,48,.17);
+  --panel-2:#F1F8F7;
+  --panel-3:#E2EFED;
+  --line:rgba(16,49,46,.10);
+  --line-2:rgba(16,49,46,.18);
 
-  --text:#101830;
-  --text-2:#4B5878;
-  --text-3:#7987A8;
+  --text:#122F2C;
+  --text-2:#47635F;
+  --text-3:#7C9793;
 
-  --iris:#4E5BE6;
-  --iris-2:#6A6FF0;
-  --iris-wash:rgba(78,91,230,.10);
-  --iris-glow:rgba(78,91,230,.35);
+  --iris:#0B8276;
+  --iris-2:#2FC7B8;
+  --iris-wash:rgba(11,130,118,.10);
+  --iris-glow:rgba(11,130,118,.38);
 
-  --mint:#0FA47C;
-  --mint-wash:rgba(15,164,124,.12);
-  --amber:#C07514;
-  --amber-wash:rgba(192,117,20,.12);
-  --rose:#DC3E62;
-  --rose-wash:rgba(220,62,98,.12);
-  --violet:#7B53E0;
-  --violet-wash:rgba(123,83,224,.12);
+  --mint:#1C7F4C;
+  --mint-wash:rgba(28,127,76,.12);
+  --amber:#B4760D;
+  --amber-wash:rgba(180,118,13,.12);
+  --rose:#D93A5E;
+  --rose-wash:rgba(217,58,94,.12);
+  --violet:#6440D8;
+  --violet-wash:rgba(100,64,216,.12);
 
   --on-accent:#FFFFFF;
-  --shadow-1:0 1px 2px rgba(19,30,64,.06),0 10px 26px rgba(19,30,64,.07);
-  --shadow-2:0 26px 70px rgba(19,30,64,.16);
-  --grid-line:rgba(15,23,48,.032);
-  --sheen:rgba(15,23,48,.04);
-  --scrim:rgba(237,240,248,.7);
+  --shadow-1:0 1px 2px rgba(16,49,46,.05),0 10px 26px rgba(16,49,46,.07);
+  --shadow-2:0 26px 70px rgba(16,49,46,.16);
+  --grid-line:rgba(16,49,46,.03);
+  --sheen:rgba(16,49,46,.04);
+  --scrim:rgba(237,246,244,.72);
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -156,7 +157,7 @@ html.theming *,html.theming *::before,html.theming *::after{
 .auth-logo{position:relative;text-align:center}
 .auth-logo .ftw-badge{
   font-family:'Sora',sans-serif;font-size:60px;font-weight:800;letter-spacing:-.05em;
-  background:linear-gradient(120deg,var(--iris-2),var(--mint));
+  background:linear-gradient(120deg,#7BE9DD,#2FBF9E);
   -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
 }
 .auth-logo .sub{margin-top:2px;font-size:13px;color:var(--text-3);letter-spacing:.02em}
@@ -221,7 +222,7 @@ html.theming *,html.theming *::before,html.theming *::after{
 }
 .sidebar-brand{
   font-family:'Sora',sans-serif;font-size:22px;font-weight:800;letter-spacing:-.04em;
-  background:linear-gradient(115deg,var(--iris-2),var(--mint));
+  background:linear-gradient(115deg,var(--iris-2),#3FC7A6);
   -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
 }
 .sidebar-status{display:flex;align-items:center;gap:8px;margin-top:6px;font-size:12px;color:var(--text-2)}
@@ -1072,7 +1073,7 @@ table code{font-size:12.5px;color:var(--text-2)}
           <div class="card-title" style="margin-bottom:14px;">Send an embed</div>
           <div class="grid-2" style="margin-bottom:12px;">
             <div class="field"><label>Channel ID</label><input class="input-sm" id="em-ch"></div>
-            <div class="field"><label>Colour (hex)</label><input class="input-sm" id="em-colour" value="6C7BFF"></div>
+            <div class="field"><label>Colour (hex)</label><input class="input-sm" id="em-colour" value="4FD1C5"></div>
           </div>
           <div class="field" style="margin-bottom:12px;"><label>Title</label><input class="input-sm" id="em-title"></div>
           <div class="field" style="margin-bottom:12px;"><label>Description</label><textarea class="input-sm" id="em-desc"></textarea></div>
@@ -1174,7 +1175,7 @@ table code{font-size:12.5px;color:var(--text-2)}
             <div class="card-title" style="margin-bottom:14px;">Create a role</div>
             <div class="grid-2" style="margin-bottom:14px;">
               <div class="field"><label>Name</label><input class="input-sm" id="adm-role-name" placeholder="new-role"></div>
-              <div class="field"><label>Colour (hex)</label><input class="input-sm" id="adm-role-colour" value="6C7BFF"></div>
+              <div class="field"><label>Colour (hex)</label><input class="input-sm" id="adm-role-colour" value="4FD1C5"></div>
             </div>
             <button class="btn btn-blue" onclick="adminCreateRole()">Create role</button>
           </div>
