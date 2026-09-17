@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#060C1A">
 <title>FTW · Dashboard</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><defs><linearGradient id='g' x1='6' y1='4' x2='42' y2='44' gradientUnits='userSpaceOnUse'><stop stop-color='%237BE9DD'/><stop offset='.55' stop-color='%234FD1C5'/><stop offset='1' stop-color='%2322A392'/></linearGradient></defs><path d='M24 3 42 12.6v20.8L24 43 6 33.4V12.6z' fill='url(%23g)'/><path d='M18.2 15h12.6v5.1h-7.7v4.2h6v4.9h-6V37h-4.9z' fill='%23051F1C'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -294,7 +295,7 @@ html.theming *,html.theming *::before,html.theming *::after{transition:backgroun
 .runtime-meta b{font-weight:600;color:var(--text)}
 @media(max-width:1000px){.pro-columns{grid-template-columns:1fr 1fr}.pro-columns .pro-card:last-child{grid-column:1/-1}.pro-bottom{grid-template-columns:1fr}}
 
-/* ═══ DATA + FORMS ═══ */
+/* ═══ DATA ═══ */
 .table-scroll{overflow:auto;border-radius:var(--r-sm)}
 table{width:100%;border-collapse:collapse;font-size:13.5px}
 .table-scroll table{min-width:600px}
@@ -411,55 +412,13 @@ table code{font-size:12.5px;color:var(--text-2)}
 .kpi-bump{animation:kpiBump .5s var(--ease)}
 @keyframes kpiBump{0%{transform:scale(.94);opacity:.6}68%{transform:scale(1.04)}100%{transform:none;opacity:1}}
 
-/* ═══ WAVESHIELD IMPORT/EXPORT ═══ */
+/* ═══ WAVESHIELD IO ═══ */
 .ws-io-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:14px;padding:12px 14px;border:1px dashed var(--line-2);border-radius:12px;background:rgba(79,209,197,.04)}
 .ws-io-bar .ws-io-label{flex:1;min-width:200px;font-size:11.5px;color:var(--text-2);line-height:1.5}
 .ws-io-bar .ws-io-label b{color:var(--iris)}
-.ws-io-bar .ws-io-label code{color:var(--text-3);font-size:10.5px}
+.ws-io-bar .ws-io-label code{color:var(--text-3);font-size:10.5px;word-break:break-all}
 .ws-io-actions{display:flex;gap:7px;flex-wrap:wrap}
 .ws-import-input{display:none}
-
-/* ═══ RESPONSIVE ═══ */
-@media(max-width:920px){
-  #sidebar{position:fixed;inset:0 auto 0 0;width:288px;min-width:288px;z-index:300;transform:translateX(-102%);box-shadow:var(--shadow-2)}
-  #sidebar.open{transform:translateX(0)}
-  .mobile-menu{display:inline-flex}
-  #topbar{height:64px;padding:0 14px;gap:12px}
-  #topbar-sub{display:none}
-  #content{padding:18px 14px 100px}
-  .topbar-search{min-width:0;width:40px;padding:9px;justify-content:center}
-  .topbar-search span,.topbar-search kbd{display:none}
-  #session-chip{display:none}
-  .save-bar{left:14px;right:14px;bottom:14px}
-  .grid-charts,.grid-charts-3,.grid-2,.grid-3,.server-grid,.pro-columns{grid-template-columns:1fr}
-  .pro-columns .pro-card:last-child{grid-column:auto}
-  .pro-metrics{grid-template-columns:1fr 1fr}
-  .pro-section-head{flex-direction:column;align-items:flex-start}
-  .server-banner-content{flex-direction:column;align-items:flex-start;padding:22px}
-  .server-name{font-size:22px}
-  .profile-strip{flex-direction:column;align-items:flex-start;padding:18px}
-}
-@media(max-width:560px){
-  .auth-mark{width:64px;height:64px;border-radius:20px}
-  .auth-mark svg{width:38px;height:38px}
-  .auth-wordmark{font-size:28px}
-  .card{padding:16px}
-  .grid-kpi{grid-template-columns:1fr}
-  .server-profile-body{grid-template-columns:1fr}
-  .server-name-row{flex-direction:column}
-  .quick-grid{grid-template-columns:1fr 1fr}
-  .topbar-actions .btn-primary{display:none}
-  .setting-row{flex-wrap:wrap}
-  .setting-row .input-sm{width:100%!important}
-}
-@media(prefers-reduced-motion:reduce){
-  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
-}
-
-/* User lookup */
-.user-lookup-hero{display:flex;align-items:center;gap:16px;padding:18px;border:1px solid var(--line);border-radius:18px;background:linear-gradient(135deg,var(--panel),color-mix(in srgb,var(--panel) 72%,var(--iris) 28%));margin-bottom:14px}
-.user-lookup-avatar{width:58px;height:58px;border-radius:16px;object-fit:cover;background:var(--panel-2);border:1px solid var(--line)}
-.user-lookup-avatar.empty{display:grid;place-items:center;font-size:22px;color:var(--text-2)}
 .api-status-pill{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--panel-2);color:var(--text-2);border-radius:999px;padding:7px 10px;font-size:11px;font-weight:800;cursor:pointer}
 .api-status-dot{width:7px;height:7px;border-radius:50%;background:var(--amber);box-shadow:0 0 0 4px rgba(255,180,70,.08)}
 .api-status-pill.online .api-status-dot{background:var(--mint);box-shadow:0 0 0 4px rgba(65,226,161,.08)}
@@ -523,7 +482,49 @@ table code{font-size:12.5px;color:var(--text-2)}
 .lookup-meta{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:14px}
 .lookup-meta .mini{padding:12px;border:1px solid var(--line);border-radius:13px;background:var(--panel-2)}
 .lookup-meta b{display:block;font-size:14px;margin-top:4px;overflow:hidden;text-overflow:ellipsis}
+.user-lookup-hero{display:flex;align-items:center;gap:16px;padding:18px;border:1px solid var(--line);border-radius:18px;background:linear-gradient(135deg,var(--panel),color-mix(in srgb,var(--panel) 72%,var(--iris) 28%));margin-bottom:14px}
+.user-lookup-avatar{width:58px;height:58px;border-radius:16px;object-fit:cover;background:var(--panel-2);border:1px solid var(--line)}
+.user-lookup-avatar.empty{display:grid;place-items:center;font-size:22px;color:var(--text-2)}
 @media(max-width:900px){.lookup-meta{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:920px){
+  #sidebar{position:fixed;inset:0 auto 0 0;width:288px;min-width:288px;z-index:300;transform:translateX(-102%);box-shadow:var(--shadow-2)}
+  #sidebar.open{transform:translateX(0)}
+  .mobile-menu{display:inline-flex}
+  #topbar{height:64px;padding:0 14px;gap:12px}
+  #topbar-sub{display:none}
+  #content{padding:18px 14px 100px}
+  .topbar-search{min-width:0;width:40px;padding:9px;justify-content:center}
+  .topbar-search span,.topbar-search kbd{display:none}
+  #session-chip{display:none}
+  .save-bar{left:14px;right:14px;bottom:14px}
+  .grid-charts,.grid-charts-3,.grid-2,.grid-3,.server-grid,.pro-columns{grid-template-columns:1fr}
+  .pro-columns .pro-card:last-child{grid-column:auto}
+  .pro-metrics{grid-template-columns:1fr 1fr}
+  .pro-section-head{flex-direction:column;align-items:flex-start}
+  .server-banner-content{flex-direction:column;align-items:flex-start;padding:22px}
+  .server-name{font-size:22px}
+  .profile-strip{flex-direction:column;align-items:flex-start;padding:18px}
+  .api-connection-row{grid-template-columns:1fr}
+}
+@media(max-width:560px){
+  .auth-mark{width:64px;height:64px;border-radius:20px}
+  .auth-mark svg{width:38px;height:38px}
+  .auth-wordmark{font-size:28px}
+  .card{padding:16px}
+  .grid-kpi{grid-template-columns:1fr}
+  .server-profile-body{grid-template-columns:1fr}
+  .server-name-row{flex-direction:column}
+  .quick-grid{grid-template-columns:1fr 1fr}
+  .topbar-actions .btn-primary{display:none}
+  .setting-row{flex-wrap:wrap}
+  .setting-row .input-sm{width:100%!important}
+  .ws-profile-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+}
 </style>
 </head>
 <body>
@@ -1428,7 +1429,7 @@ table code{font-size:12.5px;color:var(--text-2)}
             <div>
               <div class="eyebrow">SECURITY / REAL-TIME</div>
               <div class="ws-hero-title">WaveShield ban intelligence</div>
-              <div class="muted" style="max-width:760px;margin-top:6px;">A Discord-focused view of the users WaveShield has banned, with lazy-loaded Discord profiles, identifiers, evidence and a direct live WaveShield console.</div>
+              <div class="muted" style="max-width:760px;margin-top:6px;">Live sync from the WaveShield API. Bans refresh automatically every 5 minutes, with cached fallback when offline.</div>
             </div>
             <div class="ws-hero-actions">
               <span class="ws-live-badge"><span></span> Live console</span>
@@ -1437,19 +1438,60 @@ table code{font-size:12.5px;color:var(--text-2)}
           </div>
         </div>
 
-        <div class="card api-connection-card" id="api-connection-card" style="margin-bottom:14px;">
+        <!-- ══ WAVESHIELD API SYNC ══ -->
+        <div class="card" id="ws-api-card" style="margin-bottom:14px;">
           <div class="card-head">
-            <div><div class="card-title">Dashboard API connection</div><div class="muted" style="margin-top:4px;">If the bot API is offline, imported bans remain available. Fix the API URL here and test it without changing the bot token.</div></div>
-            <span class="status-chip" id="api-connection-chip">Checking…</span>
+            <div>
+              <div class="card-title">WaveShield API sync</div>
+              <div class="muted" style="margin-top:4px;">Connect your WaveShield API key to pull bans automatically. Bans refresh on every page load and every 5 minutes.</div>
+            </div>
+            <span class="status-chip" id="ws-sync-status">Not configured</span>
           </div>
-          <div class="api-connection-row">
-            <input class="input-sm" id="bot-api-url" value="" spellcheck="false" placeholder="https://your-bot-api.example.com">
-            <button class="btn btn-secondary" onclick="testAndSaveApi()">✓ Test &amp; save</button>
-            <button class="btn btn-secondary" onclick="resetApiUrl()">Reset</button>
+          <div class="grid-2" style="margin-top:16px;">
+            <div class="field">
+              <label>WaveShield API key</label>
+              <input class="input-sm" type="password" id="ws-api-key" placeholder="wsk_..." spellcheck="false" autocomplete="off">
+            </div>
+            <div class="field">
+              <label>API base URL</label>
+              <input class="input-sm" type="text" id="ws-api-url" value="https://api.waveshield.xyz" spellcheck="false">
+            </div>
           </div>
-          <div class="api-connection-help" id="api-connection-help">Current endpoint: <code id="api-current-label"></code></div>
+          <div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:14px;">
+            <button class="btn btn-primary" onclick="testWaveShieldApi()">✓ Save &amp; test</button>
+            <button class="btn btn-secondary" id="ws-sync-btn" onclick="syncWaveShieldBans()">↻ Sync now</button>
+            <button class="btn btn-danger" onclick="clearWsApiKey()">✕ Forget key</button>
+          </div>
+          <div class="ws-io-bar" style="margin-top:14px;">
+            <div class="ws-io-label">
+              <b>Endpoint</b> — <code>GET https://api.waveshield.xyz/v1/bans/search?limit=100&amp;page=1</code><br>
+              The key is stored locally in this browser only. Get it from <code>waveshield.xyz → API keys</code>.
+            </div>
+          </div>
+          <div id="ws-sync-log" class="waveshield-note" style="margin-top:10px;">No sync has run yet.</div>
         </div>
 
+        <!-- ══ WAVESHIELD IMPORT / EXPORT ══ -->
+        <div class="card" style="margin-bottom:14px;">
+          <div class="card-head">
+            <div>
+              <div class="card-title">Import / Export JSON</div>
+              <div class="muted" style="margin-top:4px;">Manually back up or restore the ban list. Exports every currently loaded ban; imports replace the active dataset in this browser.</div>
+            </div>
+          </div>
+          <div class="ws-io-bar">
+            <div class="ws-io-label">
+              <b>JSON backup</b> — export downloads a dated file. Import validates the array and confirms before replacing.
+            </div>
+            <div class="ws-io-actions">
+              <button class="btn btn-secondary btn-sm" onclick="exportWaveShieldBans()">⇩ Export JSON</button>
+              <button class="btn btn-primary btn-sm" onclick="triggerWaveShieldImport()">⇧ Import JSON</button>
+            </div>
+          </div>
+          <input type="file" id="waveshield-import-input" class="ws-import-input" accept="application/json,.json">
+        </div>
+
+        <!-- ══ WAVESHIELD BAN LIST + IFRAME ══ -->
         <div class="card" style="margin-bottom:14px;">
           <div class="card-head">
             <div>
@@ -1459,30 +1501,12 @@ table code{font-size:12.5px;color:var(--text-2)}
             <span class="status-chip live"><span class="waveshield-live-dot"></span>Live view</span>
           </div>
           <div class="waveshield-toolbar" style="margin-top:14px;">
-            <div class="waveshield-note"><strong>WaveShield bans</strong><br>The console below loads the WaveShield dashboard directly. Use Refresh if the ban list changes.</div>
+            <div class="waveshield-note"><strong>Bans list</strong><br>Populated from the API sync. Use the filters below to narrow down.</div>
             <div style="display:flex;gap:8px;flex-wrap:wrap;">
-              <button class="btn btn-secondary" id="waveshield-refresh-btn" onclick="refreshWaveShieldBans()">↻ Refresh</button>
+              <button class="btn btn-secondary" id="waveshield-refresh-btn" onclick="refreshWaveShieldBans()">↻ Refresh iframe</button>
               <button class="btn btn-secondary" onclick="openWaveShieldBans()">↗ Open WaveShield</button>
             </div>
           </div>
-          <div class="waveshield-toolbar">
-            <div class="waveshield-note"><strong>Discord ban profiles</strong><br>Every record below is from the supplied WaveShield export. Open a row to load the Discord profile from the bot, inspect IDs, evidence and ban details.</div>
-            <div style="display:flex;gap:8px;flex-wrap:wrap;">
-              <button class="btn btn-secondary" onclick="exportWaveShieldBans()">⇩ Export JSON</button>
-              <button class="btn btn-primary" onclick="triggerWaveShieldImport()">⇧ Import JSON</button>
-            </div>
-          </div>
-          <div class="ws-io-bar">
-            <div class="ws-io-label">
-              <b>Import / Export</b> — Export downloads all currently loaded bans as a JSON file. Import replaces the current dataset with the JSON file you pick. The dataset is saved to your browser's localStorage so it survives reloads.
-            </div>
-            <div class="ws-io-actions">
-              <button class="btn btn-secondary btn-sm" onclick="exportWaveShieldBans()">⇩ Export JSON</button>
-              <button class="btn btn-primary btn-sm" onclick="triggerWaveShieldImport()">⇧ Import JSON</button>
-              <button class="btn btn-danger btn-sm" onclick="clearWaveShieldBans()">✕ Reset to defaults</button>
-            </div>
-          </div>
-          <input type="file" id="waveshield-import-input" class="ws-import-input" accept="application/json,.json">
           <div class="ws-ban-filters">
             <input class="input-sm" id="waveshield-ban-search" placeholder="Search player / Discord / FiveM / ban ID" oninput="renderWaveShieldBans()">
             <select class="input-sm" id="waveshield-ban-reason" onchange="renderWaveShieldBans()"><option value="">All reasons</option></select>
@@ -1494,7 +1518,7 @@ table code{font-size:12.5px;color:var(--text-2)}
           <div class="waveshield-frame-wrap" style="margin-top:16px;">
             <iframe id="waveshield-bans-frame" class="waveshield-frame" title="WaveShield banned users" src="https://waveshield.xyz/dashboard/server/f4579c62-bb22-4634-b444-a581ba0f6068/bans" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
           </div>
-          <div class="waveshield-note" style="margin-top:10px;">The table above is the supplied WaveShield ban export. The iframe remains available for the live WaveShield web console.</div>
+          <div class="waveshield-note" style="margin-top:10px;">The iframe shows the live WaveShield web console. The table above is populated by the API sync.</div>
         </div>
       </div>
 
@@ -1580,22 +1604,12 @@ let statusTimer=null, logsTimer=null, auditTimer=null, liveServerTimer=null;
 let statusHist=[], lastAnalytics=null, lastPing=60;
 const charts = {};
 
-/* ═══════════════════════════════════════════════════════════
-   THEME
-   ═══════════════════════════════════════════════════════════ */
+/* ═══ THEME ═══ */
 const THEME_KEY = 'ftw_theme';
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-function cssVar(name){
-  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-}
-function palette(){
-  return {
-    iris: cssVar('--iris'), mint: cssVar('--mint'), violet: cssVar('--violet'),
-    amber: cssVar('--amber'), rose: cssVar('--rose'),
-    text2: cssVar('--text-2'), line: cssVar('--line'), panel: cssVar('--panel')
-  };
-}
+function cssVar(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+function palette(){ return { iris: cssVar('--iris'), mint: cssVar('--mint'), violet: cssVar('--violet'), amber: cssVar('--amber'), rose: cssVar('--rose'), text2: cssVar('--text-2'), line: cssVar('--line'), panel: cssVar('--panel') }; }
 function withAlpha(hex, a){
   const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex.trim());
   if(!m) return hex;
@@ -1604,10 +1618,7 @@ function withAlpha(hex, a){
 function currentTheme(){ return document.documentElement.getAttribute('data-theme') || 'dark'; }
 function applyTheme(theme, animate){
   const root = document.documentElement;
-  if(animate && !reduceMotion){
-    root.classList.add('theming');
-    setTimeout(()=>root.classList.remove('theming'), 480);
-  }
+  if(animate && !reduceMotion){ root.classList.add('theming'); setTimeout(()=>root.classList.remove('theming'), 480); }
   root.setAttribute('data-theme', theme);
   root.style.colorScheme = theme;
   try{ localStorage.setItem(THEME_KEY, theme); }catch(e){}
@@ -1617,13 +1628,10 @@ function toggleTheme(){ applyTheme(currentTheme()==='dark' ? 'light' : 'dark', t
 (function initTheme(){
   let saved = null;
   try{ saved = localStorage.getItem(THEME_KEY); }catch(e){}
-  if(saved !== 'light' && saved !== 'dark'){
-    saved = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
-  }
+  if(saved !== 'light' && saved !== 'dark'){ saved = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'; }
   document.documentElement.setAttribute('data-theme', saved);
   document.documentElement.style.colorScheme = saved;
 })();
-
 function syncChartTheme(){
   if(!window.Chart) return;
   Chart.defaults.color = cssVar('--text-2');
@@ -1632,9 +1640,7 @@ function syncChartTheme(){
   if(document.getElementById('page-status')?.classList.contains('active')) renderLoadCharts();
 }
 
-/* ═══════════════════════════════════════════════════════════
-   HELPERS
-   ═══════════════════════════════════════════════════════════ */
+/* ═══ HELPERS ═══ */
 function toast(message, ok = true){
   const el = document.getElementById('toast');
   el.textContent = message;
@@ -1691,7 +1697,19 @@ async function fetchApi(path, options={}){
   }
   setApiState(false,'Bot API offline'); throw last || new Error('Bot API unavailable');
 }
-
+async function apiFetch(url, options={}){
+  const controller=new AbortController();
+  const timeout=setTimeout(()=>controller.abort(), 90000);
+  try{
+    const r=await fetch(url,{...options,signal:controller.signal,cache:'no-store'});
+    setApiState(true,'Bot API online');
+    return r;
+  }catch(e){
+    setApiState(false,'Bot API offline');
+    if(e?.name==='AbortError') throw new Error('Request timed out. The bot API did not respond within 90 seconds.');
+    throw new Error('Cannot reach the bot API at '+BOT_API+'. Check the bot host, port/reverse proxy and DNS.');
+  }finally{ clearTimeout(timeout); }
+}
 function openApiSettings(){
   const input=document.getElementById('bot-api-url');
   if(input){ input.focus(); input.select(); }
@@ -1713,10 +1731,7 @@ function resetApiUrl(){
   setApiState(false,'Checking…');
   checkApiHealth(false);
 }
-function esc(s){
-  return String(s ?? '').replace(/[&<>"']/g, c =>
-    ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
+function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function animateNumber(el, target){
   if(!el) return;
   const to = Number(target);
@@ -1734,15 +1749,11 @@ function animateNumber(el, target){
 }
 function setKpi(id, value){ animateNumber(document.getElementById(id), value); }
 
-/* ═══════════════════════════════════════════════════════════
-   SIGN IN
-   ═══════════════════════════════════════════════════════════ */
+/* ═══ SIGN IN ═══ */
 let PREAUTH = null, PREAUTH_USER = null;
-
 function showAuthError(message){
   const err = document.getElementById('auth-error');
-  err.textContent = message;
-  err.style.display = 'block';
+  err.textContent = message; err.style.display = 'block';
 }
 function cancelAuth(){
   PREAUTH = null; PREAUTH_USER = null;
@@ -1758,9 +1769,7 @@ async function handleOAuthCallback(code){
   document.getElementById('auth-step-loading').style.display = '';
   document.getElementById('auth-title').textContent = 'One moment';
   try{
-    const r = await fetchApi('/api/oauth/exchange', {
-      method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({code})
-    });
+    const r = await fetchApi('/api/oauth/exchange', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({code}) });
     const d = await r.json().catch(()=>({}));
     document.getElementById('auth-step-loading').style.display = 'none';
     if(!r.ok){
@@ -1770,8 +1779,7 @@ async function handleOAuthCallback(code){
       return;
     }
     PREAUTH = d.preauth; PREAUTH_USER = d.user;
-    document.getElementById('auth-user').textContent =
-      PREAUTH_USER.display_name || PREAUTH_USER.username || PREAUTH_USER.id;
+    document.getElementById('auth-user').textContent = PREAUTH_USER.display_name || PREAUTH_USER.username || PREAUTH_USER.id;
     document.getElementById('auth-title').textContent = 'Enter your password';
     document.getElementById('auth-step-2').style.display = '';
     setTimeout(()=>document.getElementById('in-pw').focus(), 90);
@@ -1790,10 +1798,7 @@ async function doLogin(){
   if(!pw){ showAuthError('Your password is missing.'); return; }
   btn.disabled = true; btn.textContent = 'Signing in…';
   try{
-    const r = await fetchApi('/api/login', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({preauth: PREAUTH, password: pw})
-    });
+    const r = await fetchApi('/api/login', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({preauth: PREAUTH, password: pw}) });
     const data = await r.json().catch(()=>({}));
     if(!r.ok) throw new Error(data.error || 'login failed');
     SESSION = data.token; USER = data.user;
@@ -1807,9 +1812,7 @@ async function doLogin(){
     else if(e.message === 'preauth invalid or expired') showAuthError('That took too long. Authorize with Discord again.');
     else if(e.message === 'Failed to fetch') showAuthError('The bot API at ' + BOT_API + ' did not answer.');
     else showAuthError(e.message);
-  }finally{
-    btn.disabled = false; btn.textContent = 'Sign in';
-  }
+  }finally{ btn.disabled = false; btn.textContent = 'Sign in'; }
 }
 function enterApp(){
   document.getElementById('auth-screen').style.display = 'none';
@@ -1839,20 +1842,13 @@ function canOpen(page){
 }
 function applyUser(){
   document.getElementById('who').textContent = USER.name + (isOwner() ? ' · owner' : ' · staff');
-  document.querySelectorAll('.nav-item[data-page]').forEach(n=>{
-    n.classList.toggle('hidden', !canOpen(n.dataset.page));
-  });
+  document.querySelectorAll('.nav-item[data-page]').forEach(n=>{ n.classList.toggle('hidden', !canOpen(n.dataset.page)); });
   document.getElementById('nav-staff').style.display = (isOwner() || USER.full_control || USER.manage_access) ? '' : 'none';
-
   document.querySelectorAll('#sidebar .nav-section').forEach(sec=>{
     let el = sec.nextElementSibling, any = false;
-    while(el && el.classList.contains('nav-item')){
-      if(!el.classList.contains('hidden')) any = true;
-      el = el.nextElementSibling;
-    }
+    while(el && el.classList.contains('nav-item')){ if(!el.classList.contains('hidden')) any = true; el = el.nextElementSibling; }
     sec.classList.toggle('hidden', !any);
   });
-
   const allowed = [...document.querySelectorAll('.nav-item[data-page]:not(.hidden)')];
   if(!allowed.length){ showNoAccess(); return; }
   const current = document.querySelector('.page.active')?.id.replace('page-','');
@@ -1867,9 +1863,7 @@ function showNoAccess(){
   document.querySelectorAll('#topbar-actions-save,.topbar-actions .btn-primary').forEach(b=>b.style.display='none');
 }
 
-/* ═══════════════════════════════════════════════════════════
-   PROFILE
-   ═══════════════════════════════════════════════════════════ */
+/* ═══ PROFILE ═══ */
 async function loadProfile(){
   try{
     const r = await fetchApi('/api/profile',{headers:hdr()});
@@ -1883,11 +1877,7 @@ async function loadProfile(){
     document.getElementById('pf-joined').textContent = p.joined_at ? fmtTime(p.joined_at) : 'not in this server';
     const rolesEl = document.getElementById('pf-roles');
     rolesEl.innerHTML = '';
-    if(p.role === 'owner'){
-      const b = document.createElement('span');
-      b.className = 'role-badge owner'; b.textContent = 'Owner';
-      rolesEl.appendChild(b);
-    }
+    if(p.role === 'owner'){ const b = document.createElement('span'); b.className = 'role-badge owner'; b.textContent = 'Owner'; rolesEl.appendChild(b); }
     (p.roles || []).forEach(role=>{
       if(role.is_default) return;
       const b = document.createElement('span');
@@ -1899,17 +1889,10 @@ async function loadProfile(){
   }catch(e){}
 }
 
-/* ═══════════════════════════════════════════════════════════
-   LIVE SERVER
-   ═══════════════════════════════════════════════════════════ */
+/* ═══ LIVE SERVER ═══ */
 function firstDefined(...vals){ return vals.find(v=>v!==undefined && v!==null && v!==''); }
 function safeText(v, fallback='—'){ return (v===undefined||v===null||v==='') ? fallback : String(v); }
-function setImg(id, url){
-  const el = document.getElementById(id);
-  if(!el) return;
-  if(url){ el.src = url; el.style.display = ''; }
-  else { el.removeAttribute('src'); el.style.display = 'none'; }
-}
+function setImg(id, url){ const el = document.getElementById(id); if(!el) return; if(url){ el.src = url; el.style.display = ''; } else { el.removeAttribute('src'); el.style.display = 'none'; } }
 function formatDiscordDate(v){
   if(!v) return '—';
   const n = typeof v === 'number' ? (v < 10000000000 ? v*1000 : v) : Date.parse(v);
@@ -1923,13 +1906,9 @@ function applyServerProfile(d, fallbackStatus, botProfile){
   const banner = firstDefined(guild.banner_url, guild.banner);
   const botAvatar = firstDefined(bot.avatar_url, bot.avatar, botProfile.avatar);
   const botBanner = firstDefined(bot.banner_url, bot.banner, botProfile.banner);
-
   setImg('server-icon', icon);
   const sb = document.getElementById('server-banner');
-  if(sb){
-    if(banner){ sb.style.backgroundImage = `url("${banner}")`; sb.classList.add('has-image'); }
-    else { sb.style.backgroundImage = ''; sb.classList.remove('has-image'); }
-  }
+  if(sb){ if(banner){ sb.style.backgroundImage = `url("${banner}")`; sb.classList.add('has-image'); } else { sb.style.backgroundImage = ''; sb.classList.remove('has-image'); } }
   document.getElementById('server-name').textContent = safeText(firstDefined(guild.name, d.name), 'Your server');
   const gid = firstDefined(guild.id, d.guild_id, d.id);
   document.getElementById('server-id').textContent = gid ? 'ID ' + gid : '—';
@@ -1941,18 +1920,13 @@ function applyServerProfile(d, fallbackStatus, botProfile){
   document.getElementById('server-created').textContent = formatDiscordDate(firstDefined(guild.created_at, d.created_at));
   document.getElementById('server-boost').textContent = safeText(firstDefined(guild.premium_tier, guild.boost_level, d.premium_tier));
   document.getElementById('server-verification').textContent = safeText(firstDefined(guild.verification_level, d.verification_level));
-  document.getElementById('server-description').textContent =
-    safeText(firstDefined(guild.description, d.description), 'This server has no description set in Discord.');
-
+  document.getElementById('server-description').textContent = safeText(firstDefined(guild.description, d.description), 'This server has no description set in Discord.');
   setImg('bot-avatar-large', botAvatar);
   document.getElementById('bot-profile-name').textContent = safeText(firstDefined(bot.display_name, bot.name, botProfile.display_name, botProfile.username), 'Bot');
   document.getElementById('bot-profile-handle').textContent = '@' + safeText(firstDefined(bot.username, botProfile.username), 'bot');
   document.getElementById('bot-profile-status').textContent = firstDefined(bot.status, botProfile.status, fallbackStatus.status, 'Connected to Discord');
   const bb = document.getElementById('bot-banner');
-  if(bb){
-    if(botBanner){ bb.style.backgroundImage = `url("${botBanner}")`; bb.classList.add('has-image'); }
-    else { bb.style.backgroundImage = ''; bb.classList.remove('has-image'); }
-  }
+  if(bb){ if(botBanner){ bb.style.backgroundImage = `url("${botBanner}")`; bb.classList.add('has-image'); } else { bb.style.backgroundImage = ''; bb.classList.remove('has-image'); } }
   document.getElementById('server-sync').textContent = 'Live';
   document.getElementById('server-last-sync').textContent = 'Last sync at ' + new Date().toLocaleTimeString();
 }
@@ -1974,9 +1948,7 @@ async function loadLiveServer(){
   }
 }
 
-/* ═══════════════════════════════════════════════════════════
-   OPERATIONS
-   ═══════════════════════════════════════════════════════════ */
+/* ═══ OPERATIONS ═══ */
 function proRuntime(sec){
   sec = Number(sec) || 0;
   const d = Math.floor(sec/86400), h = Math.floor(sec%86400/3600), m = Math.floor(sec%3600/60);
@@ -2014,33 +1986,21 @@ async function loadProCenter(){
     document.getElementById('pro-runtime-big').textContent = proRuntime(status.uptime);
     document.getElementById('pro-health').textContent = status.ping_ms != null ? 'Online' : 'No answer';
     const ring = document.getElementById('runtime-ring');
-    if(ring){
-      const pct = Math.max(4, Math.min(100, ((Number(status.uptime)||0) / 86400) * 100));
-      ring.style.setProperty('--ring', pct.toFixed(1) + '%');
-    }
+    if(ring){ const pct = Math.max(4, Math.min(100, ((Number(status.uptime)||0) / 86400) * 100)); ring.style.setProperty('--ring', pct.toFixed(1) + '%'); }
     document.getElementById('pro-whitelist').textContent = wl.enabled === false ? 'Off' : 'Protected';
     renderProEvents(logs.logs || []);
-  }catch(e){
-    const h = document.getElementById('pro-health');
-    if(h) h.textContent = 'No answer';
-  }
+  }catch(e){ const h = document.getElementById('pro-health'); if(h) h.textContent = 'No answer'; }
 }
 function proRefresh(){ loadLiveServer(); loadProCenter(); loadStatus(); toast('Everything refreshed'); }
 
-/* ═══════════════════════════════════════════════════════════
-   HEARTBEAT
-   ═══════════════════════════════════════════════════════════ */
+/* ═══ HEARTBEAT ═══ */
 let pulseRAF = null;
 function startPulse(){
   const cv = document.getElementById('hero-pulse');
   if(!cv || reduceMotion || pulseRAF) return;
   const ctx = cv.getContext('2d');
   let phase = 0;
-  function resize(){
-    const dpr = Math.min(2, window.devicePixelRatio || 1);
-    cv.width = cv.offsetWidth * dpr; cv.height = cv.offsetHeight * dpr;
-    ctx.setTransform(dpr,0,0,dpr,0,0);
-  }
+  function resize(){ const dpr = Math.min(2, window.devicePixelRatio || 1); cv.width = cv.offsetWidth * dpr; cv.height = cv.offsetHeight * dpr; ctx.setTransform(dpr,0,0,dpr,0,0); }
   resize();
   window.addEventListener('resize', resize);
   function frame(){
@@ -2071,9 +2031,7 @@ function startPulse(){
   frame();
 }
 
-/* ═══════════════════════════════════════════════════════════
-   CONFIG
-   ═══════════════════════════════════════════════════════════ */
+/* ═══ CONFIG ═══ */
 async function loadConfig(){
   try{
     const r = await fetchApi('/api/config',{headers:hdr()});
@@ -2092,9 +2050,7 @@ async function loadConfig(){
 }
 async function loadHealth(){ await checkApiHealth(true); }
 
-/* ═══════════════════════════════════════════════════════════
-   ANALYTICS
-   ═══════════════════════════════════════════════════════════ */
+/* ═══ ANALYTICS ═══ */
 async function loadAnalytics(){
   let d = null;
   try{
@@ -2121,23 +2077,18 @@ function renderAnalytics(d){
   setKpi('kpi-verify', d.verification?.passed ?? 0);
   setKpi('mini-an', d.features?.AntiNuke ?? 0);
   setKpi('mini-sc', d.features?.["Scam Catcher"] ?? 0);
-
   const weekly = d.weekly || [];
   renderSpark('spark-members', weekly.map(w=>w.value), c.iris);
   renderSpark('spark-hubs', (d.hourly||[]).slice(-12), c.mint);
   renderSpark('spark-threats', weekly.map(w=>w.value/2), c.rose);
   renderSpark('spark-verify', weekly.map(w=>w.value), c.violet);
-
   renderLine('chart-hourly', Array.from({length:24},(_,i)=>i+':00'), d.hourly || [], c.iris, c.mint);
-  renderDonut('chart-donut', ['Passed','Failed'],
-    [d.verification?.passed || 0, d.verification?.failed || 0], [c.mint, c.rose]);
-
+  renderDonut('chart-donut', ['Passed','Failed'], [d.verification?.passed || 0, d.verification?.failed || 0], [c.mint, c.rose]);
   document.getElementById('donut-legend').innerHTML = `
     <div style="display:flex;flex-direction:column;gap:9px;margin-top:14px;font-size:13px;color:var(--text-2)">
       <div style="display:flex;align-items:center;gap:9px"><span style="width:10px;height:10px;border-radius:3px;background:${c.mint}"></span>Passed<b style="margin-left:auto;color:var(--text)">${d.verification?.passed||0}</b></div>
       <div style="display:flex;align-items:center;gap:9px"><span style="width:10px;height:10px;border-radius:3px;background:${c.rose}"></span>Failed<b style="margin-left:auto;color:var(--text)">${d.verification?.failed||0}</b></div>
     </div>`;
-
   const f = d.features || {};
   renderBars('chart-bars', Object.keys(f), Object.values(f), [c.iris, c.mint, c.violet, c.amber, c.rose]);
   renderLine('chart-weekly', weekly.map(w=>w.day), weekly.map(w=>w.value), c.mint, null);
@@ -2147,28 +2098,18 @@ function renderSpark(id, data, colour){
   if(charts[id]) charts[id].destroy();
   charts[id] = new Chart(el, {
     type:'line',
-    data:{ labels:data.map((_,i)=>i), datasets:[{ data, borderColor:colour,
-      backgroundColor:withAlpha(colour,.16), borderWidth:2, fill:true, tension:.38, pointRadius:0 }] },
-    options:{ responsive:true, maintainAspectRatio:false, animation:{duration:reduceMotion?0:800},
-      plugins:{legend:{display:false},tooltip:{enabled:false}},
-      scales:{x:{display:false},y:{display:false}} }
+    data:{ labels:data.map((_,i)=>i), datasets:[{ data, borderColor:colour, backgroundColor:withAlpha(colour,.16), borderWidth:2, fill:true, tension:.38, pointRadius:0 }] },
+    options:{ responsive:true, maintainAspectRatio:false, animation:{duration:reduceMotion?0:800}, plugins:{legend:{display:false},tooltip:{enabled:false}}, scales:{x:{display:false},y:{display:false}} }
   });
 }
 function renderLine(id, labels, data, colour, second){
   const el = document.getElementById(id); if(!el) return;
   if(charts[id]) charts[id].destroy();
-  const datasets = [{ data, borderColor:colour, backgroundColor:withAlpha(colour,.15), borderWidth:2.5,
-    fill:true, tension:.38, pointRadius:0, pointHoverRadius:5, pointHoverBackgroundColor:colour }];
-  if(second){
-    datasets.push({ data:data.map(v=>Math.max(0, v*0.6)), borderColor:second, backgroundColor:'transparent',
-      borderWidth:2, borderDash:[4,4], fill:false, tension:.38, pointRadius:0 });
-  }
+  const datasets = [{ data, borderColor:colour, backgroundColor:withAlpha(colour,.15), borderWidth:2.5, fill:true, tension:.38, pointRadius:0, pointHoverRadius:5, pointHoverBackgroundColor:colour }];
+  if(second){ datasets.push({ data:data.map(v=>Math.max(0, v*0.6)), borderColor:second, backgroundColor:'transparent', borderWidth:2, borderDash:[4,4], fill:false, tension:.38, pointRadius:0 }); }
   charts[id] = new Chart(el, {
     type:'line', data:{labels, datasets},
-    options:{ responsive:true, maintainAspectRatio:false, animation:{duration:reduceMotion?0:900},
-      plugins:{legend:{display:false}}, interaction:{intersect:false,mode:'index'},
-      scales:{ x:{grid:{display:false},ticks:{maxRotation:0,autoSkipPadding:22}},
-        y:{grid:{color:cssVar('--line')},beginAtZero:true,ticks:{precision:0}} } }
+    options:{ responsive:true, maintainAspectRatio:false, animation:{duration:reduceMotion?0:900}, plugins:{legend:{display:false}}, interaction:{intersect:false,mode:'index'}, scales:{ x:{grid:{display:false},ticks:{maxRotation:0,autoSkipPadding:22}}, y:{grid:{color:cssVar('--line')},beginAtZero:true,ticks:{precision:0}} } }
   });
 }
 function renderDonut(id, labels, data, colours){
@@ -2177,8 +2118,7 @@ function renderDonut(id, labels, data, colours){
   charts[id] = new Chart(el, {
     type:'doughnut',
     data:{ labels, datasets:[{ data, backgroundColor:colours, borderWidth:0, hoverOffset:9 }] },
-    options:{ responsive:true, maintainAspectRatio:false, cutout:'70%',
-      animation:{duration:reduceMotion?0:900}, plugins:{legend:{display:false}} }
+    options:{ responsive:true, maintainAspectRatio:false, cutout:'70%', animation:{duration:reduceMotion?0:900}, plugins:{legend:{display:false}} }
   });
 }
 function renderBars(id, labels, data, colours){
@@ -2187,15 +2127,11 @@ function renderBars(id, labels, data, colours){
   charts[id] = new Chart(el, {
     type:'bar',
     data:{ labels, datasets:[{ data, backgroundColor:colours, borderRadius:7, maxBarThickness:30 }] },
-    options:{ responsive:true, maintainAspectRatio:false, animation:{duration:reduceMotion?0:900},
-      plugins:{legend:{display:false}},
-      scales:{ x:{grid:{display:false}}, y:{grid:{color:cssVar('--line')},beginAtZero:true,ticks:{precision:0}} } }
+    options:{ responsive:true, maintainAspectRatio:false, animation:{duration:reduceMotion?0:900}, plugins:{legend:{display:false}}, scales:{ x:{grid:{display:false}}, y:{grid:{color:cssVar('--line')},beginAtZero:true,ticks:{precision:0}} } }
   });
 }
 
-/* ═══════════════════════════════════════════════════════════
-   LIVE STATUS
-   ═══════════════════════════════════════════════════════════ */
+/* ═══ LIVE STATUS ═══ */
 let lastGuildSnapshot = {channels:0,roles:0,members:0,hubs:0};
 function renderLoadCharts(){
   const c = palette();
@@ -2209,9 +2145,7 @@ function renderLoadCharts(){
         { label:'CPU %', data:statusHist.map(s=>s.cpu), borderColor:c.iris, backgroundColor:withAlpha(c.iris,.15), fill:true, tension:.38, borderWidth:2, pointRadius:0 },
         { label:'Memory MB', data:statusHist.map(s=>s.mem), borderColor:c.mint, backgroundColor:'transparent', fill:false, tension:.38, borderWidth:2, pointRadius:0 }
       ] },
-      options:{ responsive:true, maintainAspectRatio:false, animation:{duration:reduceMotion?0:500},
-        plugins:{legend:{display:true,position:'bottom',labels:{boxWidth:10,boxHeight:10,usePointStyle:true,pointStyle:'circle',padding:14}}},
-        scales:{x:{display:false},y:{grid:{color:cssVar('--line')},beginAtZero:true}} }
+      options:{ responsive:true, maintainAspectRatio:false, animation:{duration:reduceMotion?0:500}, plugins:{legend:{display:true,position:'bottom',labels:{boxWidth:10,boxHeight:10,usePointStyle:true,pointStyle:'circle',padding:14}}}, scales:{x:{display:false},y:{grid:{color:cssVar('--line')},beginAtZero:true}} }
     });
   }
   const g = document.getElementById('chart-guild');
@@ -2220,12 +2154,8 @@ function renderLoadCharts(){
     const d = lastGuildSnapshot;
     charts['chart-guild'] = new Chart(g, {
       type:'doughnut',
-      data:{ labels:['Channels','Roles','Members','Voice rooms'],
-        datasets:[{ data:[d.channels||0,d.roles||0,d.members||0,d.hubs||0],
-          backgroundColor:[c.iris,c.violet,c.mint,c.amber], borderWidth:0, hoverOffset:7 }] },
-      options:{ responsive:true, maintainAspectRatio:false, cutout:'66%',
-        animation:{duration:reduceMotion?0:700},
-        plugins:{legend:{position:'bottom',labels:{padding:14,boxWidth:10,boxHeight:10,usePointStyle:true,pointStyle:'circle'}}} }
+      data:{ labels:['Channels','Roles','Members','Voice rooms'], datasets:[{ data:[d.channels||0,d.roles||0,d.members||0,d.hubs||0], backgroundColor:[c.iris,c.violet,c.mint,c.amber], borderWidth:0, hoverOffset:7 }] },
+      options:{ responsive:true, maintainAspectRatio:false, cutout:'66%', animation:{duration:reduceMotion?0:700}, plugins:{legend:{position:'bottom',labels:{padding:14,boxWidth:10,boxHeight:10,usePointStyle:true,pointStyle:'circle'}}} }
     });
   }
 }
@@ -2247,26 +2177,20 @@ async function loadStatus(){
   }catch(e){}
 }
 
-/* ═══════════════════════════════════════════════════════════
-   ACTIVITY + AUDIT
-   ═══════════════════════════════════════════════════════════ */
+/* ═══ LOGS + AUDIT ═══ */
 async function loadLogs(){
   const el = document.getElementById('logs-list');
   try{
     const r = await fetchApi('/api/logs',{headers:hdr()});
     if(!r.ok){ el.innerHTML = '<div class="empty-state"><strong>Activity would not load</strong>The bot did not answer. Try refresh.</div>'; return; }
     const d = await r.json();
-    if(!d.logs || !d.logs.length){
-      el.innerHTML = '<div class="empty-state"><strong>Nothing yet</strong>Actions the bot takes show up here.</div>'; return;
-    }
+    if(!d.logs || !d.logs.length){ el.innerHTML = '<div class="empty-state"><strong>Nothing yet</strong>Actions the bot takes show up here.</div>'; return; }
     el.innerHTML = d.logs.map(l=>{
       const ts = new Date(l.time*1000).toLocaleTimeString();
       const kind = (l.kind || 'event').toLowerCase();
       return `<div class="log-item"><div class="log-time">${ts}</div><div class="log-kind ${esc(kind)}">${esc(l.kind||'event')}</div><div class="log-text">${esc(l.text||'')}</div></div>`;
     }).join('');
-  }catch(e){
-    el.innerHTML = '<div class="empty-state"><strong>Activity would not load</strong>The bot API did not answer.</div>';
-  }
+  }catch(e){ el.innerHTML = '<div class="empty-state"><strong>Activity would not load</strong>The bot API did not answer.</div>'; }
 }
 async function loadAudit(){
   const el = document.getElementById('audit-list');
@@ -2278,9 +2202,7 @@ async function loadAudit(){
       return;
     }
     const d = await r.json();
-    if(!d.entries || !d.entries.length){
-      el.innerHTML = '<div class="empty-state"><strong>Nothing yet</strong>Changes people make in Discord show up here.</div>'; return;
-    }
+    if(!d.entries || !d.entries.length){ el.innerHTML = '<div class="empty-state"><strong>Nothing yet</strong>Changes people make in Discord show up here.</div>'; return; }
     el.innerHTML = d.entries.map(e=>{
       const reason = e.reason ? `<span class="audit-meta">· ${esc(e.reason)}</span>` : '';
       const target = e.target ? `<span class="audit-meta">on ${esc(e.target)}</span>` : '';
@@ -2293,14 +2215,10 @@ async function loadAudit(){
         <div class="audit-meta" style="white-space:nowrap;">${fmtRel(e.created_at)}</div>
       </div>`;
     }).join('');
-  }catch(e){
-    el.innerHTML = '<div class="empty-state"><strong>Audit log would not load</strong>The bot API did not answer.</div>';
-  }
+  }catch(e){ el.innerHTML = '<div class="empty-state"><strong>Audit log would not load</strong>The bot API did not answer.</div>'; }
 }
 
-/* ═══════════════════════════════════════════════════════════
-   WHITELIST
-   ═══════════════════════════════════════════════════════════ */
+/* ═══ WHITELIST ═══ */
 async function loadWhitelist(){
   try{
     const r = await fetchApi('/api/whitelist',{headers:hdr()});
@@ -2308,10 +2226,7 @@ async function loadWhitelist(){
     const d = await r.json();
     document.getElementById('wl-enabled').checked = d.enabled !== false;
     const tb = document.getElementById('wl-rows');
-    if(!d.whitelist || !d.whitelist.length){
-      tb.innerHTML = '<tr><td colspan="5"><div class="empty-state"><strong>Nobody is whitelisted</strong>Add trusted people above.</div></td></tr>';
-      return;
-    }
+    if(!d.whitelist || !d.whitelist.length){ tb.innerHTML = '<tr><td colspan="5"><div class="empty-state"><strong>Nobody is whitelisted</strong>Add trusted people above.</div></td></tr>'; return; }
     tb.innerHTML = d.whitelist.map(w=>`
       <tr>
         <td><code class="mono">${esc(w.id)}</code></td>
@@ -2323,18 +2238,14 @@ async function loadWhitelist(){
   }catch(e){}
 }
 
-/* ═══════════════════════════════════════════════════════════
-   USER LOOKUP
-   ═══════════════════════════════════════════════════════════ */
+/* ═══ USER LOOKUP ═══ */
 function useConfiguredGuild(){
   const el=document.getElementById('lookup-guild-id');
   if(el && config.guild_id) el.value=String(config.guild_id);
   if(el) el.focus();
 }
 function clearUserLookup(){
-  const u=document.getElementById('lookup-user');
-  const r=document.getElementById('lookup-result');
-  const e=document.getElementById('lookup-empty');
+  const u=document.getElementById('lookup-user'), r=document.getElementById('lookup-result'), e=document.getElementById('lookup-empty');
   if(u) u.value='';
   if(r){ r.style.display='none'; r.innerHTML=''; }
   if(e) e.style.display='';
@@ -2354,9 +2265,7 @@ async function loadScanBlacklist(){
     const ids=Array.isArray(d.blacklisted)?d.blacklisted:[];
     if(count) count.textContent=ids.length+' blacklisted';
     list.innerHTML=ids.length ? ids.map(id=>`<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line);"><code class="mono" style="flex:1;">${esc(id)}</code><button class="btn btn-secondary btn-sm" onclick="removeScanBlacklist('${esc(id)}')">Remove</button></div>`).join('') : '<div class="muted">No extra blacklisted servers.</div>';
-  }catch(e){
-    list.innerHTML='<div class="muted">'+esc(e.message||'Could not load scan blacklist')+'</div>';
-  }
+  }catch(e){ list.innerHTML='<div class="muted">'+esc(e.message||'Could not load scan blacklist')+'</div>'; }
 }
 async function addScanBlacklist(){
   const input=document.getElementById('blacklist-guild-id');
@@ -2380,21 +2289,6 @@ async function removeScanBlacklist(gid){
     toast('Server removed from scan blacklist');
   }catch(e){ toast(e.message||'Could not remove server',false); }
 }
-
-async function apiFetch(url, options={}){
-  const controller=new AbortController();
-  const timeout=setTimeout(()=>controller.abort(), 90000);
-  try{
-    const r=await fetch(url,{...options,signal:controller.signal,cache:'no-store'});
-    setApiState(true,'Bot API online');
-    return r;
-  }catch(e){
-    setApiState(false,'Bot API offline');
-    if(e?.name==='AbortError') throw new Error('Request timed out. The bot API did not respond within 90 seconds.');
-    throw new Error('Cannot reach the bot API at '+BOT_API+'. Check the bot host, port/reverse proxy and DNS.');
-  }finally{ clearTimeout(timeout); }
-}
-
 async function lookupUser(){
   const guildId=val('lookup-guild-id').trim();
   const query=val('lookup-user').trim();
@@ -2408,8 +2302,7 @@ async function lookupUser(){
     const d=await r.json().catch(()=>({}));
     if(!r.ok) throw new Error(d.error || 'User lookup failed');
     const m=d.member||{}, roles=d.roles||[], guild=d.guild||{};
-    const result=document.getElementById('lookup-result');
-    const empty=document.getElementById('lookup-empty');
+    const result=document.getElementById('lookup-result'), empty=document.getElementById('lookup-empty');
     const avatar=m.avatar ? `<img class="user-lookup-avatar" src="${esc(m.avatar)}" alt="">` : `<div class="user-lookup-avatar empty">◉</div>`;
     const roleHtml=roles.length ? `<div class="lookup-role-grid">${roles.map(lookupRoleHtml).join('')}</div>` : '<div class="muted" style="margin-top:12px;">No custom roles on this server.</div>';
     result.innerHTML=`
@@ -2425,7 +2318,6 @@ async function lookupUser(){
   }catch(e){ toast(e.message || 'User lookup failed', false); }
   finally{ if(btn){ btn.disabled=false; btn.textContent='⌕ Look up user'; } }
 }
-
 async function scanAllServers(){
   const query=val('lookup-user').trim();
   const btn=document.getElementById('scan-all-btn');
@@ -2452,36 +2344,39 @@ async function scanAllServers(){
 }
 
 /* ═══════════════════════════════════════════════════════════
-   WAVESHIELD BANS
-   ═══════════════════════════════════════════════════════════
-   ▼▼▼ PASTE YOUR ORIGINAL WAVESHIELD_IMPORTED_BANS ARRAY ▼▼▼
-   Replace the empty array below with the exact same array that
-   was in your previous file. Everything else will keep working.
-   The import/export feature saves the loaded dataset to
-   localStorage so your imports survive page reloads.
+   WAVESHIELD BANS — LIVE SYNC FROM api.waveshield.xyz
    ═══════════════════════════════════════════════════════════ */
-const WAVESHIELD_DEFAULT_BANS = [
-  // ← PASTE YOUR EXISTING WAVESHIELD_IMPORTED_BANS DATA HERE
-  // Example (delete this and paste your real data):
-  // { "banId":"76022", "reason":"Silent Aim Detected", "playerName":"example", "identifiers":[...] },
-];
+const WS_SERVER_ID       = 'f4579c62-bb22-4634-b444-a581ba0f6068';
+const WS_API_BASE        = 'https://api.waveshield.xyz';
+const WS_STORAGE_KEY     = 'ftw_waveshield_bans_v1';
+const WS_API_KEY_STORAGE = 'ftw_waveshield_api_key';
+const WS_API_URL_STORAGE = 'ftw_waveshield_api_url';
+const WS_PAGE_SIZE       = 100;
+const WS_MAX_PAGES       = 100;
+const WS_SYNC_INTERVAL   = 5 * 60 * 1000;
 
-const WS_STORAGE_KEY = 'ftw_waveshield_bans_v1';
-function loadWaveShieldBans(){
-  try{
-    const saved = localStorage.getItem(WS_STORAGE_KEY);
-    if(saved){
-      const parsed = JSON.parse(saved);
-      if(Array.isArray(parsed) && parsed.length) return parsed;
-    }
-  }catch(e){}
-  return WAVESHIELD_DEFAULT_BANS;
-}
-let WAVESHIELD_IMPORTED_BANS = loadWaveShieldBans();
+let WAVESHIELD_IMPORTED_BANS = [];
+let wsSyncTimer = null;
 
-function saveWaveShieldBans(){
-  try{ localStorage.setItem(WS_STORAGE_KEY, JSON.stringify(WAVESHIELD_IMPORTED_BANS)); }catch(e){}
+function getWsApiKey(){ try{ return localStorage.getItem(WS_API_KEY_STORAGE) || ''; }catch(e){ return ''; } }
+function setWsApiKey(v){ try{ v ? localStorage.setItem(WS_API_KEY_STORAGE, v) : localStorage.removeItem(WS_API_KEY_STORAGE); }catch(e){} }
+function getWsApiBase(){ try{ return (localStorage.getItem(WS_API_URL_STORAGE) || WS_API_BASE).replace(/\/+$/,''); }catch(e){ return WS_API_BASE; } }
+function setWsApiBase(v){ try{ (v && v !== WS_API_BASE) ? localStorage.setItem(WS_API_URL_STORAGE, v) : localStorage.removeItem(WS_API_URL_STORAGE); }catch(e){} }
+function clearWsApiKey(){
+  if(!confirm('Forget the saved WaveShield API key from this browser?')) return;
+  setWsApiKey(''); setWsApiBase('');
+  const keyInput=document.getElementById('ws-api-key'); if(keyInput) keyInput.value='';
+  const urlInput=document.getElementById('ws-api-url'); if(urlInput) urlInput.value=WS_API_BASE;
+  const statusEl=document.getElementById('ws-sync-status'); if(statusEl) statusEl.textContent='Not configured';
+  const logEl=document.getElementById('ws-sync-log'); if(logEl) logEl.textContent='Key removed.';
+  toast('API key removed');
 }
+function loadCachedBans(){
+  try{ const raw = localStorage.getItem(WS_STORAGE_KEY); if(raw){ const p = JSON.parse(raw); if(Array.isArray(p)) return p; } }catch(e){}
+  return null;
+}
+function saveCachedBans(list){ try{ localStorage.setItem(WS_STORAGE_KEY, JSON.stringify(list)); }catch(e){} }
+
 function wsBanIdentifier(b,type){
   const item=(b.identifiers||[]).find(x=>String(x.type||'').toLowerCase()===type);
   return item ? String(item.value||'') : '';
@@ -2492,10 +2387,158 @@ function wsDiscordId(b){
   const m=raw.match(/(\d{15,25})/);
   return m?m[1]:'';
 }
-function wsFiveMId(b){
-  const raw=wsBanIdentifier(b,'fivem');
-  return raw.replace(/^fivem:/i,'');
+function wsFiveMId(b){ const raw=wsBanIdentifier(b,'fivem'); return raw.replace(/^fivem:/i,''); }
+
+function normalizeWsBan(raw){
+  if(!raw || typeof raw !== 'object') return null;
+  const pick = (...keys) => { for(const k of keys){ const v = raw[k]; if(v !== undefined && v !== null && v !== '') return v; } return undefined; };
+  let identifiers = [];
+  const rawIds = pick('identifiers','ids','identifiants');
+  if(Array.isArray(rawIds)){
+    identifiers = rawIds.map(x => {
+      if(x && typeof x === 'object') return { type: String(x.type||x.key||''), value: String(x.value||x.val||'') };
+      return { type:'ID', value:String(x) };
+    });
+  } else if(rawIds && typeof rawIds === 'object'){
+    identifiers = Object.entries(rawIds).map(([type,value]) => ({ type, value:String(value) }));
+  }
+  return {
+    banId:        String(pick('banId','id','ban_id') ?? ''),
+    reason:       String(pick('reason','banReason','ban_reason') ?? 'No reason'),
+    details:      pick('details','meta','metadata') || {},
+    evidenceUrl:  pick('evidenceUrl','evidence_url','evidence') || null,
+    bannedAt:     pick('bannedAt','banned_at','createdAt','created_at','timestamp') || null,
+    expiresAt:    pick('expiresAt','expires_at','expires') || null,
+    bannedBy:     pick('bannedBy','banned_by','admin','adminId') || null,
+    playerName:   String(pick('playerName','player_name','player','name','username') ?? 'Unknown'),
+    playerId:     String(pick('playerId','player_id','playerUuid','player_uuid') ?? ''),
+    playerLicense:String(pick('playerLicense','player_license','license') ?? ''),
+    identifiers
+  };
 }
+
+async function fetchWsPage(page, apiKey, apiBase){
+  const url = new URL(apiBase + '/v1/bans/search');
+  url.searchParams.set('limit', String(WS_PAGE_SIZE));
+  url.searchParams.set('page', String(page));
+  url.searchParams.set('serverId', WS_SERVER_ID);
+  url.searchParams.set('reason', '');
+  url.searchParams.set('playerName', '');
+  const r = await fetch(url.toString(), {
+    headers: { 'Accept': 'application/json', 'Authorization': 'Bearer ' + apiKey, 'X-API-Key': apiKey },
+    cache: 'no-store'
+  });
+  if(!r.ok){
+    let msg = 'HTTP ' + r.status;
+    try{ const j = await r.json(); if(j?.message || j?.error) msg = j.message || j.error; }catch(e){}
+    throw new Error(msg);
+  }
+  return r.json();
+}
+
+async function fetchAllWaveShieldBans(){
+  const apiKey = getWsApiKey();
+  if(!apiKey) return { ok:false, error:'No API key configured' };
+  const apiBase = getWsApiBase();
+  const all = [];
+  let page = 1;
+  let totalReported = 0;
+  try{
+    while(page <= WS_MAX_PAGES){
+      const data = await fetchWsPage(page, apiKey, apiBase);
+      let batch = [], total = 0, totalPages = 0;
+      if(Array.isArray(data)){ batch = data; total = data.length; }
+      else if(data && typeof data === 'object'){
+        if(Array.isArray(data.bans))          batch = data.bans;
+        else if(Array.isArray(data.data))     batch = data.data;
+        else if(Array.isArray(data.results))  batch = data.results;
+        else if(Array.isArray(data.items))    batch = data.items;
+        else if(Array.isArray(data.bannedUsers)) batch = data.bannedUsers;
+        total      = Number(data.total || data.count || data.totalCount || 0) || 0;
+        totalPages = Number(data.totalPages || data.pages || data.pageCount || 0) || 0;
+      }
+      if(!batch.length) break;
+      const normalized = batch.map(normalizeWsBan).filter(Boolean);
+      all.push(...normalized);
+      if(total) totalReported = total;
+      if(totalPages && page >= totalPages) break;
+      if(!totalPages && batch.length < WS_PAGE_SIZE) break;
+      if(!totalPages && total && all.length >= total) break;
+      page++;
+    }
+    return { ok:true, bans: all, total: totalReported || all.length, pages: page };
+  }catch(e){ return { ok:false, error: e.message || 'Sync failed' }; }
+}
+
+async function syncWaveShieldBans(opts = {}){
+  const silent = !!opts.silent;
+  const statusEl = document.getElementById('ws-sync-status');
+  const logEl    = document.getElementById('ws-sync-log');
+  const btn      = document.getElementById('ws-sync-btn');
+  if(statusEl) statusEl.textContent = 'Syncing…';
+  if(btn){ btn.disabled = true; btn.textContent = 'Syncing…'; }
+  const result = await fetchAllWaveShieldBans();
+  if(!result.ok){
+    if(statusEl) statusEl.innerHTML = '<span style="color:var(--rose)">● Sync failed</span>';
+    if(logEl) logEl.innerHTML = '<span style="color:var(--rose)">✕ ' + esc(result.error) + ' · ' + new Date().toLocaleTimeString() + '</span>';
+    if(btn){ btn.disabled = false; btn.textContent = '↻ Sync now'; }
+    if(!silent) toast('Sync failed: ' + result.error, false);
+    return false;
+  }
+  WAVESHIELD_IMPORTED_BANS = result.bans;
+  saveCachedBans(result.bans);
+  const sel = document.getElementById('waveshield-ban-reason');
+  if(sel){ while(sel.options.length > 1) sel.remove(1); }
+  renderWaveShieldBans();
+  if(statusEl) statusEl.innerHTML = '<span style="color:var(--mint)">● Synced</span>';
+  if(logEl) logEl.innerHTML = '<span style="color:var(--mint)">● ' + result.bans.length + ' bans loaded</span>' + ' · ' + result.pages + ' page(s)' + ' · ' + new Date().toLocaleTimeString();
+  if(btn){ btn.disabled = false; btn.textContent = '↻ Sync now'; }
+  if(!silent) toast('Synced ' + result.bans.length + ' bans');
+  return true;
+}
+
+async function testWaveShieldApi(){
+  const keyInput  = document.getElementById('ws-api-key');
+  const urlInput  = document.getElementById('ws-api-url');
+  const statusEl  = document.getElementById('ws-sync-status');
+  const logEl     = document.getElementById('ws-sync-log');
+  const key    = (keyInput?.value || '').trim();
+  const apiBase = (urlInput?.value || WS_API_BASE).trim().replace(/\/+$/,'');
+  if(!key){ if(statusEl) statusEl.innerHTML = '<span style="color:var(--rose)">Enter an API key first</span>'; return; }
+  if(statusEl) statusEl.textContent = 'Testing…';
+  if(logEl) logEl.textContent = 'Calling ' + apiBase + '/v1/bans/search …';
+  try{
+    const url = new URL(apiBase + '/v1/bans/search');
+    url.searchParams.set('limit','1');
+    url.searchParams.set('page','1');
+    url.searchParams.set('serverId', WS_SERVER_ID);
+    const r = await fetch(url.toString(), {
+      headers: { 'Accept':'application/json', 'Authorization':'Bearer '+key, 'X-API-Key': key },
+      cache: 'no-store'
+    });
+    if(!r.ok){
+      let msg = 'HTTP ' + r.status;
+      try{ const j = await r.json(); if(j?.message || j?.error) msg = j.message || j.error; }catch(e){}
+      if(statusEl) statusEl.innerHTML = '<span style="color:var(--rose)">● Test failed</span>';
+      if(logEl) logEl.innerHTML = '<span style="color:var(--rose)">✕ ' + esc(msg) + '</span>';
+      toast('API test failed: ' + msg, false);
+      return;
+    }
+    const data = await r.json().catch(()=>({}));
+    setWsApiKey(key);
+    setWsApiBase(apiBase);
+    const sample = Array.isArray(data) ? data.length : (data.bans?.length ?? data.data?.length ?? data.results?.length ?? data.items?.length ?? 0);
+    if(statusEl) statusEl.innerHTML = '<span style="color:var(--mint)">● Connected</span>';
+    if(logEl) logEl.innerHTML = '<span style="color:var(--mint)">✓ Key saved · sample page returned ' + sample + ' record(s)</span>';
+    toast('API key saved — syncing now');
+    await syncWaveShieldBans({ silent:false });
+  }catch(e){
+    if(statusEl) statusEl.innerHTML = '<span style="color:var(--rose)">● Network error</span>';
+    if(logEl) logEl.innerHTML = '<span style="color:var(--rose)">✕ ' + esc(e.message||'Network error') + '</span>';
+    toast('Could not reach ' + apiBase, false);
+  }
+}
+
 function wsProfileMarkup(i,b){
   const id=wsDiscordId(b);
   if(!id) return '<div class="ws-profile-card"><div class="muted">No Discord identifier was included in this WaveShield record.</div></div>';
@@ -2547,6 +2590,7 @@ async function wsLoadDiscordProfile(i){
     ['ws-profile-username-'+i,'ws-profile-display-'+i,'ws-profile-created-'+i,'ws-profile-bot-'+i].forEach(x=>{const el=document.getElementById(x);if(el)el.textContent='—';});
   }
 }
+
 function renderWaveShieldBans(){
   const search=(document.getElementById('waveshield-ban-search')?.value||'').trim().toLowerCase();
   const reason=(document.getElementById('waveshield-ban-reason')?.value||'').toLowerCase();
@@ -2561,9 +2605,13 @@ function renderWaveShieldBans(){
     return (!search||hay.includes(search)) && (!reason||String(b.reason||'').toLowerCase()===reason) && (!status||(status==='temporary'?temp:!temp));
   });
   const total=WAVESHIELD_IMPORTED_BANS.length, permanent=WAVESHIELD_IMPORTED_BANS.filter(b=>!b.expiresAt).length;
-  const stats=document.getElementById('waveshield-ban-stats'); if(stats) stats.innerHTML=`<span class="status-chip">${total} total bans</span><span class="status-chip">${permanent} permanent</span><span class="status-chip live">${rows.length} shown</span><span class="status-chip">${API_ONLINE?'Discord profile API ready':'Imported mode'}</span>`;
+  const stats=document.getElementById('waveshield-ban-stats');
+  if(stats) stats.innerHTML=`<span class="status-chip">${total} total bans</span><span class="status-chip">${permanent} permanent</span><span class="status-chip live">${rows.length} shown</span><span class="status-chip">${API_ONLINE?'Discord profile API ready':'Imported mode'}</span>`;
   const list=document.getElementById('waveshield-ban-list'); if(!list) return;
-  if(!rows.length){list.innerHTML='<div class="empty-state"><strong>No banned users match</strong>Try a different name, ID, reason or status.</div>';return;}
+  if(!rows.length){
+    list.innerHTML='<div class="empty-state"><strong>No banned users match</strong>Try a different name, ID, reason or status, or click <em>Sync now</em>.</div>';
+    return;
+  }
   list.innerHTML=rows.map(({b,i})=>{
     const discord=wsDiscordId(b), fivem=wsFiveMId(b), avatarLetter=(b.playerName||'?').slice(0,1).toUpperCase();
     return `<div class="ws-ban-row"><div class="ws-ban-main"><div class="ws-ban-avatar">${esc(avatarLetter)}</div><div class="ws-ban-user"><div class="ws-ban-name">${esc(b.playerName||b.player?.playerName||'Unknown user')}</div><div class="muted">Ban #${esc(b.banId||b.id||'—')} · ${esc(b.reason||'No reason')}</div><div class="ws-ban-subids">${discord?`<span>Discord <code class="mono">${esc(discord)}</code></span>`:''}${fivem?`<span>FiveM <code class="mono">${esc(fivem)}</code></span>`:''}</div></div><div class="ws-ban-time"><div>${esc(wsBanDate(b.bannedAt))}</div><span class="status-chip ${b.expiresAt?'':'live'}">${b.expiresAt?'Temporary':'Permanent'}</span></div><button class="btn btn-secondary ws-ban-more" onclick="toggleWaveShieldBan(${i})">Details</button></div><div id="ws-ban-detail-${i}" style="display:none;">${wsBanDetailsHtml(b,i)}</div></div>`;
@@ -2571,6 +2619,7 @@ function renderWaveShieldBans(){
 }
 function toggleWaveShieldBan(i){ const el=document.getElementById('ws-ban-detail-'+i); if(!el) return; const open=el.style.display==='none'; el.style.display=open?'':'none'; if(open && wsDiscordId(WAVESHIELD_IMPORTED_BANS[i])) wsLoadDiscordProfile(i); }
 function clearWaveShieldBanFilters(){ ['waveshield-ban-search','waveshield-ban-reason','waveshield-ban-status'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';}); renderWaveShieldBans(); }
+
 function exportWaveShieldBans(){
   if(!WAVESHIELD_IMPORTED_BANS.length){ toast('Nothing to export yet', false); return; }
   const blob=new Blob([JSON.stringify(WAVESHIELD_IMPORTED_BANS,null,2)],{type:'application/json'});
@@ -2584,8 +2633,7 @@ function exportWaveShieldBans(){
 function triggerWaveShieldImport(){
   const input=document.getElementById('waveshield-import-input');
   if(!input) return;
-  input.value='';
-  input.click();
+  input.value=''; input.click();
 }
 function handleWaveShieldImport(event){
   const file=event.target.files && event.target.files[0];
@@ -2595,32 +2643,18 @@ function handleWaveShieldImport(event){
     try{
       const data=JSON.parse(e.target.result);
       if(!Array.isArray(data)) throw new Error('The JSON root must be an array of ban objects.');
-      const confirmReplace = WAVESHIELD_IMPORTED_BANS.length === 0
-        ? true
-        : confirm('Replace the '+WAVESHIELD_IMPORTED_BANS.length+' currently loaded bans with '+data.length+' imported bans?');
-      if(!confirmReplace) return;
-      WAVESHIELD_IMPORTED_BANS = data;
-      saveWaveShieldBans();
+      const ok = !WAVESHIELD_IMPORTED_BANS.length || confirm('Replace the '+WAVESHIELD_IMPORTED_BANS.length+' loaded bans with '+data.length+' imported bans?');
+      if(!ok) return;
+      WAVESHIELD_IMPORTED_BANS = data.map(normalizeWsBan).filter(Boolean);
+      saveCachedBans(WAVESHIELD_IMPORTED_BANS);
       const sel=document.getElementById('waveshield-ban-reason');
       if(sel){ while(sel.options.length>1) sel.remove(1); }
       renderWaveShieldBans();
       toast('Imported '+data.length+' bans');
-    }catch(err){
-      toast('Import failed: '+(err.message||'invalid JSON'), false);
-    }
+    }catch(err){ toast('Import failed: '+(err.message||'invalid JSON'), false); }
   };
   reader.onerror=()=>toast('Could not read that file', false);
   reader.readAsText(file);
-}
-function clearWaveShieldBans(){
-  if(!WAVESHIELD_IMPORTED_BANS.length) return;
-  if(!confirm('Reset to the default ban list? Imported bans will be removed from this browser.')) return;
-  try{ localStorage.removeItem(WS_STORAGE_KEY); }catch(e){}
-  WAVESHIELD_IMPORTED_BANS = WAVESHIELD_DEFAULT_BANS.slice();
-  const sel=document.getElementById('waveshield-ban-reason');
-  if(sel){ while(sel.options.length>1) sel.remove(1); }
-  renderWaveShieldBans();
-  toast('Reset to default bans');
 }
 
 const WAVESHIELD_BANS_URL='https://waveshield.xyz/dashboard/server/f4579c62-bb22-4634-b444-a581ba0f6068/bans';
@@ -2632,28 +2666,36 @@ function refreshWaveShieldBans(){
   if(!frame) return;
   if(btn){ btn.disabled=true; btn.textContent='Refreshing…'; }
   try{ const u=new URL(WAVESHIELD_BANS_URL); u.searchParams.set('_t',String(Date.now())); frame.src=u.toString(); }
-  finally{ setTimeout(()=>{ if(btn){ btn.disabled=false; btn.textContent='↻ Refresh'; } },1200); }
+  finally{ setTimeout(()=>{ if(btn){ btn.disabled=false; btn.textContent='↻ Refresh iframe'; } },1200); }
 }
-
-setApiState(false,'Checking…');
-checkApiHealth(true);
-renderWaveShieldBans();
-
-// Hook up the file input for WaveShield import
-(function wireWaveShieldImport(){
-  const input=document.getElementById('waveshield-import-input');
-  if(input) input.addEventListener('change', handleWaveShieldImport);
-})();
-
 function startWaveShieldRefresh(){
   if(waveShieldRefreshTimer) clearInterval(waveShieldRefreshTimer);
   waveShieldRefreshTimer=setInterval(()=>{ const page=document.getElementById('page-waveshield'); if(page?.classList.contains('active')) refreshWaveShieldBans(); },30000);
 }
-startWaveShieldRefresh();
 
-/* ═══════════════════════════════════════════════════════════
-   NAVIGATION
-   ═══════════════════════════════════════════════════════════ */
+async function initWaveShieldBans(){
+  const keyInput = document.getElementById('ws-api-key');
+  const urlInput = document.getElementById('ws-api-url');
+  if(keyInput) keyInput.value = getWsApiKey();
+  if(urlInput) urlInput.value = getWsApiBase();
+  const cached = loadCachedBans();
+  WAVESHIELD_IMPORTED_BANS = (cached && cached.length) ? cached : [];
+  renderWaveShieldBans();
+  if(getWsApiKey()){
+    await syncWaveShieldBans({ silent:true });
+  }else{
+    const statusEl = document.getElementById('ws-sync-status');
+    if(statusEl) statusEl.textContent = 'Not configured';
+    const logEl = document.getElementById('ws-sync-log');
+    if(logEl) logEl.textContent = 'Paste your WaveShield API key above and click Save & test.';
+  }
+  if(wsSyncTimer) clearInterval(wsSyncTimer);
+  wsSyncTimer = setInterval(()=>{
+    if(getWsApiKey() && !document.hidden) syncWaveShieldBans({ silent:true });
+  }, WS_SYNC_INTERVAL);
+}
+
+/* ═══ NAVIGATION ═══ */
 function nav(page){
   if(USER && !canOpen(page)){ toast('That page is owner only', false); return; }
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -2664,7 +2706,6 @@ function nav(page){
   document.getElementById('topbar-sub').textContent = PAGE_SUBS[page] || '';
   document.getElementById('content').scrollTop = 0;
   toggleSidebar(false);
-
   [statusTimer,logsTimer,auditTimer].forEach(t=>{ if(t) clearInterval(t); });
   statusTimer = logsTimer = auditTimer = null;
   if(page === 'status'){ statusHist = []; loadStatus(); statusTimer = setInterval(loadStatus, 5000); }
@@ -2687,9 +2728,7 @@ function refreshAll(){
   if(p === 'page-ai') loadAiPanel();
 }
 
-/* ═══════════════════════════════════════════════════════════
-   SAVING
-   ═══════════════════════════════════════════════════════════ */
+/* ═══ SAVING ═══ */
 function markDirty(){ dirty = true; document.getElementById('save-bar').classList.add('visible'); }
 function discardChanges(){ dirty = false; document.getElementById('save-bar').classList.remove('visible'); loadConfig(); toast('Changes discarded'); }
 async function saveAll(){
@@ -2701,15 +2740,9 @@ async function saveAll(){
     else payload[k] = el.value;
   });
   const tw = document.getElementById('ai-trigger-words');
-  if(tw){
-    const raw = tw.value.trim();
-    payload.ai_trigger_words = raw ? raw.split(',').map(s=>s.trim()).filter(Boolean) : [];
-  }
+  if(tw){ const raw = tw.value.trim(); payload.ai_trigger_words = raw ? raw.split(',').map(s=>s.trim()).filter(Boolean) : []; }
   const ci = document.getElementById('ai-channel-ids');
-  if(ci){
-    const raw = ci.value.trim();
-    payload.ai_channel_ids = raw ? raw.split(',').map(s=>parseInt(s.trim(),10)).filter(n=>Number.isFinite(n)) : [];
-  }
+  if(ci){ const raw = ci.value.trim(); payload.ai_channel_ids = raw ? raw.split(',').map(s=>parseInt(s.trim(),10)).filter(n=>Number.isFinite(n)) : []; }
   try{
     const r = await fetchApi('/api/config',{method:'POST',headers:hdr(),body:JSON.stringify(payload)});
     if(!r.ok){ toast('The bot refused the save', false); return; }
@@ -2719,9 +2752,7 @@ async function saveAll(){
   }catch(e){ toast('The save did not go through', false); }
 }
 
-/* ═══════════════════════════════════════════════════════════
-   ACTIONS
-   ═══════════════════════════════════════════════════════════ */
+/* ═══ ACTIONS ═══ */
 async function post(path, body){
   try{
     const r = await fetch(BOT_API+path,{method:'POST',headers:hdr(),body:JSON.stringify(body)});
@@ -2750,24 +2781,18 @@ async function addWhitelist(){ const r = await post('/api/whitelist/add',{discor
 async function removeWhitelist(id){ if(!confirm('Take this person off the whitelist?')) return; const r = await post('/api/whitelist/remove',{discord_id:id}); if(r){ toast('Removed'); loadWhitelist(); } }
 async function toggleWhitelist(){ const enabled = document.getElementById('wl-enabled').checked; const r = await post('/api/whitelist/toggle',{enabled}); if(r) toast('Whitelist turned ' + (enabled ? 'on' : 'off')); }
 
-/* ═══════════════════════════════════════════════════════════
-   AI
-   ═══════════════════════════════════════════════════════════ */
+/* ═══ AI ═══ */
 function selectAIProvider(provider){
   const hidden = document.getElementById('ai-provider-hidden');
   if(hidden) hidden.value = provider;
-  document.querySelectorAll('.ai-provider-chip').forEach(chip=>{
-    chip.classList.toggle('selected', chip.dataset.provider === provider);
-  });
+  document.querySelectorAll('.ai-provider-chip').forEach(chip=>{ chip.classList.toggle('selected', chip.dataset.provider === provider); });
   markDirty();
 }
 function loadAiPanel(){
   const provider = (config.ai_provider || 'anthropic').toLowerCase();
   const hidden = document.getElementById('ai-provider-hidden');
   if(hidden) hidden.value = provider;
-  document.querySelectorAll('.ai-provider-chip').forEach(chip=>{
-    chip.classList.toggle('selected', chip.dataset.provider === provider);
-  });
+  document.querySelectorAll('.ai-provider-chip').forEach(chip=>{ chip.classList.toggle('selected', chip.dataset.provider === provider); });
   const triggers = document.getElementById('ai-trigger-words');
   if(triggers) triggers.value = Array.isArray(config.ai_trigger_words) ? config.ai_trigger_words.join(', ') : '';
   const channels = document.getElementById('ai-channel-ids');
@@ -2788,9 +2813,7 @@ async function testAI(provider){
   }catch(e){ out.textContent = 'The bot API did not answer.'; }
 }
 
-/* ═══════════════════════════════════════════════════════════
-   ACCESS CONTROL
-   ═══════════════════════════════════════════════════════════ */
+/* ═══ ACCESS CONTROL ═══ */
 const ACCESS_CATEGORIES={
   'Server operations':['messaging','moderation','channels','roles','admin','whitelist'],
   'Protection':['antinuke','scam','verify','hub','backup'],
@@ -2809,9 +2832,7 @@ async function addStaff(){const id=val('sf-id'),name=val('sf-name'),pw=document.
 async function editStaff(id){if(!isOwner()&&!USER.full_control&&!USER.manage_access){toast('You do not have access-management permission',false);return;}const name=prompt('Operator name (leave blank to keep current):');if(name===null)return;const password=prompt('New password (leave blank to keep current):');if(password===null)return;const payload={discord_id:id};if(name.trim())payload.name=name.trim();if(password)payload.password=password;if(isOwner()){payload.full_control=confirm('Grant Full Control? Cancel means Full Control will be disabled.');payload.manage_access=payload.full_control||confirm('Grant Access Management?');}const r=await post('/api/staff/update',payload);if(r){toast('Operator updated');loadStaff();}}
 async function removeStaff(id){if(!confirm('Remove this operator? They will immediately lose dashboard access.'))return;const r=await post('/api/staff/remove',{discord_id:id});if(r){toast('Operator removed');loadStaff();}}
 
-/* ═══════════════════════════════════════════════════════════
-   SIDEBAR + COMMAND PALETTE
-   ═══════════════════════════════════════════════════════════ */
+/* ═══ SIDEBAR + COMMAND PALETTE ═══ */
 function toggleSidebar(open){
   document.getElementById('sidebar')?.classList.toggle('open', open);
   document.getElementById('mobile-overlay')?.classList.toggle('open', open);
@@ -2831,8 +2852,7 @@ function renderCommands(query=''){
   const list = document.getElementById('command-list');
   const items = [...document.querySelectorAll('.nav-item[data-page]')]
     .filter(n=>!n.classList.contains('hidden'))
-    .map(n=>({page:n.dataset.page, name:PAGE_NAMES[n.dataset.page] || n.dataset.page,
-              icon:n.querySelector('.nav-ico')?.textContent || '•'}))
+    .map(n=>({page:n.dataset.page, name:PAGE_NAMES[n.dataset.page] || n.dataset.page, icon:n.querySelector('.nav-ico')?.textContent || '•'}))
     .filter(x=>!q || x.name.toLowerCase().includes(q) || x.page.includes(q));
   list.innerHTML = items.length
     ? items.map((x,i)=>`<div class="command-item ${i===0?'selected':''}" data-page="${x.page}" tabindex="0">
@@ -2844,9 +2864,7 @@ function renderCommands(query=''){
   });
 }
 
-/* ═══════════════════════════════════════════════════════════
-   BOOT
-   ═══════════════════════════════════════════════════════════ */
+/* ═══ BOOT ═══ */
 window.addEventListener('load', async () => {
   renderPermGrid();
   syncChartTheme();
@@ -2894,9 +2912,7 @@ window.addEventListener('load', async () => {
     items[idx].classList.add('selected');
   });
 
-  window.addEventListener('beforeunload', e=>{
-    if(dirty){ e.preventDefault(); e.returnValue = ''; }
-  });
+  window.addEventListener('beforeunload', e=>{ if(dirty){ e.preventDefault(); e.returnValue = ''; } });
 
   if(window.Chart){
     Chart.defaults.font.family = "'Manrope', system-ui, sans-serif";
@@ -2907,6 +2923,16 @@ window.addEventListener('load', async () => {
     Chart.defaults.plugins.tooltip.displayColors = true;
     syncChartTheme();
   }
+
+  // WaveShield init
+  (function wireWaveShieldImport(){
+    const input=document.getElementById('waveshield-import-input');
+    if(input) input.addEventListener('change', handleWaveShieldImport);
+  })();
+  setApiState(false,'Checking…');
+  checkApiHealth(true);
+  initWaveShieldBans();
+  startWaveShieldRefresh();
 
   const url = new URL(window.location.href);
   const code = url.searchParams.get('code');
@@ -2926,12 +2952,7 @@ window.addEventListener('load', async () => {
     SESSION = sess;
     fetchApi('/api/me',{headers:hdr()})
       .then(r=>{ if(!r.ok) throw 0; return r.json(); })
-      .then(u=>{
-        USER = u;
-        enterApp();
-        bootData();
-        if(isOwner()) loadStaff();
-      })
+      .then(u=>{ USER = u; enterApp(); bootData(); if(isOwner()) loadStaff(); })
       .catch(()=>{ try{ localStorage.removeItem('ftw_session'); }catch(e){} });
   }
 });
