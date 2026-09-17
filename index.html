@@ -247,7 +247,7 @@ html.theming *,html.theming *::before,html.theming *::after{
   animation:railIn .3s var(--ease-out)
 }
 @keyframes railIn{from{height:4px;margin-top:-2px;opacity:0}to{height:18px;margin-top:-9px;opacity:1}}
-.nav-item.hidden{display:none}
+.nav-item.hidden,.nav-section.hidden{display:none}
 .sidebar-footer{margin-top:auto;padding:12px 10px;border-top:1px solid var(--line)}
 
 #main{flex:1;display:flex;flex-direction:column;height:100vh;overflow:hidden}
@@ -1528,9 +1528,12 @@ table code{font-size:12.5px;color:var(--text-2)}
    ═══════════════════════════════════════════════════════════ */
 const BOT_API = "https://G-Side.wisp.uno";
 
+/* Staff can only ever be given these bot-settings pages.
+   Everything else — the dashboard, live status, activity, audit log,
+   messaging, moderation, channels, roles, admin actions, whitelist and
+   staff access — belongs to the owner alone. */
 const PAGES = ['hub','verify','antinuke','scam','backup','ai','music',
-               'status-cfg','presence','messaging','moderation','channels','roles',
-               'admin','audit','whitelist'];
+               'status-cfg','presence'];
 
 const PAGE_NAMES = {
   overview:'Dashboard', status:'Live status', logs:'Activity', audit:'Audit log',
@@ -1718,8 +1721,8 @@ async function doLogin(){
     try{ localStorage.setItem('ftw_session', SESSION); }catch(e){}
     PREAUTH = null;
     enterApp();
-    await Promise.all([loadProfile(), loadLiveServer(), loadProCenter(), loadConfig(), loadHealth(), loadAnalytics()]);
-    if(USER.role === 'owner') await loadStaff();
+    await bootData();
+    if(isOwner()) await loadStaff();
   }catch(e){
     if(e.message === 'invalid password') showAuthError('That password does not match.');
     else if(e.message === 'preauth invalid or expired') showAuthError('That took too long. Authorize with Discord again.');
@@ -1733,7 +1736,17 @@ function enterApp(){
   document.getElementById('auth-screen').style.display = 'none';
   document.getElementById('app').classList.add('visible');
   applyUser();
-  startPulse();
+  if(isOwner()) startPulse();
+}
+/* The owner gets the live server picture; staff only get the settings
+   their pages need, so the owner-only endpoints are never called. */
+async function bootData(){
+  const jobs = [loadConfig(), loadHealth()];
+  if(isOwner()){
+    jobs.push(loadProfile(), loadLiveServer(), loadProCenter(), loadAnalytics());
+    if(!liveServerTimer) liveServerTimer = setInterval(()=>{ loadLiveServer(); loadProCenter(); }, 5000);
+  }
+  await Promise.all(jobs);
 }
 function doLogout(){
   if(SESSION) fetch(BOT_API+'/api/logout',{method:'POST',headers:hdr()}).catch(()=>{});
@@ -1741,16 +1754,41 @@ function doLogout(){
   try{ localStorage.removeItem('ftw_session'); }catch(e){}
   location.reload();
 }
+function isOwner(){ return USER && USER.role === 'owner'; }
+function canOpen(page){
+  if(!USER) return false;
+  if(isOwner()) return true;
+  return PAGES.includes(page) && !!(USER.perms || {})[page];
+}
 function applyUser(){
-  document.getElementById('who').textContent = USER.name + (USER.role === 'owner' ? ' · owner' : ' · staff');
+  document.getElementById('who').textContent = USER.name + (isOwner() ? ' · owner' : ' · staff');
   document.querySelectorAll('.nav-item[data-page]').forEach(n=>{
-    const p = n.dataset.page;
-    if(p==='overview' || p==='status' || p==='logs'){ n.classList.remove('hidden'); return; }
-    if(USER.role === 'owner'){ n.classList.remove('hidden'); return; }
-    if(p==='staff' || p==='admin' || p==='audit'){ n.classList.add('hidden'); return; }
-    n.classList.toggle('hidden', !(USER.perms || {})[p]);
+    n.classList.toggle('hidden', !canOpen(n.dataset.page));
   });
-  document.getElementById('nav-staff').style.display = USER.role === 'owner' ? '' : 'none';
+  document.getElementById('nav-staff').style.display = isOwner() ? '' : 'none';
+
+  // a section header with nothing under it would just be a loose title
+  document.querySelectorAll('#sidebar .nav-section').forEach(sec=>{
+    let el = sec.nextElementSibling, any = false;
+    while(el && el.classList.contains('nav-item')){
+      if(!el.classList.contains('hidden')) any = true;
+      el = el.nextElementSibling;
+    }
+    sec.classList.toggle('hidden', !any);
+  });
+
+  const allowed = [...document.querySelectorAll('.nav-item[data-page]:not(.hidden)')];
+  if(!allowed.length){ showNoAccess(); return; }
+  const current = document.querySelector('.page.active')?.id.replace('page-','');
+  if(!canOpen(current)) nav(allowed[0].dataset.page);
+}
+function showNoAccess(){
+  document.getElementById('content').innerHTML =
+    '<div class="card"><div class="empty-state"><strong>No pages assigned to you yet</strong>' +
+    'Ask the server owner to tick the pages you need on the staff page.</div></div>';
+  document.getElementById('topbar-title').textContent = 'No access';
+  document.getElementById('topbar-sub').textContent = 'Nothing has been shared with this account';
+  document.querySelectorAll('#topbar-actions-save,.topbar-actions .btn-primary').forEach(b=>b.style.display='none');
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -2214,6 +2252,7 @@ async function loadWhitelist(){
    NAVIGATION
    ═══════════════════════════════════════════════════════════ */
 function nav(page){
+  if(USER && !canOpen(page)){ toast('That page is owner only', false); return; }
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   document.getElementById('page-'+page)?.classList.add('active');
@@ -2233,7 +2272,8 @@ function nav(page){
   if(page === 'ai') loadAiPanel();
 }
 function refreshAll(){
-  loadProfile(); loadLiveServer(); loadProCenter(); loadConfig(); loadAnalytics();
+  loadConfig();
+  if(isOwner()){ loadProfile(); loadLiveServer(); loadProCenter(); loadAnalytics(); }
   const p = document.querySelector('.page.active')?.id;
   if(p === 'page-status') loadStatus();
   if(p === 'page-logs') loadLogs();
@@ -2494,8 +2534,6 @@ window.addEventListener('load', async () => {
     syncChartTheme();
   }
 
-  liveServerTimer = setInterval(()=>{ loadLiveServer(); loadProCenter(); }, 5000);
-
   // 1 · coming back from Discord
   const url = new URL(window.location.href);
   const code = url.searchParams.get('code');
@@ -2519,8 +2557,8 @@ window.addEventListener('load', async () => {
       .then(u=>{
         USER = u;
         enterApp();
-        Promise.all([loadProfile(), loadLiveServer(), loadProCenter(), loadConfig(), loadHealth(), loadAnalytics()]);
-        if(u.role === 'owner') loadStaff();
+        bootData();
+        if(isOwner()) loadStaff();
       })
       .catch(()=>{ try{ localStorage.removeItem('ftw_session'); }catch(e){} });
   }
