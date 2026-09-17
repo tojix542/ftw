@@ -2485,7 +2485,7 @@ async function loadScanBlacklist(){
   const count=document.getElementById('scan-blacklist-count');
   if(!list) return;
   try{
-    const r=await apiFetch('/api/user-scan/blacklist',{headers:hdr()});
+    const r=await apiFetch(BOT_API+'/api/user-scan/blacklist',{headers:hdr()});
     const d=await r.json().catch(()=>({}));
     if(!r.ok) throw new Error(d.error||'Could not load scan blacklist');
     const ids=Array.isArray(d.blacklisted)?d.blacklisted:[];
@@ -2500,7 +2500,7 @@ async function addScanBlacklist(){
   const gid=(input?.value||'').trim();
   if(!/^\d{15,25}$/.test(gid)){ toast('Enter a valid Discord server ID',false); return; }
   try{
-    const r=await apiFetch('/api/user-scan/blacklist',{method:'POST',headers:hdr(),body:JSON.stringify({action:'add',guild_id:gid})});
+    const r=await apiFetch(BOT_API+'/api/user-scan/blacklist',{method:'POST',headers:hdr(),body:JSON.stringify({action:'add',guild_id:gid})});
     const d=await r.json().catch(()=>({}));
     if(!r.ok) throw new Error(d.error||'Could not blacklist server');
     input.value='';
@@ -2510,7 +2510,7 @@ async function addScanBlacklist(){
 }
 async function removeScanBlacklist(gid){
   try{
-    const r=await apiFetch('/api/user-scan/blacklist',{method:'POST',headers:hdr(),body:JSON.stringify({action:'remove',guild_id:String(gid)})});
+    const r=await apiFetch(BOT_API+'/api/user-scan/blacklist',{method:'POST',headers:hdr(),body:JSON.stringify({action:'remove',guild_id:String(gid)})});
     const d=await r.json().catch(()=>({}));
     if(!r.ok) throw new Error(d.error||'Could not remove server');
     await loadScanBlacklist();
@@ -2518,28 +2518,18 @@ async function removeScanBlacklist(gid){
   }catch(e){ toast(e.message||'Could not remove server',false); }
 }
 
-async function apiFetch(urlOrPath, options={}){
-  const raw=String(urlOrPath||'');
-  const path = /^https?:\/\//i.test(raw) ? null : (raw.startsWith('/') ? raw : '/'+raw);
-  const bases=[API_ACTIVE_BASE,BOT_API,...BOT_API_FALLBACKS].map(normalizeApiBase).filter(Boolean);
-  const seen=[]; let last=null;
-  for(const base of bases){
-    if(seen.includes(base)) continue; seen.push(base);
-    const url=path ? base+path : raw;
-    const controller=new AbortController();
-    const timeout=setTimeout(()=>controller.abort(), 15000);
-    try{
-      const r=await fetch(url,{...options,signal:controller.signal,cache:'no-store'});
-      API_ACTIVE_BASE=base; BOT_API=base; setApiState(true,'Bot API online');
-      return r;
-    }catch(e){
-      last=e;
-      if(path && e?.name==='AbortError') last=new Error('Request timed out');
-    }finally{ clearTimeout(timeout); }
-  }
-  setApiState(false,'Bot API offline');
-  if(last?.message==='Request timed out') throw new Error('Bot API timed out. Make sure port 13506 is open and the bot process is running.');
-  throw new Error('Cannot reach the bot API. Checked '+seen.join(', ')+'. Start the bot and expose TCP port 13506.');
+async function apiFetch(url, options={}){
+  const controller=new AbortController();
+  const timeout=setTimeout(()=>controller.abort(), 90000);
+  try{
+    const r=await fetch(url,{...options,signal:controller.signal,cache:'no-store'});
+    setApiState(true,'Bot API online');
+    return r;
+  }catch(e){
+    setApiState(false,'Bot API offline');
+    if(e?.name==='AbortError') throw new Error('Request timed out. The bot API did not respond within 90 seconds.');
+    throw new Error('Cannot reach the bot API at '+BOT_API+'. Check the bot host, port/reverse proxy and DNS.');
+  }finally{ clearTimeout(timeout); }
 }
 
 async function lookupUser(){
@@ -2551,7 +2541,7 @@ async function lookupUser(){
   if(btn){ btn.disabled=true; btn.textContent='Looking up…'; }
   try{
     const qs=new URLSearchParams({guild_id:guildId,user:query});
-    const r=await apiFetch('/api/user-lookup?'+qs.toString(),{headers:hdr()});
+    const r=await apiFetch(BOT_API+'/api/user-lookup?'+qs.toString(),{headers:hdr()});
     const d=await r.json().catch(()=>({}));
     if(!r.ok) throw new Error(d.error || 'User lookup failed');
     const m=d.member||{}, roles=d.roles||[], guild=d.guild||{};
@@ -2580,7 +2570,7 @@ async function scanAllServers(){
   if(btn){ btn.disabled=true; btn.textContent='Scanning…'; }
   try{
     const qs=new URLSearchParams({user:query});
-    const r=await apiFetch('/api/user-scan?'+qs.toString(),{headers:hdr()});
+    const r=await apiFetch(BOT_API+'/api/user-scan?'+qs.toString(),{headers:hdr()});
     const d=await r.json().catch(()=>({}));
     if(!r.ok) throw new Error(d.error || 'Server scan failed');
     const result=document.getElementById('lookup-result'), empty=document.getElementById('lookup-empty');
@@ -2647,7 +2637,7 @@ async function wsLoadDiscordProfile(i){
   root.dataset.loading='1';
   try{
     const qs=new URLSearchParams({id});
-    const r=await apiFetch('/api/discord-profile?'+qs.toString(),{headers:hdr()});
+    const r=await apiFetch(BOT_API+'/api/discord-profile?'+qs.toString(),{headers:hdr()});
     const d=await r.json().catch(()=>({}));
     if(!r.ok) throw new Error(d.error||'Discord profile unavailable');
     const p=d.user||d;
