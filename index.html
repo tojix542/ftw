@@ -672,6 +672,11 @@ table code{font-size:12.5px;color:var(--text-2)}
 .user-lookup-avatar{width:58px;height:58px;border-radius:16px;object-fit:cover;background:var(--panel-2);border:1px solid var(--line)}
 .user-lookup-avatar.empty{display:grid;place-items:center;font-size:22px;color:var(--text-2)}
 
+
+.api-status-pill{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--panel-2);color:var(--text-2);border-radius:999px;padding:7px 10px;font-size:11px;font-weight:800;cursor:pointer}.api-status-dot{width:7px;height:7px;border-radius:50%;background:var(--amber);box-shadow:0 0 0 4px rgba(255,180,70,.08)}.api-status-pill.online .api-status-dot{background:var(--mint);box-shadow:0 0 0 4px rgba(65,226,161,.08)}.api-status-pill.offline .api-status-dot{background:var(--rose);box-shadow:0 0 0 4px rgba(255,93,132,.08)}
+.ws-hero-card{position:relative;overflow:hidden;background:linear-gradient(135deg,rgba(90,92,255,.14),rgba(65,226,161,.06) 45%,rgba(10,17,35,.94));}.ws-hero-glow{position:absolute;width:420px;height:220px;right:-80px;top:-110px;border-radius:50%;background:radial-gradient(circle,rgba(91,92,255,.28),transparent 68%);pointer-events:none}.ws-hero-content{position:relative;display:flex;justify-content:space-between;align-items:flex-end;gap:18px}.eyebrow{font-size:10px;letter-spacing:.18em;font-weight:900;color:var(--iris);margin-bottom:7px}.ws-hero-title{font-family:'Sora',sans-serif;font-size:25px;font-weight:900;letter-spacing:-.03em}.ws-hero-actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.ws-live-badge{display:inline-flex;align-items:center;gap:7px;border:1px solid rgba(65,226,161,.22);background:rgba(65,226,161,.08);color:var(--mint);padding:8px 10px;border-radius:999px;font-size:11px;font-weight:900}.ws-live-badge span{width:7px;height:7px;border-radius:50%;background:var(--mint);box-shadow:0 0 0 4px rgba(65,226,161,.08)}
+.api-connection-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:9px;margin-top:14px}.api-connection-help{font-size:11px;color:var(--text-2);margin-top:8px}.api-connection-help code{color:var(--iris);word-break:break-all}.api-connection-card.online{border-color:rgba(65,226,161,.25)}.api-connection-card.offline{border-color:rgba(255,93,132,.28)}
+.ws-profile-card{margin-top:12px;border:1px solid var(--line);border-radius:14px;padding:12px;background:linear-gradient(135deg,rgba(255,255,255,.025),rgba(91,92,255,.045));}.ws-profile-head{display:flex;align-items:center;gap:11px}.ws-profile-avatar{width:50px;height:50px;border-radius:15px;object-fit:cover;background:var(--panel-2);border:1px solid var(--line)}.ws-profile-avatar-fallback{display:grid;place-items:center;font-weight:900;color:var(--iris);font-size:18px}.ws-profile-name{font-family:'Sora',sans-serif;font-weight:900}.ws-profile-handle{font-size:11px;color:var(--text-2);margin-top:2px}.ws-profile-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin-top:10px}.ws-profile-stat{border:1px solid var(--line);border-radius:10px;padding:8px;background:rgba(0,0,0,.08)}.ws-profile-stat span{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-2);font-weight:800}.ws-profile-stat b{display:block;font-size:11px;margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ws-profile-link{margin-top:10px;display:flex;gap:7px;flex-wrap:wrap}.ws-discord-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 8px;border-radius:8px;background:rgba(88,101,242,.12);border:1px solid rgba(88,101,242,.25);color:#aeb7ff;font-size:10px;font-weight:800}
 .ws-ban-filters{display:grid;grid-template-columns:minmax(220px,2fr) minmax(180px,1fr) minmax(150px,1fr) auto;gap:9px;margin:12px 0}.ws-ban-stats{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 12px}.ws-ban-list{display:grid;gap:8px}.ws-ban-row{border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.018);overflow:hidden}.ws-ban-main{display:grid;grid-template-columns:42px minmax(0,1fr) auto auto;align-items:center;gap:12px;padding:13px 14px}.ws-ban-avatar{width:42px;height:42px;border-radius:12px;background:var(--rose-wash);color:var(--rose);display:grid;place-items:center;font-weight:800}.ws-ban-name{font-weight:800;font-family:'Sora',sans-serif}.ws-ban-subids{display:flex;gap:10px;flex-wrap:wrap;margin-top:5px;font-size:11px;color:var(--text-2)}.ws-ban-time{text-align:right;font-size:11px;color:var(--text-2);white-space:nowrap}.ws-ban-more{white-space:nowrap}.ws-ban-expanded{padding:0 14px 14px;border-top:1px solid var(--line)}.ws-ban-detail-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:14px;padding-top:12px}.ws-ban-ids{display:flex;flex-wrap:wrap;gap:6px}.ws-ban-id{font-size:11px;border:1px solid var(--line);border-radius:8px;padding:5px 7px;word-break:break-all}.ws-ban-id b{color:var(--iris);margin-right:4px}.ws-ban-detail{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid var(--line);font-size:11px}.ws-ban-detail b{font-family:'IBM Plex Mono',monospace;word-break:break-word;text-align:right}.ws-ban-user{min-width:0}.ws-ban-user .muted{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}@media(max-width:850px){.ws-ban-filters{grid-template-columns:1fr 1fr}.ws-ban-main{grid-template-columns:42px minmax(0,1fr) auto}.ws-ban-time{grid-column:2;text-align:left}.ws-ban-more{grid-column:3;grid-row:1 / span 2}.ws-ban-detail-grid{grid-template-columns:1fr}}@media(max-width:560px){.ws-ban-filters{grid-template-columns:1fr}.ws-ban-main{grid-template-columns:42px minmax(0,1fr)}.ws-ban-time,.ws-ban-more{grid-column:2;grid-row:auto;text-align:left}}
 .waveshield-frame-wrap{position:relative;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#0b1224;min-height:720px}
 .waveshield-frame{display:block;width:100%;height:720px;border:0;background:#0b1224}
@@ -804,6 +809,7 @@ table code{font-size:12.5px;color:var(--text-2)}
         </button>
         <button class="btn btn-secondary" onclick="refreshAll()">↻ Refresh</button>
         <button class="btn btn-primary" onclick="saveAll()">Save changes</button>
+        <button class="api-status-pill" id="api-status-pill" onclick="openApiSettings()"><span class="api-status-dot"></span><span id="api-status-text">Bot API</span></button>
         <span id="session-chip">Secure session</span>
       </div>
     </div>
@@ -1558,6 +1564,32 @@ table code{font-size:12.5px;color:var(--text-2)}
 
       <!-- ══ WAVESHIELD BANS ══ -->
       <div class="page" id="page-waveshield">
+        <div class="card ws-hero-card" style="margin-bottom:14px;">
+          <div class="ws-hero-glow"></div>
+          <div class="ws-hero-content">
+            <div>
+              <div class="eyebrow">SECURITY / REAL-TIME</div>
+              <div class="ws-hero-title">WaveShield ban intelligence</div>
+              <div class="muted" style="max-width:760px;margin-top:6px;">A Discord-focused view of the users WaveShield has banned, with lazy-loaded Discord profiles, identifiers, evidence and a direct live WaveShield console.</div>
+            </div>
+            <div class="ws-hero-actions">
+              <span class="ws-live-badge"><span></span> Live console</span>
+              <button class="btn btn-primary" onclick="openWaveShieldBans()">↗ Open WaveShield</button>
+            </div>
+          </div>
+        </div>
+        <div class="card api-connection-card" id="api-connection-card" style="margin-bottom:14px;">
+          <div class="card-head">
+            <div><div class="card-title">Dashboard API connection</div><div class="muted" style="margin-top:4px;">If the bot API is offline, imported bans remain available. Fix the API URL here and test it without changing the bot token.</div></div>
+            <span class="status-chip" id="api-connection-chip">Checking…</span>
+          </div>
+          <div class="api-connection-row">
+            <input class="input-sm" id="bot-api-url" value="" spellcheck="false" placeholder="https://your-bot-api.example.com">
+            <button class="btn btn-secondary" onclick="testAndSaveApi()">✓ Test &amp; save</button>
+            <button class="btn btn-secondary" onclick="resetApiUrl()">Reset</button>
+          </div>
+          <div class="api-connection-help" id="api-connection-help">Current endpoint: <code id="api-current-label"></code></div>
+        </div>
         <div class="card" style="margin-bottom:14px;">
           <div class="card-head">
             <div>
@@ -1574,7 +1606,7 @@ table code{font-size:12.5px;color:var(--text-2)}
             </div>
           </div>
           <div class="waveshield-toolbar">
-            <div class="waveshield-note"><strong>Imported banned users</strong><br>Loaded from the WaveShield bans export supplied for this server. Search by player, Discord ID, FiveM ID, ban ID, or reason.</div>
+            <div class="waveshield-note"><strong>Discord ban profiles</strong><br>Every record below is from the supplied WaveShield export. Open a row to load the Discord profile from the bot, inspect IDs, evidence and ban details.</div>
             <div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn btn-secondary" onclick="exportWaveShieldBans()">⇩ Export JSON</button></div>
           </div>
           <div class="ws-ban-filters">
@@ -1630,7 +1662,19 @@ table code{font-size:12.5px;color:var(--text-2)}
 /* ═══════════════════════════════════════════════════════════
    CONFIG — public values only. The client secret never lives here.
    ═══════════════════════════════════════════════════════════ */
-const BOT_API = "https://G-Side.wisp.uno";
+const BOT_API_DEFAULT = "https://G-Side.wisp.uno";
+function normalizeApiBase(v){ return String(v||'').trim().replace(/\/+$/,''); }
+function getBotApiBase(){
+  try{
+    const q = new URLSearchParams(location.search).get('api');
+    if(q) return normalizeApiBase(q);
+    const saved = localStorage.getItem('ftw_bot_api');
+    if(saved) return normalizeApiBase(saved);
+  }catch(e){}
+  return BOT_API_DEFAULT;
+}
+let BOT_API = getBotApiBase();
+let API_ONLINE = true;
 
 /* Staff can only ever be given these bot-settings pages.
    Everything else — the dashboard, live status, activity, audit log,
@@ -1739,6 +1783,51 @@ function fmtRel(ts){
   if(d < 3600) return Math.floor(d/60) + ' min ago';
   if(d < 86400) return Math.floor(d/3600) + ' h ago';
   return Math.floor(d/86400) + ' d ago';
+}
+function setApiState(online, message){
+  API_ONLINE=!!online;
+  const pill=document.getElementById('api-status-pill'), txt=document.getElementById('api-status-text');
+  if(pill){ pill.classList.toggle('online',API_ONLINE); pill.classList.toggle('offline',!API_ONLINE); }
+  if(txt) txt.textContent=message || (API_ONLINE?'Bot API online':'Bot API offline');
+  const card=document.getElementById('api-connection-card'), chip=document.getElementById('api-connection-chip');
+  if(card) card.classList.toggle('online',API_ONLINE), card.classList.toggle('offline',!API_ONLINE);
+  if(chip){ chip.textContent=API_ONLINE?'Online':'Offline'; chip.classList.toggle('live',API_ONLINE); }
+  const label=document.getElementById('api-current-label'); if(label) label.textContent=BOT_API;
+  const input=document.getElementById('bot-api-url'); if(input && document.activeElement!==input) input.value=BOT_API;
+  const svc=document.getElementById('svc-api'); if(svc) svc.textContent=API_ONLINE?'Connected':'Offline';
+}
+async function checkApiHealth(silent=true){
+  try{
+    const r=await fetch(BOT_API+'/api/health',{cache:'no-store'});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    setApiState(true,'Bot API online');
+    return true;
+  }catch(e){
+    setApiState(false,'Bot API offline');
+    if(!silent) toast('Bot API is not reachable at '+BOT_API,false);
+    return false;
+  }
+}
+function openApiSettings(){
+  const input=document.getElementById('bot-api-url');
+  if(input){ input.focus(); input.select(); }
+  nav('waveshield');
+  document.getElementById('api-connection-card')?.scrollIntoView({behavior:'smooth',block:'center'});
+}
+async function testAndSaveApi(){
+  const input=document.getElementById('bot-api-url');
+  const candidate=normalizeApiBase(input?.value||'');
+  if(!/^https?:\/\//i.test(candidate)){ toast('Use a full http:// or https:// API URL',false); return; }
+  const old=BOT_API; BOT_API=candidate;
+  const ok=await checkApiHealth(false);
+  if(ok){ try{localStorage.setItem('ftw_bot_api',BOT_API);}catch(e){} toast('Bot API connected and saved'); }
+  else { BOT_API=old; setApiState(false,'Bot API offline'); toast('Connection failed. The URL was not saved.',false); }
+}
+function resetApiUrl(){
+  BOT_API=BOT_API_DEFAULT;
+  try{localStorage.removeItem('ftw_bot_api');}catch(e){}
+  setApiState(false,'Checking…');
+  checkApiHealth(false);
 }
 function esc(s){
   return String(s ?? '').replace(/[&<>"']/g, c =>
@@ -2120,7 +2209,7 @@ async function loadConfig(){
     loadAiPanel();
   }catch(e){ toast('Settings would not load', false); }
 }
-async function loadHealth(){ try{ await fetch(BOT_API+'/api/health'); }catch(e){} }
+async function loadHealth(){ await checkApiHealth(true); }
 
 /* ═══════════════════════════════════════════════════════════
    ANALYTICS
@@ -2416,10 +2505,13 @@ async function apiFetch(url, options={}){
   const controller=new AbortController();
   const timeout=setTimeout(()=>controller.abort(), 90000);
   try{
-    return await fetch(url,{...options,signal:controller.signal,cache:'no-store'});
+    const r=await fetch(url,{...options,signal:controller.signal,cache:'no-store'});
+    setApiState(true,'Bot API online');
+    return r;
   }catch(e){
+    setApiState(false,'Bot API offline');
     if(e?.name==='AbortError') throw new Error('Request timed out. The bot API did not respond within 90 seconds.');
-    throw new Error('Cannot reach the bot API. Check that https://G-Side.wisp.uno is online and the bot dashboard API is running.');
+    throw new Error('Cannot reach the bot API at '+BOT_API+'. Check the bot host, port/reverse proxy and DNS.');
   }finally{ clearTimeout(timeout); }
 }
 
@@ -2485,37 +2577,94 @@ function wsBanIdentifier(b,type){
   const found=(b.identifiers||[]).find(x=>x.type===type); return found?.value||'';
 }
 function wsBanDate(v){ if(!v) return 'Permanent'; try{return new Date(v).toLocaleString();}catch{return v;} }
-function wsBanDetailsHtml(b){
+function wsBanIdentifier(b,type){
+  const item=(b.identifiers||[]).find(x=>String(x.type||'').toLowerCase()===type);
+  return item ? String(item.value||'') : '';
+}
+function wsBanDate(v){ if(!v) return '—'; const d=new Date(v); return Number.isNaN(d.getTime())?String(v):d.toLocaleString(); }
+function wsDiscordId(b){
+  const raw=wsBanIdentifier(b,'discord');
+  const m=raw.match(/(\d{15,25})/);
+  return m?m[1]:'';
+}
+function wsFiveMId(b){
+  const raw=wsBanIdentifier(b,'fivem');
+  return raw.replace(/^fivem:/i,'');
+}
+function wsProfileMarkup(i,b){
+  const id=wsDiscordId(b);
+  if(!id) return '<div class="ws-profile-card"><div class="muted">No Discord identifier was included in this WaveShield record.</div></div>';
+  return `<div class="ws-profile-card" id="ws-profile-${i}">
+    <div class="ws-profile-head">
+      <div class="ws-profile-avatar ws-profile-avatar-fallback" id="ws-profile-avatar-${i}">${esc((b.playerName||'?').slice(0,1).toUpperCase())}</div>
+      <div style="min-width:0;flex:1"><div class="ws-profile-name" id="ws-profile-name-${i}">${esc(b.playerName||'Discord user')}</div><div class="ws-profile-handle" id="ws-profile-handle-${i}">Discord ID ${esc(id)}</div></div>
+      <span class="ws-discord-badge">● Discord</span>
+    </div>
+    <div class="ws-profile-grid">
+      <div class="ws-profile-stat"><span>Username</span><b id="ws-profile-username-${i}">Loading…</b></div>
+      <div class="ws-profile-stat"><span>Display name</span><b id="ws-profile-display-${i}">Loading…</b></div>
+      <div class="ws-profile-stat"><span>Account</span><b id="ws-profile-created-${i}">Loading…</b></div>
+      <div class="ws-profile-stat"><span>Bot</span><b id="ws-profile-bot-${i}">Loading…</b></div>
+    </div>
+    <div class="ws-profile-link"><a class="btn btn-secondary" href="https://discord.com/users/${encodeURIComponent(id)}" target="_blank" rel="noopener noreferrer">↗ Open Discord profile</a><span class="muted" id="ws-profile-membership-${i}"></span></div>
+  </div>`;
+}
+function wsBanDetailsHtml(b,i){
   const ids=(b.identifiers||[]).map(x=>`<span class="ws-ban-id"><b>${esc(x.type||'ID')}</b> ${esc(x.value||'')}</span>`).join('');
   const details=Object.entries(b.details||{}).map(([k,v])=>`<div class="ws-ban-detail"><span>${esc(k)}</span><b>${esc(typeof v==='object'?JSON.stringify(v):String(v))}</b></div>`).join('');
-  return `<div class="ws-ban-expanded"><div class="ws-ban-detail-grid"><div><div class="muted" style="margin-bottom:6px;">Identifiers</div><div class="ws-ban-ids">${ids||'<span class="muted">No identifiers</span>'}</div></div><div><div class="muted" style="margin-bottom:6px;">Detection details</div>${details||'<span class="muted">No extra details</span>'}</div></div>${b.evidenceUrl?`<a class="btn btn-secondary" style="display:inline-flex;margin-top:12px;" href="${esc(b.evidenceUrl)}" target="_blank" rel="noopener noreferrer">↗ View evidence</a>`:''}</div>`;
+  return `<div class="ws-ban-expanded"><div class="ws-ban-detail-grid"><div>${wsProfileMarkup(i,b)}<div class="muted" style="margin:12px 0 6px;">Identifiers</div><div class="ws-ban-ids">${ids||'<span class="muted">No identifiers</span>'}</div></div><div><div class="muted" style="margin-bottom:6px;">Detection details</div>${details||'<span class="muted">No extra details</span>'}</div></div>${b.evidenceUrl?`<a class="btn btn-secondary" style="display:inline-flex;margin-top:12px;" href="${esc(b.evidenceUrl)}" target="_blank" rel="noopener noreferrer">↗ View evidence</a>`:''}</div>`;
+}
+async function wsLoadDiscordProfile(i){
+  const b=WAVESHIELD_IMPORTED_BANS[i]; const id=wsDiscordId(b); if(!id) return;
+  const root=document.getElementById('ws-profile-'+i); if(!root) return;
+  root.dataset.loading='1';
+  try{
+    const qs=new URLSearchParams({id});
+    const r=await apiFetch(BOT_API+'/api/discord-profile?'+qs.toString(),{headers:hdr()});
+    const d=await r.json().catch(()=>({}));
+    if(!r.ok) throw new Error(d.error||'Discord profile unavailable');
+    const p=d.user||d;
+    const av=document.getElementById('ws-profile-avatar-'+i); if(av && p.avatar){ av.classList.remove('ws-profile-avatar-fallback'); av.innerHTML=''; av.style.backgroundImage=`url("${p.avatar}")`; av.style.backgroundSize='cover'; av.style.backgroundPosition='center'; }
+    const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v||'—';};
+    set('ws-profile-name-'+i,p.global_name||p.display_name||p.username||b.playerName);
+    set('ws-profile-handle-'+i,p.username?'@'+p.username:'Discord ID '+id);
+    set('ws-profile-username-'+i,p.username?'@'+p.username:'—');
+    set('ws-profile-display-'+i,p.global_name||p.display_name||'—');
+    set('ws-profile-created-'+i,p.created_at?new Date(p.created_at*1000).toLocaleDateString():'—');
+    set('ws-profile-bot-'+i,p.bot?'Yes':'No');
+    const membership=document.getElementById('ws-profile-membership-'+i);
+    if(membership){
+      const roles=(p.membership?.roles||[]).map(r=>r.name).filter(Boolean);
+      membership.textContent=p.membership ? ('Server member' + (roles.length ? ' · '+roles.slice(0,3).join(', ') : '')) : 'Not in configured server';
+    }
+  }catch(e){
+    const h=document.getElementById('ws-profile-handle-'+i); if(h) h.textContent='Profile lookup unavailable · '+(e.message||'API offline');
+    ['ws-profile-username-'+i,'ws-profile-display-'+i,'ws-profile-created-'+i,'ws-profile-bot-'+i].forEach(x=>{const el=document.getElementById(x);if(el)el.textContent='—';});
+  }
 }
 function renderWaveShieldBans(){
-  const host=document.getElementById('waveshield-ban-list'); if(!host) return;
-  const q=(document.getElementById('waveshield-ban-search')?.value||'').trim().toLowerCase();
-  const reason=(document.getElementById('waveshield-ban-reason')?.value||'').trim();
-  const status=(document.getElementById('waveshield-ban-status')?.value||'').trim();
-  const rows=WAVESHIELD_IMPORTED_BANS.filter(b=>{
-    const discord=wsBanIdentifier(b,'DISCORD');
-    const hay=[b.playerName,b.playerId,b.playerLicense,b.banId,b.reason,discord].join(' ').toLowerCase();
-    const okQ=!q||hay.includes(q); const okR=!reason||b.reason===reason; const okS=!status||(status==='permanent'?!b.expiresAt:new Date(b.expiresAt)>new Date());
-    return okQ&&okR&&okS;
-  }).sort((a,b)=>new Date(b.bannedAt||0)-new Date(a.bannedAt||0));
-  const stats=document.getElementById('waveshield-ban-stats');
-  const reasons=[...new Set(WAVESHIELD_IMPORTED_BANS.map(b=>b.reason).filter(Boolean))].sort();
+  const search=(document.getElementById('waveshield-ban-search')?.value||'').trim().toLowerCase();
+  const reason=(document.getElementById('waveshield-ban-reason')?.value||'').toLowerCase();
+  const status=(document.getElementById('waveshield-ban-status')?.value||'').toLowerCase();
+  const reasons=[...new Set(WAVESHIELD_IMPORTED_BANS.map(b=>b.reason).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
   const sel=document.getElementById('waveshield-ban-reason');
-  if(sel && sel.options.length<=1) reasons.forEach(r=>{const o=document.createElement('option');o.value=r;o.textContent=r;sel.appendChild(o);});
-  const permanent=WAVESHIELD_IMPORTED_BANS.filter(b=>!b.expiresAt).length;
-  if(stats) stats.innerHTML=`<span class="status-chip live">${WAVESHIELD_IMPORTED_BANS.length} bans</span><span class="status-chip">${permanent} permanent</span><span class="status-chip">Showing ${rows.length}</span>`;
-  if(!rows.length){host.innerHTML='<div class="empty-state"><strong>No banned users match</strong>Try another name, Discord ID, ban ID, or reason.</div>';return;}
-  host.innerHTML=rows.map((b,i)=>{
-    const discord=wsBanIdentifier(b,'DISCORD');
-    const fivem=wsBanIdentifier(b,'FIVEM');
-    const avatarLetter=(b.playerName||'?').trim().charAt(0).toUpperCase()||'?';
-    return `<div class="ws-ban-row"><div class="ws-ban-main"><div class="ws-ban-avatar">${esc(avatarLetter)}</div><div class="ws-ban-user"><div class="ws-ban-name">${esc(b.playerName)}</div><div class="muted">Ban #${esc(b.banId)} · ${esc(b.reason)}</div><div class="ws-ban-subids">${discord?`<span>Discord <code class="mono">${esc(discord.replace(/^discord:/,''))}</code></span>`:''}${fivem?`<span>FiveM <code class="mono">${esc(fivem.replace(/^fivem:/,''))}</code></span>`:''}</div></div><div class="ws-ban-time"><div>${esc(wsBanDate(b.bannedAt))}</div><span class="status-chip live">${b.expiresAt?'Temporary':'Permanent'}</span></div><button class="btn btn-secondary ws-ban-more" onclick="toggleWaveShieldBan(${i})">Details</button></div><div id="ws-ban-detail-${i}" style="display:none;">${wsBanDetailsHtml(b)}</div></div>`;
+  if(sel && sel.options.length===1) reasons.forEach(r=>{const o=document.createElement('option');o.value=r.toLowerCase();o.textContent=r;sel.appendChild(o);});
+  const rows=WAVESHIELD_IMPORTED_BANS.map((b,i)=>({b,i})).filter(({b})=>{
+    const discord=wsDiscordId(b), fivem=wsFiveMId(b);
+    const hay=[b.playerName,b.player?.playerName,b.banId,b.reason,b.playerId,discord,fivem,b.licenseId].filter(Boolean).join(' ').toLowerCase();
+    const temp=!!b.expiresAt;
+    return (!search||hay.includes(search)) && (!reason||String(b.reason||'').toLowerCase()===reason) && (!status||(status==='temporary'?temp:!temp));
+  });
+  const total=WAVESHIELD_IMPORTED_BANS.length, permanent=WAVESHIELD_IMPORTED_BANS.filter(b=>!b.expiresAt).length;
+  const stats=document.getElementById('waveshield-ban-stats'); if(stats) stats.innerHTML=`<span class="status-chip">${total} total bans</span><span class="status-chip">${permanent} permanent</span><span class="status-chip live">${rows.length} shown</span><span class="status-chip">${API_ONLINE?'Discord profile API ready':'Imported mode'}</span>`;
+  const list=document.getElementById('waveshield-ban-list'); if(!list) return;
+  if(!rows.length){list.innerHTML='<div class="empty-state"><strong>No banned users match</strong>Try a different name, ID, reason or status.</div>';return;}
+  list.innerHTML=rows.map(({b,i})=>{
+    const discord=wsDiscordId(b), fivem=wsFiveMId(b), avatarLetter=(b.playerName||'?').slice(0,1).toUpperCase();
+    return `<div class="ws-ban-row"><div class="ws-ban-main"><div class="ws-ban-avatar">${esc(avatarLetter)}</div><div class="ws-ban-user"><div class="ws-ban-name">${esc(b.playerName||b.player?.playerName||'Unknown user')}</div><div class="muted">Ban #${esc(b.banId||b.id||'—')} · ${esc(b.reason||'No reason')}</div><div class="ws-ban-subids">${discord?`<span>Discord <code class="mono">${esc(discord)}</code></span>`:''}${fivem?`<span>FiveM <code class="mono">${esc(fivem)}</code></span>`:''}</div></div><div class="ws-ban-time"><div>${esc(wsBanDate(b.bannedAt))}</div><span class="status-chip ${b.expiresAt?'':'live'}">${b.expiresAt?'Temporary':'Permanent'}</span></div><button class="btn btn-secondary ws-ban-more" onclick="toggleWaveShieldBan(${i})">Details</button></div><div id="ws-ban-detail-${i}" style="display:none;">${wsBanDetailsHtml(b,i)}</div></div>`;
   }).join('');
 }
-function toggleWaveShieldBan(i){ const el=document.getElementById('ws-ban-detail-'+i); if(el) el.style.display=el.style.display==='none'?'':'none'; }
+function toggleWaveShieldBan(i){ const el=document.getElementById('ws-ban-detail-'+i); if(!el) return; const open=el.style.display==='none'; el.style.display=open?'':'none'; if(open && wsDiscordId(WAVESHIELD_IMPORTED_BANS[i])) wsLoadDiscordProfile(i); }
 function clearWaveShieldBanFilters(){ ['waveshield-ban-search','waveshield-ban-reason','waveshield-ban-status'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';}); renderWaveShieldBans(); }
 function exportWaveShieldBans(){
   const blob=new Blob([JSON.stringify(WAVESHIELD_IMPORTED_BANS,null,2)],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='waveshield-bans.json'; a.click(); setTimeout(()=>URL.revokeObjectURL(url),1000);
@@ -2532,6 +2681,8 @@ function refreshWaveShieldBans(){
   try{ const u=new URL(WAVESHIELD_BANS_URL); u.searchParams.set('_t',String(Date.now())); frame.src=u.toString(); }
   finally{ setTimeout(()=>{ if(btn){ btn.disabled=false; btn.textContent='↻ Refresh'; } },1200); }
 }
+setApiState(false,'Checking…');
+checkApiHealth(true);
 renderWaveShieldBans();
 function startWaveShieldRefresh(){
   if(waveShieldRefreshTimer) clearInterval(waveShieldRefreshTimer);
