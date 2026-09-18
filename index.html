@@ -658,6 +658,7 @@ table code{font-size:12.5px;color:var(--text-2)}
 .kpi-bump{animation:kpiBump .5s var(--ease)}
 @keyframes kpiBump{0%{transform:scale(.94);opacity:.6}68%{transform:scale(1.04)}100%{transform:none;opacity:1}}
 
+/* ═══ WAVESHIELD ═══ */
 .ws-io-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:14px;padding:12px 14px;border:1px dashed var(--line-2);border-radius:12px;background:rgba(167,139,250,.04)}
 .ws-io-bar .ws-io-label{flex:1;min-width:200px;font-size:11.5px;color:var(--text-2);line-height:1.5}
 .ws-io-bar .ws-io-label b{color:var(--iris)}
@@ -692,13 +693,14 @@ table code{font-size:12.5px;color:var(--text-2)}
 .ws-profile-stat b{display:block;font-size:11px;margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .ws-profile-link{margin-top:10px;display:flex;gap:7px;flex-wrap:wrap}
 .ws-discord-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 8px;border-radius:8px;background:rgba(88,101,242,.12);border:1px solid rgba(88,101,242,.25);color:#aeb7ff;font-size:10px;font-weight:800}
-.ws-ban-filters{display:grid;grid-template-columns:minmax(220px,2fr) minmax(180px,1fr) minmax(150px,1fr) auto;gap:9px;margin:12px 0}
+.ws-ban-filters{display:grid;grid-template-columns:minmax(220px,2fr) minmax(180px,1fr) minmax(150px,1fr) auto auto;gap:9px;margin:12px 0;align-items:center}
 .ws-ban-stats{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 12px}
 .ws-ban-list{display:grid;gap:8px}
-.ws-ban-row{border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.018);overflow:hidden}
+.ws-ban-row{border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.018);overflow:hidden;transition:box-shadow .3s var(--ease)}
+.ws-ban-row.flash{box-shadow:0 0 0 2px rgba(251,191,36,.55)}
 .ws-ban-main{display:grid;grid-template-columns:42px minmax(0,1fr) auto auto;align-items:center;gap:12px;padding:13px 14px}
 .ws-ban-avatar{width:42px;height:42px;border-radius:12px;background:var(--rose-wash);color:var(--rose);display:grid;place-items:center;font-weight:800}
-.ws-ban-name{font-weight:800;font-family:'Sora',sans-serif}
+.ws-ban-name{font-weight:800;font-family:'Sora',sans-serif;display:flex;align-items:center;flex-wrap:wrap;gap:4px}
 .ws-ban-subids{display:flex;gap:10px;flex-wrap:wrap;margin-top:5px;font-size:11px;color:var(--text-2)}
 .ws-ban-time{text-align:right;font-size:11px;color:var(--text-2);white-space:nowrap}
 .ws-ban-more{white-space:nowrap}
@@ -719,6 +721,57 @@ table code{font-size:12.5px;color:var(--text-2)}
 .waveshield-live-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--mint);box-shadow:0 0 0 4px rgba(94,234,212,.10);margin-right:7px}
 .waveshield-note{font-size:12px;color:var(--text-2);line-height:1.5}
 @media(max-width:760px){.waveshield-frame-wrap,.waveshield-frame{min-height:620px;height:620px}.waveshield-frame{height:620px}}
+
+/* ═══ WAVESHIELD ALT ACCOUNTS ═══ */
+.ws-alt-badge{
+  display:inline-flex; align-items:center; gap:5px; margin-left:8px;
+  padding:3px 8px; font-size:10.5px; font-weight:700; letter-spacing:.02em;
+  border-radius:99px; background:var(--amber-wash); color:var(--amber);
+  border:1px solid transparent; cursor:pointer; vertical-align:middle;
+  transition:filter .18s var(--ease);
+}
+.ws-alt-badge:hover{ filter:brightness(1.18); }
+.ws-alt-panel{
+  margin-top:14px; padding:12px 14px; border-radius:12px;
+  border:1px dashed rgba(251,191,36,.32);
+  background:linear-gradient(135deg, rgba(251,191,36,.06), rgba(251,191,36,.02));
+}
+.ws-alt-panel-title{
+  font-size:11px; font-weight:800; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--amber); margin-bottom:10px;
+}
+.ws-alt-list{ display:grid; gap:6px; }
+.ws-alt-item{
+  display:flex; align-items:center; gap:10px; padding:8px 10px;
+  border:1px solid var(--line); border-radius:10px;
+  background:rgba(0,0,0,.18); cursor:pointer; font-size:12px;
+  transition:border-color .18s, background .18s;
+}
+.ws-alt-item:hover{ border-color:var(--amber); background:rgba(251,191,36,.06); }
+.ws-alt-item .ws-ban-avatar{ width:30px; height:30px; border-radius:9px; font-size:12px; }
+.ws-alt-item .who{ flex:1; min-width:0; overflow:hidden; }
+.ws-alt-item .who > div:first-child{
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.ws-alt-item .why{
+  margin-top:3px; color:var(--text-3);
+  font-family:'IBM Plex Mono',monospace; font-size:10.5px;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.ws-alt-toggle{
+  display:inline-flex; align-items:center; gap:6px;
+  font-size:11.5px; font-weight:600; color:var(--text-2); cursor:pointer;
+  padding:8px 11px; border:1px solid var(--line); border-radius:8px;
+  background:var(--panel-2); user-select:none;
+  transition:border-color .18s, color .18s;
+}
+.ws-alt-toggle input{ accent-color:var(--amber); }
+.ws-alt-toggle:hover{ border-color:var(--line-2); color:var(--text); }
+.ws-alt-toggle:has(input:checked){
+  border-color:rgba(251,191,36,.42); color:var(--amber);
+  background:var(--amber-wash);
+}
+
 .lookup-role-grid{display:flex;flex-wrap:wrap;gap:9px;margin-top:12px}
 .lookup-role{display:flex;align-items:center;gap:8px;padding:9px 11px;border:1px solid var(--line);border-radius:12px;background:var(--panel-2);min-width:190px}
 .lookup-role-dot{width:9px;height:9px;border-radius:50%;background:var(--text-2);flex:none}
@@ -1768,7 +1821,7 @@ table code{font-size:12.5px;color:var(--text-2)}
           <div class="card-head">
             <div>
               <div class="card-title">Scan blacklist</div>
-              <div class="muted" style="margin-top:4px;">Add server IDs you never want included in the multi-server scan. These are excluded even if they are in the 1,683-server database.</div>
+              <div class="muted" style="margin-top:4px;">Add server IDs you never want included in the multi-server scan.</div>
             </div>
             <span class="status-chip" id="scan-blacklist-count">0 blacklisted</span>
           </div>
@@ -1781,7 +1834,7 @@ table code{font-size:12.5px;color:var(--text-2)}
         </div>
 
         <div class="card" id="lookup-empty">
-          <div class="empty-state"><strong>Ready to look up or scan a member</strong>Use a server ID for one server, or scan the supplied server list to see every accessible server where the user is a member and their roles.</div>
+          <div class="empty-state"><strong>Ready to look up or scan a member</strong>Use a server ID for one server, or scan the supplied server list.</div>
         </div>
         <div class="card" id="lookup-result" style="display:none;"></div>
       </div>
@@ -1794,7 +1847,7 @@ table code{font-size:12.5px;color:var(--text-2)}
             <div>
               <div class="eyebrow">SECURITY / REAL-TIME</div>
               <div class="ws-hero-title">WaveShield ban intelligence</div>
-              <div class="muted" style="max-width:760px;margin-top:6px;">Live sync from the WaveShield API. Bans refresh automatically every 5 minutes, with cached fallback when offline.</div>
+              <div class="muted" style="max-width:760px;margin-top:6px;">Live sync from the WaveShield API. Bans refresh automatically every 5 minutes, with cached fallback when offline. Alt accounts are detected by matching every identifier on every ban.</div>
             </div>
             <div class="ws-hero-actions">
               <span class="ws-live-badge"><span></span> Live console</span>
@@ -1807,7 +1860,7 @@ table code{font-size:12.5px;color:var(--text-2)}
           <div class="card-head">
             <div>
               <div class="card-title">WaveShield API sync</div>
-              <div class="muted" style="margin-top:4px;">Connect your WaveShield API key to pull bans automatically. Bans refresh on every page load and every 5 minutes.</div>
+              <div class="muted" style="margin-top:4px;">Connect your WaveShield API key to pull bans automatically.</div>
             </div>
             <span class="status-chip" id="ws-sync-status">Not configured</span>
           </div>
@@ -1829,7 +1882,7 @@ table code{font-size:12.5px;color:var(--text-2)}
           <div class="ws-io-bar" style="margin-top:14px;">
             <div class="ws-io-label">
               <b>Endpoint</b> — <code>GET https://api.waveshield.xyz/v1/bans/search?limit=100&amp;page=1</code><br>
-              The key is stored locally in this browser only. Get it from <code>waveshield.xyz → API keys</code>.
+              The key is stored locally in this browser only.
             </div>
           </div>
           <div id="ws-sync-log" class="waveshield-note" style="margin-top:10px;">No sync has run yet.</div>
@@ -1839,7 +1892,7 @@ table code{font-size:12.5px;color:var(--text-2)}
           <div class="card-head">
             <div>
               <div class="card-title">Import / Export JSON</div>
-              <div class="muted" style="margin-top:4px;">Manually back up or restore the ban list. Exports every currently loaded ban; imports replace the active dataset in this browser.</div>
+              <div class="muted" style="margin-top:4px;">Back up or restore the ban list.</div>
             </div>
           </div>
           <div class="ws-io-bar">
@@ -1873,6 +1926,9 @@ table code{font-size:12.5px;color:var(--text-2)}
             <input class="input-sm" id="waveshield-ban-search" placeholder="Search player / Discord / FiveM / ban ID" oninput="renderWaveShieldBans()">
             <select class="input-sm" id="waveshield-ban-reason" onchange="renderWaveShieldBans()"><option value="">All reasons</option></select>
             <select class="input-sm" id="waveshield-ban-status" onchange="renderWaveShieldBans()"><option value="">All status</option><option value="permanent">Permanent</option><option value="temporary">Temporary</option></select>
+            <label class="ws-alt-toggle" title="Only show bans that share an ID with another ban">
+              <input type="checkbox" id="waveshield-alts-only" onchange="renderWaveShieldBans()">🔗 Alts only
+            </label>
             <button class="btn btn-secondary" onclick="clearWaveShieldBanFilters()">Clear</button>
           </div>
           <div id="waveshield-ban-stats" class="ws-ban-stats"></div>
@@ -1888,7 +1944,7 @@ table code{font-size:12.5px;color:var(--text-2)}
       <div class="page" id="page-staff">
         <div class="card access-hero" style="margin-bottom:14px;">
           <div class="access-hero-grid">
-            <div><div class="eyebrow">ADMINISTRATION / ACCESS</div><div class="access-title">Permission Center</div><div class="muted" style="max-width:780px;margin-top:7px;">Control who can enter the dashboard, which modules they can use, and who is allowed to manage other operators. Only the owner can delegate <strong>Full Control</strong> or <strong>Access Management</strong>.</div></div>
+            <div><div class="eyebrow">ADMINISTRATION / ACCESS</div><div class="access-title">Permission Center</div><div class="muted" style="max-width:780px;margin-top:7px;">Control who can enter the dashboard, which modules they can use, and who is allowed to manage other operators.</div></div>
             <div class="access-owner-badge"><span class="access-lock">⌁</span><div><strong>Owner protected</strong><small>The owner account cannot be edited or removed</small></div></div>
           </div>
         </div>
@@ -2044,7 +2100,7 @@ async function checkApiHealth(silent=true){
     }catch(e){}
   }
   setApiState(false,'Bot API offline');
-  if(!silent) toast('Bot API is not reachable. Checked '+seen.join(' and '),false);
+  if(!silent) toast('Bot API is not reachable.',false);
   return false;
 }
 async function fetchApi(path, options={}){
@@ -2696,7 +2752,7 @@ async function scanAllServers(){
     const result=document.getElementById('lookup-result'), empty=document.getElementById('lookup-empty');
     const accessCount=Number(d.bot_accessible_count||0);
     const foundCount=Number(d.found_count||0);
-    const warning=accessCount===0 ? '<div class="empty-state" style="margin-top:16px;"><strong>Discord access is 0</strong><span>The uploaded database contains the server IDs, but the bot cannot access any of those servers. A server-ID database alone does not contain user membership data, so Discord cannot confirm that this user is in them unless the bot is also a member of the server.</span></div>' : '';
+    const warning=accessCount===0 ? '<div class="empty-state" style="margin-top:16px;"><strong>Discord access is 0</strong><span>The uploaded database contains the server IDs, but the bot cannot access any of those servers. A server-ID database alone does not contain user membership data.</span></div>' : '';
     const rows=(d.results||[]).map(item=>{
       const g=item.guild||{}, m=item.member||{}, roles=item.roles||[];
       const roleHtml=roles.length ? `<div class="lookup-role-grid">${roles.map(lookupRoleHtml).join('')}</div>` : '<div class="muted" style="margin-top:10px;">No custom roles.</div>';
@@ -2904,6 +2960,191 @@ async function testWaveShieldApi(){
   }
 }
 
+/* ═══════════════════════════════════════════════════════════
+   WAVESHIELD — ALT-ACCOUNT DETECTION (universal)
+
+   Every identifier on every ban is indexed as a key. If two
+   bans share even ONE key, each gets the other added to its
+   linked-accounts panel. Matching is bidirectional, transitive
+   (A↔B and B↔C puts A, B and C in one group), and case-/
+   whitespace-insensitive.
+   ═══════════════════════════════════════════════════════════ */
+
+const WS_ALT_MIN_LEN = 4;
+let WS_ALT_INDEX_CACHE = null;
+
+function wsHarvestIdentifiers(obj, depth = 0){
+  const out = [];
+  if(depth > 3 || obj === null || obj === undefined) return out;
+  if(Array.isArray(obj)){
+    for(const item of obj){
+      if(item && typeof item === 'object' && ('value' in item || 'val' in item)){
+        out.push({
+          type:  String(item.type ?? item.key ?? item.name ?? 'id').trim(),
+          value: String(item.value ?? item.val ?? '').trim()
+        });
+      } else {
+        out.push(...wsHarvestIdentifiers(item, depth + 1));
+      }
+    }
+    return out;
+  }
+  if(typeof obj !== 'object') return out;
+  for(const [k, v] of Object.entries(obj)){
+    if(v === null || v === undefined || v === '') continue;
+    const key = k.toLowerCase();
+    const looksLikeId =
+      key.includes('id') || key.includes('license') || key.includes('licence') ||
+      key.includes('steam') || key.includes('xbox') || key.includes('live') ||
+      key.includes('discord') || key.includes('fivem') || key.includes('serial') ||
+      key.includes('hwid') || key.includes('ip') || key.includes('token') ||
+      key.includes('identifier') || key.includes('uuid') || key.includes('guid');
+    if(looksLikeId && (typeof v === 'string' || typeof v === 'number')){
+      out.push({ type: k, value: String(v).trim() });
+    } else if(looksLikeId && Array.isArray(v)){
+      out.push(...wsHarvestIdentifiers(v, depth + 1));
+    } else if(typeof v === 'object'){
+      out.push(...wsHarvestIdentifiers(v, depth + 1));
+    }
+  }
+  return out;
+}
+
+function wsNormalizeId(raw){
+  if(raw === undefined || raw === null) return '';
+  let v = String(raw).trim().toLowerCase();
+  v = v.replace(/^(discord|fivem|license\d?|licence\d?|steam|xbox|live|playerid|player|ip|hwid|serial)\s*[:=]\s*/i, '');
+  return v;
+}
+
+function wsIdentityKeys(ban){
+  const keys = new Set();
+  const add = (kind, raw) => {
+    const v = wsNormalizeId(raw);
+    if(v.length < WS_ALT_MIN_LEN) return;
+    keys.add(String(kind).toLowerCase() + ':' + v);
+  };
+  if(Array.isArray(ban.identifiers)){
+    for(const id of ban.identifiers){
+      if(!id) continue;
+      if(typeof id === 'object'){
+        add(id.type || id.key || id.name || 'id', id.value ?? id.val ?? '');
+      } else {
+        add('id', id);
+      }
+    }
+  }
+  if(ban.playerLicense) add('license', ban.playerLicense);
+  if(ban.playerId)      add('playerid', ban.playerId);
+  if(ban.details && typeof ban.details === 'object'){
+    for(const pair of wsHarvestIdentifiers(ban.details)){
+      add(pair.type, pair.value);
+    }
+  }
+  return keys;
+}
+
+function wsBuildAltIndex(){
+  const byKey = new Map();
+  WAVESHIELD_IMPORTED_BANS.forEach((ban, i) => {
+    for(const key of wsIdentityKeys(ban)){
+      if(!byKey.has(key)) byKey.set(key, []);
+      byKey.get(key).push(i);
+    }
+  });
+  const index = new Map();
+  byKey.forEach((banIdxs, key) => {
+    if(banIdxs.length < 2) return;
+    for(const a of banIdxs){
+      for(const b of banIdxs){
+        if(a === b) continue;
+        if(!index.has(a)) index.set(a, new Map());
+        const inner = index.get(a);
+        if(!inner.has(b)) inner.set(b, new Set());
+        inner.get(b).add(key);
+      }
+    }
+  });
+  return index;
+}
+
+function wsAltIndex(){
+  if(!WS_ALT_INDEX_CACHE) WS_ALT_INDEX_CACHE = wsBuildAltIndex();
+  return WS_ALT_INDEX_CACHE;
+}
+
+function wsLinkedFor(i){ return wsAltIndex().get(i) || null; }
+
+function wsAltGroupCount(){
+  const idx = wsAltIndex();
+  const seen = new Set();
+  let groups = 0;
+  idx.forEach((_links, i) => {
+    if(seen.has(i)) return;
+    const stack = [i], comp = new Set();
+    while(stack.length){
+      const cur = stack.pop();
+      if(comp.has(cur)) continue;
+      comp.add(cur);
+      const links = idx.get(cur);
+      if(links) links.forEach((_k, j) => { if(!comp.has(j)) stack.push(j); });
+    }
+    comp.forEach(x => seen.add(x));
+    if(comp.size >= 2) groups++;
+  });
+  return groups;
+}
+
+function wsShortKey(key){
+  const colon = key.indexOf(':');
+  const kind = colon >= 0 ? key.slice(0, colon) : 'id';
+  const val  = colon >= 0 ? key.slice(colon + 1) : key;
+  const short = val.length > 22 ? (val.slice(0, 10) + '…' + val.slice(-7)) : val;
+  return `${kind.toUpperCase()}=${short}`;
+}
+
+function wsAltPanelHtml(i){
+  const links = wsLinkedFor(i);
+  if(!links || !links.size) return '';
+  const items = [...links.entries()].map(([j, sharedKeys]) => {
+    const other = WAVESHIELD_IMPORTED_BANS[j];
+    if(!other) return '';
+    const letter = (other.playerName || '?').slice(0, 1).toUpperCase();
+    const sharedArr = [...sharedKeys];
+    const sharedTxt = sharedArr.slice(0, 3).map(wsShortKey).join('  ·  ');
+    const extra = sharedArr.length > 3 ? `  +${sharedArr.length - 3} more` : '';
+    const disc = wsDiscordId(other);
+    const linkIcon = disc
+      ? `<a class="btn btn-secondary btn-sm" style="padding:3px 7px;font-size:10px;" href="https://discord.com/users/${encodeURIComponent(disc)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation();">↗</a>`
+      : '';
+    return `<div class="ws-alt-item" onclick="wsJumpToBan(${j})">
+      <div class="ws-ban-avatar">${esc(letter)}</div>
+      <div class="who">
+        <div style="color:var(--text);font-weight:700;">${esc(other.playerName || 'Unknown user')} <span style="color:var(--text-3);font-weight:400;">· #${esc(other.banId || j)}</span></div>
+        <div class="why">shared ${esc(sharedTxt)}${extra}</div>
+      </div>
+      ${linkIcon}
+    </div>`;
+  }).join('');
+  return `<div class="ws-alt-panel">
+    <div class="ws-alt-panel-title">🔗 Linked accounts (${links.size})</div>
+    <div class="ws-alt-list">${items}</div>
+  </div>`;
+}
+
+function wsJumpToBan(i){
+  const detail = document.getElementById('ws-ban-detail-' + i);
+  if(detail && detail.style.display === 'none'){
+    detail.style.display = '';
+    if(wsDiscordId(WAVESHIELD_IMPORTED_BANS[i])) wsLoadDiscordProfile(i);
+  }
+  const row = document.getElementById('ws-ban-row-' + i);
+  if(!row) return;
+  row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  row.classList.add('flash');
+  setTimeout(() => row.classList.remove('flash'), 1600);
+}
+
 function wsProfileMarkup(i,b){
   const id=wsDiscordId(b);
   if(!id) return '<div class="ws-profile-card"><div class="muted">No Discord identifier was included in this WaveShield record.</div></div>';
@@ -2925,7 +3166,8 @@ function wsProfileMarkup(i,b){
 function wsBanDetailsHtml(b,i){
   const ids=(b.identifiers||[]).map(x=>`<span class="ws-ban-id"><b>${esc(x.type||'ID')}</b> ${esc(x.value||'')}</span>`).join('');
   const details=Object.entries(b.details||{}).map(([k,v])=>`<div class="ws-ban-detail"><span>${esc(k)}</span><b>${esc(typeof v==='object'?JSON.stringify(v):String(v))}</b></div>`).join('');
-  return `<div class="ws-ban-expanded"><div class="ws-ban-detail-grid"><div>${wsProfileMarkup(i,b)}<div class="muted" style="margin:12px 0 6px;">Identifiers</div><div class="ws-ban-ids">${ids||'<span class="muted">No identifiers</span>'}</div></div><div><div class="muted" style="margin-bottom:6px;">Detection details</div>${details||'<span class="muted">No extra details</span>'}</div></div>${b.evidenceUrl?`<a class="btn btn-secondary" style="display:inline-flex;margin-top:12px;" href="${esc(b.evidenceUrl)}" target="_blank" rel="noopener noreferrer">↗ View evidence</a>`:''}</div>`;
+  const altPanel = wsAltPanelHtml(i);
+  return `<div class="ws-ban-expanded"><div class="ws-ban-detail-grid"><div>${wsProfileMarkup(i,b)}<div class="muted" style="margin:12px 0 6px;">Identifiers</div><div class="ws-ban-ids">${ids||'<span class="muted">No identifiers</span>'}</div></div><div><div class="muted" style="margin-bottom:6px;">Detection details</div>${details||'<span class="muted">No extra details</span>'}</div></div>${altPanel}${b.evidenceUrl?`<a class="btn btn-secondary" style="display:inline-flex;margin-top:12px;" href="${esc(b.evidenceUrl)}" target="_blank" rel="noopener noreferrer">↗ View evidence</a>`:''}</div>`;
 }
 async function wsLoadDiscordProfile(i){
   const b=WAVESHIELD_IMPORTED_BANS[i]; const id=wsDiscordId(b); if(!id) return;
@@ -2957,33 +3199,74 @@ async function wsLoadDiscordProfile(i){
 }
 
 function renderWaveShieldBans(){
-  const search=(document.getElementById('waveshield-ban-search')?.value||'').trim().toLowerCase();
-  const reason=(document.getElementById('waveshield-ban-reason')?.value||'').toLowerCase();
-  const status=(document.getElementById('waveshield-ban-status')?.value||'').toLowerCase();
-  const reasons=[...new Set(WAVESHIELD_IMPORTED_BANS.map(b=>b.reason).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
-  const sel=document.getElementById('waveshield-ban-reason');
-  if(sel && sel.options.length===1) reasons.forEach(r=>{const o=document.createElement('option');o.value=r.toLowerCase();o.textContent=r;sel.appendChild(o);});
-  const rows=WAVESHIELD_IMPORTED_BANS.map((b,i)=>({b,i})).filter(({b})=>{
-    const discord=wsDiscordId(b), fivem=wsFiveMId(b);
-    const hay=[b.playerName,b.player?.playerName,b.banId,b.reason,b.playerId,discord,fivem].filter(Boolean).join(' ').toLowerCase();
-    const temp=!!b.expiresAt;
-    return (!search||hay.includes(search)) && (!reason||String(b.reason||'').toLowerCase()===reason) && (!status||(status==='temporary'?temp:!temp));
+  /* Rebuild the alt index so it stays in sync with syncs & imports. */
+  WS_ALT_INDEX_CACHE = null;
+
+  const search  = (document.getElementById('waveshield-ban-search')?.value  || '').trim().toLowerCase();
+  const reason  = (document.getElementById('waveshield-ban-reason')?.value  || '').toLowerCase();
+  const status  = (document.getElementById('waveshield-ban-status')?.value  || '').toLowerCase();
+  const altsOnly = !!document.getElementById('waveshield-alts-only')?.checked;
+
+  const reasons = [...new Set(WAVESHIELD_IMPORTED_BANS.map(b => b.reason).filter(Boolean))]
+    .sort((a, b) => a.localeCompare(b));
+  const sel = document.getElementById('waveshield-ban-reason');
+  if(sel && sel.options.length === 1) reasons.forEach(r => {
+    const o = document.createElement('option');
+    o.value = r.toLowerCase(); o.textContent = r; sel.appendChild(o);
   });
-  const total=WAVESHIELD_IMPORTED_BANS.length, permanent=WAVESHIELD_IMPORTED_BANS.filter(b=>!b.expiresAt).length;
-  const stats=document.getElementById('waveshield-ban-stats');
-  if(stats) stats.innerHTML=`<span class="status-chip">${total} total bans</span><span class="status-chip">${permanent} permanent</span><span class="status-chip live">${rows.length} shown</span><span class="status-chip">${API_ONLINE?'Discord profile API ready':'Imported mode'}</span>`;
-  const list=document.getElementById('waveshield-ban-list'); if(!list) return;
+
+  const altIdx = wsAltIndex();
+
+  const rows = WAVESHIELD_IMPORTED_BANS.map((b, i) => ({ b, i })).filter(({ b, i }) => {
+    if(altsOnly && !altIdx.has(i)) return false;
+    const discord = wsDiscordId(b), fivem = wsFiveMId(b);
+    const hay = [b.playerName, b.player?.playerName, b.banId, b.reason, b.playerId, discord, fivem]
+      .filter(Boolean).join(' ').toLowerCase();
+    const temp = !!b.expiresAt;
+    return (!search || hay.includes(search))
+        && (!reason || String(b.reason || '').toLowerCase() === reason)
+        && (!status || (status === 'temporary' ? temp : !temp));
+  });
+
+  const total     = WAVESHIELD_IMPORTED_BANS.length;
+  const permanent = WAVESHIELD_IMPORTED_BANS.filter(b => !b.expiresAt).length;
+  const altGroups = wsAltGroupCount();
+
+  const stats = document.getElementById('waveshield-ban-stats');
+  if(stats) stats.innerHTML =
+    `<span class="status-chip">${total} total bans</span>` +
+    `<span class="status-chip">${permanent} permanent</span>` +
+    `<span class="status-chip live">${rows.length} shown</span>` +
+    `<span class="status-chip" style="color:var(--amber);border-color:rgba(251,191,36,.35);">🔗 ${altGroups} alt group${altGroups === 1 ? '' : 's'}</span>` +
+    `<span class="status-chip">${API_ONLINE ? 'Discord profile API ready' : 'Imported mode'}</span>`;
+
+  const list = document.getElementById('waveshield-ban-list');
+  if(!list) return;
   if(!rows.length){
-    list.innerHTML='<div class="empty-state"><strong>No banned users match</strong>Try a different name, ID, reason or status, or click <em>Sync now</em>.</div>';
+    list.innerHTML = '<div class="empty-state"><strong>No banned users match</strong>Try a different name, ID, reason or status, or click <em>Sync now</em>.</div>';
     return;
   }
-  list.innerHTML=rows.map(({b,i})=>{
-    const discord=wsDiscordId(b), fivem=wsFiveMId(b), avatarLetter=(b.playerName||'?').slice(0,1).toUpperCase();
-    return `<div class="ws-ban-row"><div class="ws-ban-main"><div class="ws-ban-avatar">${esc(avatarLetter)}</div><div class="ws-ban-user"><div class="ws-ban-name">${esc(b.playerName||b.player?.playerName||'Unknown user')}</div><div class="muted">Ban #${esc(b.banId||b.id||'—')} · ${esc(b.reason||'No reason')}</div><div class="ws-ban-subids">${discord?`<span>Discord <code class="mono">${esc(discord)}</code></span>`:''}${fivem?`<span>FiveM <code class="mono">${esc(fivem)}</code></span>`:''}</div></div><div class="ws-ban-time"><div>${esc(wsBanDate(b.bannedAt))}</div><span class="status-chip ${b.expiresAt?'':'live'}">${b.expiresAt?'Temporary':'Permanent'}</span></div><button class="btn btn-secondary ws-ban-more" onclick="toggleWaveShieldBan(${i})">Details</button></div><div id="ws-ban-detail-${i}" style="display:none;">${wsBanDetailsHtml(b,i)}</div></div>`;
+
+  list.innerHTML = rows.map(({ b, i }) => {
+    const discord = wsDiscordId(b), fivem = wsFiveMId(b);
+    const avatarLetter = (b.playerName || '?').slice(0, 1).toUpperCase();
+    const linked = altIdx.get(i);
+    const linkedCount = linked ? linked.size : 0;
+    const altBadge = linkedCount
+      ? `<span class="ws-alt-badge" onclick="event.stopPropagation();toggleWaveShieldBan(${i})" title="${linkedCount} linked account(s)">🔗 ${linkedCount} linked</span>`
+      : '';
+    return `<div class="ws-ban-row" id="ws-ban-row-${i}"><div class="ws-ban-main"><div class="ws-ban-avatar">${esc(avatarLetter)}</div><div class="ws-ban-user"><div class="ws-ban-name">${esc(b.playerName || b.player?.playerName || 'Unknown user')} ${altBadge}</div><div class="muted">Ban #${esc(b.banId || b.id || '—')} · ${esc(b.reason || 'No reason')}</div><div class="ws-ban-subids">${discord ? `<span>Discord <code class="mono">${esc(discord)}</code></span>` : ''}${fivem ? `<span>FiveM <code class="mono">${esc(fivem)}</code></span>` : ''}</div></div><div class="ws-ban-time"><div>${esc(wsBanDate(b.bannedAt))}</div><span class="status-chip ${b.expiresAt ? '' : 'live'}">${b.expiresAt ? 'Temporary' : 'Permanent'}</span></div><button class="btn btn-secondary ws-ban-more" onclick="toggleWaveShieldBan(${i})">Details</button></div><div id="ws-ban-detail-${i}" style="display:none;">${wsBanDetailsHtml(b, i)}</div></div>`;
   }).join('');
 }
 function toggleWaveShieldBan(i){ const el=document.getElementById('ws-ban-detail-'+i); if(!el) return; const open=el.style.display==='none'; el.style.display=open?'':'none'; if(open && wsDiscordId(WAVESHIELD_IMPORTED_BANS[i])) wsLoadDiscordProfile(i); }
-function clearWaveShieldBanFilters(){ ['waveshield-ban-search','waveshield-ban-reason','waveshield-ban-status'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';}); renderWaveShieldBans(); }
+function clearWaveShieldBanFilters(){
+  ['waveshield-ban-search','waveshield-ban-reason','waveshield-ban-status'].forEach(id => {
+    const e = document.getElementById(id); if(e) e.value = '';
+  });
+  const alt = document.getElementById('waveshield-alts-only');
+  if(alt) alt.checked = false;
+  renderWaveShieldBans();
+}
 
 function exportWaveShieldBans(){
   if(!WAVESHIELD_IMPORTED_BANS.length){ toast('Nothing to export yet', false); return; }
