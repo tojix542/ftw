@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="dark light">
 <meta name="theme-color" content="#060C1A">
 <title>FTW · Dashboard</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><defs><linearGradient id='g' x1='6' y1='4' x2='42' y2='44' gradientUnits='userSpaceOnUse'><stop stop-color='%237BE9DD'/><stop offset='.55' stop-color='%234FD1C5'/><stop offset='1' stop-color='%2322A392'/></linearGradient></defs><path d='M24 3 42 12.6v20.8L24 43 6 33.4V12.6z' fill='url(%23g)'/><path d='M18.2 15h12.6v5.1h-7.7v4.2h6v4.9h-6V37h-4.9z' fill='%23051F1C'/></svg>">
+<link rel="icon" type="image/svg+xml" href="/ftw-dashboard-logo.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -60,7 +60,7 @@ html.theming *,html.theming *::before,html.theming *::after{transition:backgroun
 
 /* ═══ BRAND ═══ */
 .brand-mark{position:relative;display:inline-grid;place-items:center;width:38px;height:38px;flex:0 0 38px;border-radius:12px;background:linear-gradient(145deg,rgba(123,233,221,.16),rgba(34,163,146,.10));border:1px solid rgba(123,233,221,.22);box-shadow:0 8px 22px -12px var(--iris-glow),inset 0 1px 0 rgba(255,255,255,.10);transition:transform .4s var(--ease),box-shadow .3s var(--ease)}
-.brand-mark svg{width:24px;height:24px;display:block}
+.brand-mark img{width:26px;height:26px;display:block}
 .brand-lockup{display:flex;align-items:center;gap:11px;min-width:0}
 .brand-lockup:hover .brand-mark{transform:translateY(-1px) scale(1.03)}
 .brand-text{display:flex;flex-direction:column;line-height:1;min-width:0}
@@ -74,7 +74,7 @@ html.theming *,html.theming *::before,html.theming *::after{transition:backgroun
 .auth-logo{position:relative;text-align:center;display:flex;flex-direction:column;align-items:center;gap:14px}
 .auth-mark{position:relative;display:grid;place-items:center;width:78px;height:78px;border-radius:24px;background:linear-gradient(150deg,rgba(123,233,221,.18),rgba(34,163,146,.08));border:1px solid rgba(123,233,221,.24);box-shadow:0 26px 60px -26px var(--iris-glow),inset 0 1px 0 rgba(255,255,255,.12);animation:markIn .7s var(--ease-out) both}
 .auth-mark::before{content:"";position:absolute;inset:-26px;border-radius:50%;pointer-events:none;background:radial-gradient(circle,var(--iris-glow),transparent 68%);opacity:.35;animation:markGlow 4.5s ease-in-out infinite}
-.auth-mark svg{width:46px;height:46px;display:block;position:relative;z-index:1}
+.auth-mark img{width:50px;height:50px;display:block;position:relative;z-index:1}
 @keyframes markIn{from{opacity:0;transform:translateY(10px) scale(.9)}to{opacity:1;transform:none}}
 @keyframes markGlow{0%,100%{opacity:.28;transform:scale(1)}50%{opacity:.5;transform:scale(1.08)}}
 .auth-wordmark{font-family:'Sora',sans-serif;font-size:34px;font-weight:800;letter-spacing:-.045em;display:flex;align-items:baseline;gap:8px;background:linear-gradient(120deg,var(--iris-2),var(--iris-deep));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
@@ -510,7 +510,7 @@ table code{font-size:12.5px;color:var(--text-2)}
 }
 @media(max-width:560px){
   .auth-mark{width:64px;height:64px;border-radius:20px}
-  .auth-mark svg{width:38px;height:38px}
+  .auth-mark img{width:40px;height:40px}
   .auth-wordmark{font-size:28px}
   .card{padding:16px}
   .grid-kpi{grid-template-columns:1fr}
@@ -525,6 +525,39 @@ table code{font-size:12.5px;color:var(--text-2)}
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
 }
+/* ═══ FTW OBSIDIAN / VIOLET THEME ═══ */
+:root{
+  --ink:#030306;--bg:#09090f;--bg-elev:#0d0d15;--panel:#15151f;--panel-2:#1b1a29;--panel-3:#25233a;
+  --line:rgba(196,181,253,.10);--line-2:rgba(196,181,253,.22);--line-3:rgba(196,181,253,.38);
+  --text:#f5f3ff;--text-2:#b7b1cb;--text-3:#817a9b;
+  --iris:#a78bfa;--iris-2:#c4b5fd;--iris-deep:#7c3aed;--iris-wash:rgba(167,139,250,.15);--iris-glow:rgba(139,92,246,.58);
+  --mint:#72e6bd;--mint-wash:rgba(114,230,189,.14);--amber:#f7c66b;--amber-wash:rgba(247,198,107,.14);
+  --rose:#fb7185;--rose-wash:rgba(251,113,133,.14);--violet:#a78bfa;--violet-wash:rgba(167,139,250,.16);--on-accent:#13082a;
+  --shadow-1:0 1px 2px rgba(0,0,0,.62),0 18px 42px rgba(0,0,0,.35);--shadow-2:0 34px 90px rgba(0,0,0,.68);
+  --shadow-glow:0 18px 48px -18px rgba(139,92,246,.62);--grid-line:rgba(196,181,253,.027);--sheen:rgba(255,255,255,.07);--scrim:rgba(4,3,10,.82);
+}
+body::before{background:radial-gradient(900px 610px at 5% -8%,rgba(124,58,237,.19),transparent 62%),radial-gradient(900px 640px at 100% 108%,rgba(139,92,246,.14),transparent 62%),radial-gradient(660px 440px at 58% 44%,rgba(76,29,149,.10),transparent 70%)}
+#sidebar{background:linear-gradient(180deg,#0d0d15 0%,#09090f 100%)}
+#topbar{background:color-mix(in srgb,#09090f 86%,transparent)}
+.brand-mark,.auth-mark{background:linear-gradient(145deg,rgba(196,181,253,.24),rgba(124,58,237,.11));border-color:rgba(196,181,253,.28)}
+.card,.server-panel,.pro-control-center{background:linear-gradient(145deg,rgba(29,28,43,.96),rgba(18,18,28,.96));border-color:rgba(196,181,253,.11)}
+.card:hover{border-color:rgba(196,181,253,.28);box-shadow:0 22px 52px rgba(0,0,0,.42),0 0 0 1px rgba(167,139,250,.05)}
+.nav-item.active{box-shadow:inset 0 0 0 1px rgba(167,139,250,.12),0 10px 28px -18px var(--iris-glow)}
+.btn-primary{background:linear-gradient(135deg,#c4b5fd,#8b5cf6);color:#110522}.btn-primary:hover{background:linear-gradient(135deg,#ddd6fe,#a78bfa)}
+.spotify-note{margin-top:16px;padding:12px 14px;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--iris-wash);font-size:12px;line-height:1.65;color:var(--text-2)}
+.setting-row small,.log-capture-controls small{display:block;margin-top:4px;font-size:11.5px;line-height:1.45;color:var(--text-3)}
+.log-capture-controls{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:13px 0;border-bottom:1px solid var(--line)}
+.log-capture-controls.privacy{margin-bottom:16px;color:var(--amber)}
+.log-item.detailed{align-items:flex-start}.log-details{margin-top:9px}.log-details summary{cursor:pointer;color:var(--iris);font-size:11px;font-weight:700}.log-details pre{margin-top:7px;padding:9px 10px;max-width:100%;overflow:auto;border:1px solid var(--line);border-radius:8px;background:rgba(3,3,6,.45);font:11px/1.5 'IBM Plex Mono',monospace;color:var(--text-2)}
+/* Node-workspace treatment: a quiet graph-paper canvas, compact panels, and thin technical edges. */
+body::after{opacity:.62;background-image:radial-gradient(circle,rgba(221,214,254,.20) 1px,transparent 1.25px);background-size:18px 18px;-webkit-mask-image:none;mask-image:none}
+#topbar{height:64px;margin:10px 12px 0;border:1px solid var(--line);border-radius:14px;background:rgba(13,13,21,.78);box-shadow:0 12px 34px rgba(0,0,0,.22)}
+#sidebar{margin:10px 0 10px 12px;height:calc(100vh - 20px);border:1px solid var(--line);border-radius:16px;box-shadow:0 16px 46px rgba(0,0,0,.26)}
+#content{padding-top:10px}.card,.server-panel,.pro-control-center,.auth-card{border-radius:13px;box-shadow:0 14px 35px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.025)}
+.card::before{opacity:.42}.nav-item{border:1px solid transparent}.nav-item:hover{border-color:var(--line);transform:none}.nav-item.active{border-color:rgba(167,139,250,.20);background:rgba(124,58,237,.16)}
+.nav-item .nav-ico{border-radius:7px;background:rgba(255,255,255,.025)}.btn,.field input,.field select,.field textarea,.input-sm{border-radius:8px;background:rgba(255,255,255,.035);border-color:var(--line)}
+.btn-primary{background:linear-gradient(135deg,#b69cff,#7c3aed)}.btn-primary::before{content:"";width:5px;height:5px;border-radius:50%;background:#e9ddff;box-shadow:0 0 10px #e9ddff}.card-tag,.status-chip{border-radius:6px}
+.setting-row{border-bottom-color:var(--line)}.setting-row:last-child{border-bottom:0}.theme-switch{border-radius:9px}.theme-switch .ts-thumb{border-radius:7px}
 </style>
 </head>
 <body>
@@ -550,15 +583,7 @@ table code{font-size:12.5px;color:var(--text-2)}
 
   <div class="auth-logo">
     <div class="auth-mark">
-      <svg viewBox="0 0 48 48" aria-hidden="true">
-        <defs>
-          <linearGradient id="ftwAuthGrad" x1="6" y1="4" x2="42" y2="44" gradientUnits="userSpaceOnUse">
-            <stop stop-color="#7BE9DD"/><stop offset=".55" stop-color="#4FD1C5"/><stop offset="1" stop-color="#22A392"/>
-          </linearGradient>
-        </defs>
-        <path d="M24 3 42 12.6v20.8L24 43 6 33.4V12.6z" fill="url(#ftwAuthGrad)"/>
-        <path d="M18.2 15h12.6v5.1h-7.7v4.2h6v4.9h-6V37h-4.9z" fill="#051F1C"/>
-      </svg>
+      <img src="/ftw-dashboard-logo.svg" alt="FTW Dashboard">
     </div>
     <div class="auth-wordmark">FTW <span>Dashboard</span></div>
     <div class="sub">Server control panel</div>
@@ -601,15 +626,7 @@ table code{font-size:12.5px;color:var(--text-2)}
     <div class="sidebar-header">
       <div class="brand-lockup">
         <div class="brand-mark">
-          <svg viewBox="0 0 48 48" aria-hidden="true">
-            <defs>
-              <linearGradient id="ftwSideGrad" x1="6" y1="4" x2="42" y2="44" gradientUnits="userSpaceOnUse">
-                <stop stop-color="#7BE9DD"/><stop offset=".55" stop-color="#4FD1C5"/><stop offset="1" stop-color="#22A392"/>
-              </linearGradient>
-            </defs>
-            <path d="M24 3 42 12.6v20.8L24 43 6 33.4V12.6z" fill="url(#ftwSideGrad)"/>
-            <path d="M18.2 15h12.6v5.1h-7.7v4.2h6v4.9h-6V37h-4.9z" fill="#051F1C"/>
-          </svg>
+          <img src="/ftw-dashboard-logo.svg" alt="FTW Dashboard">
         </div>
         <div class="brand-text">
           <div class="brand-name">FTW</div>
@@ -931,6 +948,18 @@ table code{font-size:12.5px;color:var(--text-2)}
           <div class="card-head">
             <div class="card-title">What the bot has been doing</div>
             <button class="btn btn-secondary btn-sm" onclick="loadLogs()">↻ Refresh</button>
+          </div>
+          <div class="log-capture-controls">
+            <div><strong>Detailed server events</strong><small>Track joins, moderation, channels, roles, voice moves and message changes.</small></div>
+            <label class="toggle"><input type="checkbox" data-key="detailed_logs_enabled" onchange="markDirty()"><div class="toggle-track"><div class="toggle-thumb"></div></div></label>
+          </div>
+          <div class="log-capture-controls">
+            <div><strong>Message event headers</strong><small>Log sent, edited and deleted messages without saving their text.</small></div>
+            <label class="toggle"><input type="checkbox" data-key="detailed_logs_message_events" onchange="markDirty()"><div class="toggle-track"><div class="toggle-thumb"></div></div></label>
+          </div>
+          <div class="log-capture-controls privacy">
+            <div><strong>Include message excerpts</strong><small>Off by default. Enable only if your server policy permits storing message text in the bot log.</small></div>
+            <label class="toggle"><input type="checkbox" data-key="detailed_logs_include_message_content" onchange="markDirty()"><div class="toggle-track"><div class="toggle-thumb"></div></div></label>
           </div>
           <div id="logs-list"><div class="empty-state">Loading…</div></div>
         </div>
@@ -1344,6 +1373,11 @@ table code{font-size:12.5px;color:var(--text-2)}
             <input class="input-sm" type="number" data-key="music_default_volume" step="0.1" min="0.1" max="2" onchange="markDirty()" style="width:110px;"></div>
           <div class="setting-row"><div>Longest track (seconds)</div>
             <input class="input-sm" type="number" data-key="music_max_seconds" min="60" onchange="markDirty()" style="width:130px;"></div>
+          <div class="setting-row"><div><strong>Spotify default playlist</strong><small>Paste a public Spotify playlist URL. Run <code>!playliste</code> in Discord to start it automatically.</small></div>
+            <input class="input-sm" type="url" data-key="spotify_default_playlist" onchange="markDirty()" placeholder="https://open.spotify.com/playlist/..." style="width:min(420px,100%);"></div>
+          <div class="setting-row"><div><strong>Playlist autoplay</strong><small>Continue through the Spotify playlist until it finishes or you run <code>/music stop</code>.</small></div>
+            <label class="toggle"><input type="checkbox" data-key="spotify_autoplay" onchange="markDirty()"><div class="toggle-track"><div class="toggle-thumb"></div></div></label></div>
+          <p class="spotify-note">Spotify access is configured securely on the bot host with <code>SPOTIFY_CLIENT_ID</code> and <code>SPOTIFY_CLIENT_SECRET</code>. Spotify supplies track metadata; the bot resolves playable audio through your installed yt-dlp.</p>
         </div>
       </div>
 
@@ -2188,7 +2222,9 @@ async function loadLogs(){
     el.innerHTML = d.logs.map(l=>{
       const ts = new Date(l.time*1000).toLocaleTimeString();
       const kind = (l.kind || 'event').toLowerCase();
-      return `<div class="log-item"><div class="log-time">${ts}</div><div class="log-kind ${esc(kind)}">${esc(l.kind||'event')}</div><div class="log-text">${esc(l.text||'')}</div></div>`;
+      const details = l.details && Object.keys(l.details).length
+        ? `<details class="log-details"><summary>Details</summary><pre>${esc(JSON.stringify(l.details, null, 2))}</pre></details>` : '';
+      return `<div class="log-item detailed"><div class="log-time">${ts}</div><div class="log-kind ${esc(kind)}">${esc(l.kind||'event')}</div><div class="log-text">${esc(l.text||'')}${details}</div></div>`;
     }).join('');
   }catch(e){ el.innerHTML = '<div class="empty-state"><strong>Activity would not load</strong>The bot API did not answer.</div>'; }
 }
