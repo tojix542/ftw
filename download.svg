@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+  <title id="title">FTW Dashboard</title>
+  <defs>
+    <linearGradient id="surface" x1="20" y1="12" x2="108" y2="118" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#8cf5e8"/>
+      <stop offset=".5" stop-color="#4fd1c5"/>
+      <stop offset="1" stop-color="#18897f"/>
+    </linearGradient>
+    <linearGradient id="line" x1="30" y1="35" x2="100" y2="94" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#e8fffb"/>
+      <stop offset="1" stop-color="#a2fff1" stop-opacity=".72"/>
+    </linearGradient>
+  </defs>
+  <path d="M64 5 115 34v60L64 123 13 94V34z" fill="url(#surface)"/>
+  <path d="m64 13 44 25v52l-44 25-44-25V38z" fill="#062621" fill-opacity=".3"/>
+  <path d="M34 35h36v12H48v13h19v12H48v22H34z" fill="url(#line)"/>
+  <path d="m72 48 9 37 9-22 9 22 9-37h-13l-4 18-7-18h-12z" fill="#e8fffb"/>
+  <path d="M22 100 64 124l42-24-42 17z" fill="#03231e" fill-opacity=".36"/>
+</svg>
