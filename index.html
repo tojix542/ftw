@@ -2161,14 +2161,16 @@ async function submitBan(){
     }
     if(mirror){
       try{
-        const wsKey = (localStorage.getItem('ftw_waveshield_api_key') || '').trim();
-        const wsBase = (localStorage.getItem('ftw_waveshield_api_url') || 'https://api.waveshield.xyz').replace(/\/+$/,'');
+        const wsKey = wsApiKey();
+        const wsBase = wsApiBase();
         if(wsKey){
           await fetch(wsBase + '/v1/bans', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + wsKey, 'X-API-Key': wsKey },
-            body: JSON.stringify({ serverId: 'f4579c62-bb22-4634-b444-a581ba0f6068', reason: reason, playerName: 'Discord ' + uid, identifiers: [{ type: 'discord', value: uid }] })
+            body: JSON.stringify({ serverId: WS_SERVER_ID, reason: reason, playerName: 'Discord ' + uid, identifiers: [{ type: 'discord', value: uid }] })
           }).catch(()=>{});
+          // Refresh the shared list so all operators see the new ban immediately.
+          syncWaveShieldBans({ silent:true });
         }
       }catch(e){}
     }
@@ -2646,31 +2648,85 @@ async function loadWhitelist(){
 /* ═══ WAVESHIELD ═══ */
 const WS_SERVER_ID = 'f4579c62-bb22-4634-b444-a581ba0f6068';
 const WS_API_BASE = 'https://api.waveshield.xyz';
-const WS_STORAGE_KEY = 'ftw_waveshield_bans_v1';
-const WS_API_KEY_STORAGE = 'ftw_waveshield_api_key';
-const WS_API_URL_STORAGE = 'ftw_waveshield_api_url';
-let WAVESHIELD_IMPORTED_BANS = [];
-let wsSyncTimer = null;
+const WS_SYNC_INTERVAL = 5 * 60 * 1000;   // pull live bans from WaveShield
+const WS_REFRESH_INTERVAL = 20 * 1000;    // pull shared state from the bot API
 
-function getWsApiKey(){ try{ return localStorage.getItem(WS_API_KEY_STORAGE) || ''; }catch(e){ return ''; } }
-function setWsApiKey(v){ try{ v ? localStorage.setItem(WS_API_KEY_STORAGE, v) : localStorage.removeItem(WS_API_KEY_STORAGE); }catch(e){} }
-function getWsApiBase(){ try{ return (localStorage.getItem(WS_API_URL_STORAGE) || WS_API_BASE).replace(/\/+$/,''); }catch(e){ return WS_API_BASE; } }
-function setWsApiBase(v){ try{ (v && v !== WS_API_BASE) ? localStorage.setItem(WS_API_URL_STORAGE, v) : localStorage.removeItem(WS_API_URL_STORAGE); }catch(e){} }
-function clearWsApiKey(){
-  if(!confirm('Forget the saved WaveShield API key from this browser?')) return;
-  setWsApiKey(''); setWsApiBase('');
-  const k=document.getElementById('ws-api-key'); if(k) k.value='';
-  const u=document.getElementById('ws-api-url'); if(u) u.value=WS_API_BASE;
-  const s=document.getElementById('ws-sync-status'); if(s) s.textContent='Not configured';
-  const l=document.getElementById('ws-sync-log'); if(l) l.textContent='Key removed.';
+let WAVESHIELD_IMPORTED_BANS = [];
+let WS_CONFIG = { api_key: '', api_url: WS_API_BASE };
+let wsSyncTimer = null;
+let wsRefreshTimer = null;
+
+/* --- shared helpers ------------------------------------------------- */
+function wsApiKey(){ return WS_CONFIG.api_key || ''; }
+function wsApiBase(){ return (WS_CONFIG.api_url || WS_API_BASE).replace(/\/+$/,''); }
+
+/* --- shared config (server-side) ------------------------------------ */
+async function loadWsConfigFromServer(){
+  try{
+    const r = await fetchApi('/api/waveshield/config', { headers: hdr() });
+    const d = await r.json().catch(()=>({}));
+    if(r.ok){
+      WS_CONFIG.api_key = d.api_key || '';
+      WS_CONFIG.api_url = (d.api_url || WS_API_BASE).replace(/\/+$/,'');
+    }
+  }catch(e){ /* keep last known value */ }
+  const k = document.getElementById('ws-api-key'); if(k) k.value = WS_CONFIG.api_key;
+  const u = document.getElementById('ws-api-url'); if(u) u.value = WS_CONFIG.api_url;
+  return WS_CONFIG;
+}
+
+async function saveWsConfigToServer(apiKey, apiBase){
+  const r = await fetchApi('/api/waveshield/config', {
+    method: 'POST', headers: hdr(),
+    body: JSON.stringify({ api_key: apiKey, api_url: apiBase })
+  });
+  const d = await r.json().catch(()=>({}));
+  if(!r.ok) throw new Error(d.error || 'Could not save WaveShield settings');
+  WS_CONFIG.api_key = apiKey;
+  WS_CONFIG.api_url = apiBase;
+  return d;
+}
+
+async function clearWsApiKey(){
+  if(!confirm('Forget the shared WaveShield API key for everyone?')) return;
+  try{ await saveWsConfigToServer('', WS_API_BASE); }
+  catch(e){ toast(e.message || 'Could not clear key', false); return; }
+  const k = document.getElementById('ws-api-key'); if(k) k.value = '';
+  const u = document.getElementById('ws-api-url'); if(u) u.value = WS_API_BASE;
+  const s = document.getElementById('ws-sync-status'); if(s) s.textContent = 'Not configured';
+  const l = document.getElementById('ws-sync-log'); if(l) l.textContent = 'Key removed for all operators.';
   toast('API key removed');
 }
-function loadCachedBans(){ try{ const raw=localStorage.getItem(WS_STORAGE_KEY); if(raw){ const p=JSON.parse(raw); if(Array.isArray(p)) return p; } }catch(e){} return null; }
-function saveCachedBans(list){ try{ localStorage.setItem(WS_STORAGE_KEY, JSON.stringify(list)); }catch(e){} }
+
+/* --- shared ban list (server-side) ---------------------------------- */
+async function loadWsBansFromServer(){
+  try{
+    const r = await fetchApi('/api/waveshield/bans', { headers: hdr() });
+    const d = await r.json().catch(()=>({}));
+    if(r.ok && Array.isArray(d.bans)){
+      WAVESHIELD_IMPORTED_BANS = d.bans.map(normalizeWsBan).filter(Boolean);
+      return true;
+    }
+  }catch(e){}
+  return false;
+}
+
+async function saveWsBansToServer(bans){
+  const r = await fetchApi('/api/waveshield/bans', {
+    method: 'POST', headers: hdr(),
+    body: JSON.stringify({ bans })
+  });
+  const d = await r.json().catch(()=>({}));
+  if(!r.ok) throw new Error(d.error || 'Could not save WaveShield bans');
+  return d;
+}
+
+/* --- normalisation / helpers ---------------------------------------- */
 function wsBanIdentifier(b,type){ const item=(b.identifiers||[]).find(x=>String(x.type||'').toLowerCase()===type); return item ? String(item.value||'') : ''; }
 function wsBanDate(v){ if(!v) return '—'; const d=new Date(v); return Number.isNaN(d.getTime())?String(v):d.toLocaleString(); }
 function wsDiscordId(b){ const raw=wsBanIdentifier(b,'discord'); const m=raw.match(/(\d{15,25})/); return m?m[1]:''; }
 function wsFiveMId(b){ const raw=wsBanIdentifier(b,'fivem'); return raw.replace(/^fivem:/i,''); }
+
 function normalizeWsBan(raw){
   if(!raw || typeof raw !== 'object') return null;
   const pick = (...keys) => { for(const k of keys){ const v = raw[k]; if(v !== undefined && v !== null && v !== '') return v; } return undefined; };
@@ -2696,6 +2752,8 @@ function normalizeWsBan(raw){
     identifiers
   };
 }
+
+/* --- remote sync from WaveShield API -------------------------------- */
 async function fetchWsPage(page, apiKey, apiBase){
   const url = new URL(apiBase + '/v1/bans/search');
   url.searchParams.set('limit', '100'); url.searchParams.set('page', String(page)); url.searchParams.set('serverId', WS_SERVER_ID);
@@ -2703,9 +2761,10 @@ async function fetchWsPage(page, apiKey, apiBase){
   if(!r.ok){ let msg = 'HTTP ' + r.status; try{ const j = await r.json(); if(j?.message || j?.error) msg = j.message || j.error; }catch(e){} throw new Error(msg); }
   return r.json();
 }
+
 async function fetchAllWaveShieldBans(){
-  const apiKey = getWsApiKey(); if(!apiKey) return { ok:false, error:'No API key configured' };
-  const apiBase = getWsApiBase(); const all = []; let page = 1;
+  const apiKey = wsApiKey(); if(!apiKey) return { ok:false, error:'No API key configured' };
+  const apiBase = wsApiBase(); const all = []; let page = 1;
   try{
     while(page <= 100){
       const data = await fetchWsPage(page, apiKey, apiBase);
@@ -2727,6 +2786,7 @@ async function fetchAllWaveShieldBans(){
     return { ok:true, bans: all, pages: page };
   }catch(e){ return { ok:false, error: e.message || 'Sync failed' }; }
 }
+
 async function syncWaveShieldBans(opts = {}){
   const silent = !!opts.silent;
   const statusEl = document.getElementById('ws-sync-status');
@@ -2743,7 +2803,8 @@ async function syncWaveShieldBans(opts = {}){
     return false;
   }
   WAVESHIELD_IMPORTED_BANS = result.bans;
-  saveCachedBans(result.bans);
+  try{ await saveWsBansToServer(result.bans); }
+  catch(e){ console.warn('Could not persist WaveShield bans', e); }
   const sel = document.getElementById('waveshield-ban-reason');
   if(sel){ while(sel.options.length > 1) sel.remove(1); }
   renderWaveShieldBans();
@@ -2753,6 +2814,7 @@ async function syncWaveShieldBans(opts = {}){
   if(!silent) toast('Synced ' + result.bans.length + ' bans');
   return true;
 }
+
 async function testWaveShieldApi(){
   const keyInput = document.getElementById('ws-api-key');
   const urlInput = document.getElementById('ws-api-url');
@@ -2774,10 +2836,10 @@ async function testWaveShieldApi(){
       toast('API test failed: ' + msg, false); return;
     }
     const data = await r.json().catch(()=>({}));
-    setWsApiKey(key); setWsApiBase(apiBase);
+    await saveWsConfigToServer(key, apiBase);
     const sample = Array.isArray(data) ? data.length : (data.bans?.length ?? data.data?.length ?? data.results?.length ?? data.items?.length ?? 0);
     if(statusEl) statusEl.innerHTML = '<span style="color:var(--mint)">● Connected</span>';
-    if(logEl) logEl.innerHTML = '<span style="color:var(--mint)">✓ Key saved · sample page returned ' + sample + ' record(s)</span>';
+    if(logEl) logEl.innerHTML = '<span style="color:var(--mint)">✓ Key saved for all operators · sample page returned ' + sample + ' record(s)</span>';
     toast('API key saved — syncing now');
     await syncWaveShieldBans({ silent:false });
   }catch(e){
@@ -2958,38 +3020,78 @@ function exportWaveShieldBans(){
   toast('Exported '+WAVESHIELD_IMPORTED_BANS.length+' bans');
 }
 function triggerWaveShieldImport(){ const input=document.getElementById('waveshield-import-input'); if(!input) return; input.value=''; input.click(); }
-function handleWaveShieldImport(event){
+
+async function handleWaveShieldImport(event){
   const file=event.target.files && event.target.files[0]; if(!file) return;
   const reader=new FileReader();
-  reader.onload=(e)=>{
+  reader.onload=async (e)=>{
     try{
       const data=JSON.parse(e.target.result);
       if(!Array.isArray(data)) throw new Error('The JSON root must be an array of ban objects.');
-      const ok = !WAVESHIELD_IMPORTED_BANS.length || confirm('Replace the '+WAVESHIELD_IMPORTED_BANS.length+' loaded bans with '+data.length+' imported bans?');
+      const ok = !WAVESHIELD_IMPORTED_BANS.length || confirm('Replace the '+WAVESHIELD_IMPORTED_BANS.length+' loaded bans with '+data.length+' imported bans? This affects all operators.');
       if(!ok) return;
       WAVESHIELD_IMPORTED_BANS = data.map(normalizeWsBan).filter(Boolean);
-      saveCachedBans(WAVESHIELD_IMPORTED_BANS);
+      try{ await saveWsBansToServer(WAVESHIELD_IMPORTED_BANS); }
+      catch(err){ toast('Could not save imported bans: ' + (err.message||''), false); return; }
       const sel=document.getElementById('waveshield-ban-reason'); if(sel){ while(sel.options.length>1) sel.remove(1); }
-      renderWaveShieldBans(); toast('Imported '+data.length+' bans');
+      renderWaveShieldBans();
+      toast('Imported '+data.length+' bans');
     }catch(err){ toast('Import failed: '+(err.message||'invalid JSON'), false); }
   };
   reader.onerror=()=>toast('Could not read that file', false);
   reader.readAsText(file);
 }
+
 const WAVESHIELD_BANS_URL='https://waveshield.xyz/dashboard/server/f4579c62-bb22-4634-b444-a581ba0f6068/bans';
 function openWaveShieldBans(){ window.open(WAVESHIELD_BANS_URL,'_blank','noopener,noreferrer'); }
+
 async function initWaveShieldBans(){
-  const k=document.getElementById('ws-api-key'); const u=document.getElementById('ws-api-url');
-  if(k) k.value=getWsApiKey(); if(u) u.value=getWsApiBase();
-  const cached=loadCachedBans(); WAVESHIELD_IMPORTED_BANS=(cached && cached.length)?cached:[];
+  // 1. Load shared config + shared ban list from the bot API
+  await loadWsConfigFromServer();
+  const hadServerBans = await loadWsBansFromServer();
+  if(!hadServerBans){
+    // Fallback: if the API hasn't got bans yet, try the local cache so old users
+    // don't lose their list on the first load after the upgrade.
+    try{
+      const raw = localStorage.getItem('ftw_waveshield_bans_v1');
+      if(raw){ const p = JSON.parse(raw); if(Array.isArray(p)) WAVESHIELD_IMPORTED_BANS = p.map(normalizeWsBan).filter(Boolean); }
+    }catch(e){}
+  }
   renderWaveShieldBans();
-  if(getWsApiKey()){ await syncWaveShieldBans({ silent:true }); }
-  else{
+
+  // 2. If a shared key exists, pull fresh bans from WaveShield once
+  if(wsApiKey()){
+    await syncWaveShieldBans({ silent:true });
+  }else{
     const s=document.getElementById('ws-sync-status'); if(s) s.textContent='Not configured';
     const l=document.getElementById('ws-sync-log'); if(l) l.textContent='Paste your WaveShield API key above and click Save & test.';
   }
+
+  // 3. Periodic refresh from the bot API so changes made by *other* operators
+  //    show up here without a page reload.
+  if(wsRefreshTimer) clearInterval(wsRefreshTimer);
+  wsRefreshTimer = setInterval(async ()=>{
+    if(document.hidden) return;
+    if(document.querySelector('.page.active')?.id !== 'page-waveshield') return;
+    const prevKey = wsApiKey();
+    await loadWsConfigFromServer();
+    const hadServerBans = await loadWsBansFromServer();
+    if(hadServerBans){
+      const sel=document.getElementById('waveshield-ban-reason'); if(sel){ while(sel.options.length>1) sel.remove(1); }
+      renderWaveShieldBans();
+    }
+    // If another operator saved a key for the first time, start a sync here too.
+    if(!prevKey && wsApiKey()) syncWaveShieldBans({ silent:true });
+  }, WS_REFRESH_INTERVAL);
+
+  // 4. Periodic re-sync from WaveShield itself (only the operator with a key needs it;
+  //    the result is pushed to the server for everyone else).
   if(wsSyncTimer) clearInterval(wsSyncTimer);
-  wsSyncTimer=setInterval(()=>{ if(getWsApiKey() && !document.hidden) syncWaveShieldBans({ silent:true }); }, 5 * 60 * 1000);
+  wsSyncTimer = setInterval(()=>{
+    if(wsApiKey() && !document.hidden && document.querySelector('.page.active')?.id === 'page-waveshield'){
+      syncWaveShieldBans({ silent:true });
+    }
+  }, WS_SYNC_INTERVAL);
 }
 
 /* ═══ IP GUARD ═══ */
@@ -3548,7 +3650,16 @@ async function syncPage(page){
       case 'audit':          await loadAudit();                              break;
       case 'whitelist':      await loadWhitelist();                          break;
       case 'staff':          if(isOwner()||USER?.full_control||USER?.manage_access) await loadStaff(); break;
-      case 'waveshield':     if(getWsApiKey()) await syncWaveShieldBans({silent:true}); break;
+      case 'waveshield': {
+        await loadWsConfigFromServer();
+        if(await loadWsBansFromServer()){
+          const sel = document.getElementById('waveshield-ban-reason');
+          if(sel){ while(sel.options.length > 1) sel.remove(1); }
+          renderWaveShieldBans();
+        }
+        if(wsApiKey()) await syncWaveShieldBans({silent:true});
+        break;
+      }
       case 'ipguard':        if(isOwner()) await Promise.all([loadIpGuard(), loadDiscordBans()]); break;
       case 'userlookup':     await loadScanBlacklist();                      break;
     }
