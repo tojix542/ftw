@@ -664,6 +664,8 @@ table code{font-size:12.5px;color:var(--text-2)}
 .log-kind.antinuke{background:var(--rose-wash);color:var(--rose)}
 .log-kind.autoban{background:var(--rose-wash);color:var(--rose)}
 .log-kind.ban{background:var(--rose-wash);color:var(--rose)}
+.log-kind.login{background:var(--iris-wash);color:var(--iris-2)}
+.log-kind.ip-ban{background:var(--rose-wash);color:var(--rose)}
 .log-kind.mod{background:var(--iris-wash);color:var(--iris-2)}
 .log-text{flex:1;color:var(--text-2);padding-top:4px}
 .log-details{margin-top:8px}
@@ -937,6 +939,55 @@ table code{font-size:12.5px;color:var(--text-2)}
   word-break:break-all;
 }
 
+/* ═══ IP GUARD ═══ */
+.ip-row{
+  display:grid; grid-template-columns:36px 1.4fr 1.3fr 1fr auto auto;
+  gap:12px; align-items:center;
+  padding:12px 14px; border:1px solid var(--line); border-radius:12px;
+  background:rgba(255,255,255,.018); margin-bottom:8px;
+  transition:border-color .18s, background .18s;
+}
+.ip-row:hover{ border-color:var(--line-2); background:rgba(255,255,255,.035); }
+.ip-row.blocked{ border-color:rgba(244,63,94,.38); background:rgba(244,63,94,.06); }
+.ip-row .ip-av{
+  width:36px; height:36px; border-radius:10px;
+  display:grid; place-items:center; font-weight:800; font-family:'Sora',sans-serif;
+  background:var(--iris-wash); color:var(--iris-2); font-size:14px;
+}
+.ip-row.fail .ip-av{ background:var(--rose-wash); color:var(--rose); }
+.ip-row .who{ min-width:0; }
+.ip-row .who .nm{ font-weight:700; color:var(--text); font-size:13px; }
+.ip-row .who .sub{ font-size:11px; color:var(--text-3); font-family:'IBM Plex Mono',monospace; }
+.ip-row .ip-addr{
+  font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--text-2);
+  padding:4px 8px; border:1px solid var(--line); border-radius:6px;
+  background:rgba(0,0,0,.18);
+}
+.ip-row .ip-addr.banned{ border-color:rgba(244,63,94,.4); color:var(--rose); }
+.ip-row .when{ font-size:11.5px; color:var(--text-3); white-space:nowrap; }
+.ip-row .kind-chip{
+  padding:3px 8px; font-size:10px; font-weight:700; border-radius:99px;
+  background:var(--mint-wash); color:var(--mint); text-transform:uppercase; letter-spacing:.06em;
+}
+.ip-row .kind-chip.fail{ background:var(--rose-wash); color:var(--rose); }
+.ip-row .kind-chip.active{ background:var(--iris-wash); color:var(--iris-2); }
+.ip-row .actions{ display:flex; gap:6px; }
+.ip-ban-item{
+  display:flex; align-items:center; gap:10px; padding:10px 12px;
+  border:1px solid var(--line); border-radius:10px;
+  background:rgba(244,63,94,.05); margin-bottom:6px;
+}
+.ip-ban-item code{
+  font-size:12.5px; padding:3px 7px; border-radius:6px;
+  background:rgba(0,0,0,.25); color:var(--rose);
+}
+.ip-ban-item .why{ flex:1; min-width:0; font-size:11.5px; color:var(--text-3); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+@media(max-width:900px){
+  .ip-row{ grid-template-columns:36px 1fr auto; grid-auto-flow:row; }
+  .ip-row .ip-addr, .ip-row .when{ grid-column:2; }
+  .ip-row .actions{ grid-column:3; grid-row:1 / span 3; }
+}
+
 .lookup-role-grid{display:flex;flex-wrap:wrap;gap:9px;margin-top:12px}
 .lookup-role{display:flex;align-items:center;gap:8px;padding:9px 11px;border:1px solid var(--line);border-radius:12px;background:var(--panel-2);min-width:190px}
 .lookup-role-dot{width:9px;height:9px;border-radius:50%;background:var(--text-2);flex:none}
@@ -1144,6 +1195,7 @@ table code{font-size:12.5px;color:var(--text-2)}
     <div class="nav-item" data-page="welcome" onclick="nav('welcome')"><span class="nav-ico">☺</span>Welcome</div>
     <div class="nav-item" data-page="userlookup" onclick="nav('userlookup')"><span class="nav-ico">⌕</span>User lookup</div>
     <div class="nav-item" data-page="waveshield" onclick="nav('waveshield')"><span class="nav-ico">◉</span>WaveShield bans</div>
+    <div class="nav-item" data-page="ipguard" id="nav-ipguard" onclick="nav('ipguard')"><span class="nav-ico">🛡</span>IP Guard</div>
     <div class="nav-item" data-page="staff" id="nav-staff" onclick="nav('staff')"><span class="nav-ico">⌘</span>Access control</div>
 
     <div class="sidebar-footer">
@@ -2103,6 +2155,63 @@ table code{font-size:12.5px;color:var(--text-2)}
         </div>
       </div>
 
+      <!-- ══ IP GUARD ══ -->
+      <div class="page" id="page-ipguard">
+        <div class="card" style="margin-bottom:14px;">
+          <div class="card-head">
+            <div>
+              <div class="card-title">Login activity</div>
+              <div class="muted" style="margin-top:4px;font-size:12px;color:var(--text-3);">
+                Every successful and failed login is recorded with the client IP. Owner only.
+              </div>
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick="loadIpGuard()">↻ Refresh</button>
+          </div>
+
+          <div id="ipguard-stats" class="ws-ban-stats"></div>
+
+          <div style="display:grid;grid-template-columns:2fr 1.2fr 1fr 1fr auto;gap:9px;margin:12px 0;">
+            <input class="input-sm" id="ipguard-search" placeholder="Search user or IP" oninput="renderIpLogs()">
+            <select class="input-sm" id="ipguard-status" onchange="renderIpLogs()">
+              <option value="">All results</option>
+              <option value="ok">Successful only</option>
+              <option value="fail">Failed only</option>
+            </select>
+            <select class="input-sm" id="ipguard-kind" onchange="renderIpLogs()">
+              <option value="">All events</option>
+              <option value="login">Logins</option>
+              <option value="active">Active session</option>
+            </select>
+            <label class="ws-alt-toggle" style="height:100%;">
+              <input type="checkbox" id="ipguard-banned-only" onchange="renderIpLogs()">Banned only
+            </label>
+            <button class="btn btn-secondary" onclick="clearIpGuardFilters()">Clear</button>
+          </div>
+
+          <div id="ipguard-log-list" class="ws-ban-list"></div>
+        </div>
+
+        <div class="grid-2" style="margin-bottom:14px;">
+          <div class="card">
+            <div class="card-title" style="margin-bottom:12px;">Ban an IP</div>
+            <div class="field" style="margin-bottom:10px;">
+              <label>IP address</label>
+              <input class="input-sm" id="ipguard-add-ip" placeholder="203.0.113.42">
+            </div>
+            <div class="field" style="margin-bottom:14px;">
+              <label>Reason (optional)</label>
+              <input class="input-sm" id="ipguard-add-reason" placeholder="Evading ban / scam alt">
+            </div>
+            <button class="btn btn-danger" onclick="addIpBan()">🚫 Ban this IP</button>
+          </div>
+
+          <div class="card">
+            <div class="card-title" style="margin-bottom:12px;">Currently banned</div>
+            <div id="ipguard-ban-list"></div>
+          </div>
+        </div>
+      </div>
+
       <div class="page" id="page-staff">
         <div class="card access-hero" style="margin-bottom:14px;">
           <div class="access-hero-grid">
@@ -2155,7 +2264,7 @@ let API_ONLINE = false;
 let API_ACTIVE_BASE = BOT_API;
 
 const PAGES = ['hub','verify','antinuke','scam','backup','ai','music',
-               'status-cfg','presence','userlookup','waveshield','welcome'];
+               'status-cfg','presence','userlookup','waveshield','welcome','ipguard'];
 
 const PAGE_NAMES = {
   overview:'Dashboard', status:'Live status', logs:'Activity', audit:'Audit log',
@@ -2164,7 +2273,7 @@ const PAGE_NAMES = {
   antinuke:'AntiNuke', scam:'Scam catcher', backup:'Backups', ai:'AI chat',
   music:'Music', 'status-cfg':'Status card', presence:'Presence & bio',
   userlookup:'User lookup', waveshield:'WaveShield bans', staff:'Staff access',
-  welcome:'Welcome & goodbye'
+  welcome:'Welcome & goodbye', ipguard:'IP Guard'
 };
 const PAGE_SUBS = {
   overview:'Live view of your server and bot', status:'Health readings every five seconds',
@@ -2179,7 +2288,8 @@ const PAGE_SUBS = {
   presence:'What the bot shows on its profile', userlookup:'Inspect a member and their server roles',
   waveshield:'Live WaveShield banned users console',
   staff:'Who can open which page',
-  welcome:'Greet new members automatically'
+  welcome:'Greet new members automatically',
+  ipguard:'Every login, tied to the client IP — owner only'
 };
 
 let SESSION='', USER=null, dirty=false, config={}, newPerms={};
@@ -2266,9 +2376,7 @@ async function checkApiHealth(silent=true){
   return false;
 }
 
-/* ═══════════════════════════════════════════════════════════
-   fetchApi — robust fallback (patched)
-   ═══════════════════════════════════════════════════════════ */
+/* fetchApi — tries primary first, then whatever last worked, then fallbacks. */
 async function fetchApi(path, options={}){
   const ordered = [BOT_API_DEFAULT, API_ACTIVE_BASE, BOT_API, ...BOT_API_FALLBACKS]
     .map(normalizeApiBase).filter(Boolean);
@@ -2288,10 +2396,7 @@ async function fetchApi(path, options={}){
   throw last || new Error('Bot API unavailable');
 }
 
-/* ═══════════════════════════════════════════════════════════
-   apiFetch — robust fallback (patched)
-   Accepts either an absolute URL or a path.
-   ═══════════════════════════════════════════════════════════ */
+/* apiFetch — accepts a path or absolute URL, tries every known base. */
 async function apiFetch(url, options={}){
   const isAbsolute = /^https?:\/\//i.test(url);
   const candidates = isAbsolute
@@ -2299,7 +2404,6 @@ async function apiFetch(url, options={}){
     : [BOT_API_DEFAULT, BOT_API, ...BOT_API_FALLBACKS]
         .map(normalizeApiBase).filter(Boolean)
         .filter((v, i, a) => a.indexOf(v) === i);
-
   let lastErr = null;
   for(const base of candidates){
     const target = isAbsolute ? url : (base + url);
@@ -2431,15 +2535,17 @@ function isOwner(){ return USER && USER.role === 'owner'; }
 function canOpen(page){
   if(!USER) return false;
   if(isOwner() || USER.full_control || USER.manage_access) return true;
+  if(page === 'ipguard') return false; // owner-only page
   return PAGES.includes(page) && !!(USER.perms || {})[page];
 }
 function applyUser(){
   document.getElementById('who').textContent = USER.name + (isOwner() ? ' · owner' : ' · staff');
   document.querySelectorAll('.nav-item[data-page]').forEach(n=>{ n.classList.toggle('hidden', !canOpen(n.dataset.page)); });
   document.getElementById('nav-staff').style.display = (isOwner() || USER.full_control || USER.manage_access) ? '' : 'none';
-  /* Owner-only Ban user button */
   const banBtn = document.getElementById('ban-user-btn');
   if(banBtn) banBtn.classList.toggle('visible', isOwner());
+  const ipNav = document.getElementById('nav-ipguard');
+  if(ipNav) ipNav.classList.toggle('hidden', !isOwner());
   document.querySelectorAll('#sidebar .nav-section').forEach(sec=>{
     let el = sec.nextElementSibling, any = false;
     while(el && el.classList.contains('nav-item')){ if(!el.classList.contains('hidden')) any = true; el = el.nextElementSibling; }
@@ -3023,7 +3129,7 @@ async function loadWhitelist(){
 }
 
 /* ═══════════════════════════════════════════════════════════
-   WAVESHIELD BANS
+   WAVESHIELD
    ═══════════════════════════════════════════════════════════ */
 const WS_SERVER_ID       = 'f4579c62-bb22-4634-b444-a581ba0f6068';
 const WS_API_BASE        = 'https://api.waveshield.xyz';
@@ -3218,7 +3324,7 @@ async function testWaveShieldApi(){
   }
 }
 
-/* ═══ ALT-ACCOUNT DETECTION (universal) ═══ */
+/* ═══ ALT-ACCOUNT DETECTION ═══ */
 const WS_ALT_MIN_LEN = 4;
 let WS_ALT_INDEX_CACHE = null;
 
@@ -3570,7 +3676,176 @@ async function initWaveShieldBans(){
 }
 
 /* ═══════════════════════════════════════════════════════════
-   USER LOOKUP with WaveShield proof
+   IP GUARD
+   ═══════════════════════════════════════════════════════════ */
+let IP_GUARD_LOGS = [];
+let IP_GUARD_BANS = {};
+
+async function loadIpGuard(){
+  if(!isOwner()){ toast('Owner only', false); return; }
+  try{
+    const r = await fetchApi('/api/ip-logs', { headers: hdr() });
+    const d = await r.json().catch(()=>({}));
+    if(!r.ok) throw new Error(d.error || 'Could not load IP logs');
+    IP_GUARD_LOGS = Array.isArray(d.logs) ? d.logs : [];
+    IP_GUARD_BANS = d.bans || {};
+    renderIpGuard();
+  }catch(e){ toast(e.message || 'IP logs unavailable', false); }
+}
+
+function renderIpGuard(){
+  const stats = document.getElementById('ipguard-stats');
+  if(stats){
+    const total  = IP_GUARD_LOGS.length;
+    const ok     = IP_GUARD_LOGS.filter(l=>l.ok).length;
+    const fail   = IP_GUARD_LOGS.filter(l=>!l.ok).length;
+    const ips    = new Set(IP_GUARD_LOGS.map(l=>l.ip).filter(Boolean));
+    const bans   = Object.keys(IP_GUARD_BANS).length;
+    stats.innerHTML =
+      `<span class="status-chip">${total} events</span>` +
+      `<span class="status-chip live">${ok} successful</span>` +
+      `<span class="status-chip" style="color:var(--rose);border-color:rgba(244,63,94,.35);">${fail} failed</span>` +
+      `<span class="status-chip">${ips.size} unique IPs</span>` +
+      `<span class="status-chip" style="color:var(--rose);border-color:rgba(244,63,94,.35);">🚫 ${bans} banned</span>`;
+  }
+  renderIpLogs();
+  renderIpBans();
+}
+
+function renderIpLogs(){
+  const list = document.getElementById('ipguard-log-list');
+  if(!list) return;
+  const q      = (document.getElementById('ipguard-search')?.value || '').trim().toLowerCase();
+  const status = document.getElementById('ipguard-status')?.value || '';
+  const kind   = document.getElementById('ipguard-kind')?.value || '';
+  const bannedOnly = !!document.getElementById('ipguard-banned-only')?.checked;
+
+  const rows = IP_GUARD_LOGS.filter(l=>{
+    if(status === 'ok'   && !l.ok) return false;
+    if(status === 'fail' &&  l.ok) return false;
+    if(kind && (l.kind || 'login') !== kind) return false;
+    if(bannedOnly && !IP_GUARD_BANS[l.ip]) return false;
+    if(q){
+      const hay = (String(l.ip||'') + ' ' + String(l.name||'') + ' ' + String(l.user_id||'')).toLowerCase();
+      if(!hay.includes(q)) return false;
+    }
+    return true;
+  });
+
+  if(!rows.length){
+    list.innerHTML = '<div class="empty-state"><strong>No matching events</strong>Try a different filter, or refresh.</div>';
+    return;
+  }
+
+  list.innerHTML = rows.map((l)=>{
+    const isBanned = !!IP_GUARD_BANS[l.ip];
+    const when = new Date((l.time || 0) * 1000);
+    const relTime = l.time ? `${when.toLocaleTimeString()} · ${fmtRel(l.time)}` : '—';
+    const letter = (l.display_name || l.name || l.user_id || '?').toString().slice(0,1).toUpperCase();
+    const avatar = l.avatar
+      ? `<img class="ip-av" src="${esc(l.avatar)}" alt="" onerror="this.style.display='none'; this.parentNode.textContent='${esc(letter)}'">`
+      : `<div class="ip-av">${esc(letter)}</div>`;
+    const userLink = l.user_id
+      ? `<a href="https://discord.com/users/${encodeURIComponent(l.user_id)}" target="_blank" rel="noopener noreferrer" class="log-user" style="border:0;padding:0;">${esc(l.display_name || l.name || l.user_id)}</a>`
+      : `<span style="color:var(--text-3);">Unknown</span>`;
+    const kindChip = l.ok
+      ? `<span class="kind-chip ${esc(l.kind||'login')}">${esc(l.kind||'login')}</span>`
+      : `<span class="kind-chip fail">failed</span>`;
+    const banBtn = isBanned
+      ? `<button class="btn btn-secondary btn-sm" onclick="removeIpBan('${esc(l.ip)}')">Unban</button>`
+      : `<button class="btn btn-danger btn-sm" onclick="quickBanIp('${esc(l.ip)}')">🚫 Ban IP</button>`;
+    return `<div class="ip-row ${l.ok ? '' : 'fail'} ${isBanned ? 'blocked' : ''}">
+      ${avatar}
+      <div class="who">
+        <div class="nm">${userLink}</div>
+        <div class="sub">${l.user_id ? 'ID ' + esc(l.user_id) : 'no session user'}</div>
+      </div>
+      <span class="ip-addr ${isBanned ? 'banned' : ''}">${esc(l.ip || 'unknown')}</span>
+      <span class="when">${esc(relTime)}</span>
+      ${kindChip}
+      <div class="actions">${banBtn}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderIpBans(){
+  const el = document.getElementById('ipguard-ban-list');
+  if(!el) return;
+  const entries = Object.entries(IP_GUARD_BANS);
+  if(!entries.length){
+    el.innerHTML = '<div class="muted" style="font-size:12px;">No IPs are banned.</div>';
+    return;
+  }
+  el.innerHTML = entries
+    .sort((a,b) => (b[1]?.added_at || 0) - (a[1]?.added_at || 0))
+    .map(([ip, meta]) => `
+      <div class="ip-ban-item">
+        <code>${esc(ip)}</code>
+        <span class="why">${esc(meta?.reason || '—')} · ${fmtRel(meta?.added_at || 0)}</span>
+        <button class="btn btn-secondary btn-sm" onclick="removeIpBan('${esc(ip)}')">Unban</button>
+      </div>`).join('');
+}
+
+async function addIpBan(){
+  if(!isOwner()){ toast('Owner only', false); return; }
+  const ip     = (document.getElementById('ipguard-add-ip').value || '').trim();
+  const reason = (document.getElementById('ipguard-add-reason').value || '').trim();
+  if(!ip){ toast('Enter an IP address', false); return; }
+  try{
+    const r = await fetchApi('/api/ip-bans/add', {
+      method: 'POST', headers: hdr(),
+      body: JSON.stringify({ ip, reason })
+    });
+    const d = await r.json().catch(()=>({}));
+    if(!r.ok) throw new Error(d.error || 'Could not ban IP');
+    toast(`IP ${ip} banned`);
+    document.getElementById('ipguard-add-ip').value = '';
+    document.getElementById('ipguard-add-reason').value = '';
+    await loadIpGuard();
+  }catch(e){ toast(e.message || 'Could not ban IP', false); }
+}
+
+async function quickBanIp(ip){
+  if(!isOwner()){ toast('Owner only', false); return; }
+  const reason = prompt(`Reason for banning ${ip}:`, 'Suspicious login');
+  if(reason === null) return;
+  try{
+    const r = await fetchApi('/api/ip-bans/add', {
+      method: 'POST', headers: hdr(),
+      body: JSON.stringify({ ip, reason })
+    });
+    const d = await r.json().catch(()=>({}));
+    if(!r.ok) throw new Error(d.error || 'Could not ban IP');
+    toast(`IP ${ip} banned`);
+    await loadIpGuard();
+  }catch(e){ toast(e.message || 'Could not ban IP', false); }
+}
+
+async function removeIpBan(ip){
+  if(!isOwner()){ toast('Owner only', false); return; }
+  if(!confirm(`Unban ${ip}?`)) return;
+  try{
+    const r = await fetchApi('/api/ip-bans/remove', {
+      method: 'POST', headers: hdr(),
+      body: JSON.stringify({ ip })
+    });
+    const d = await r.json().catch(()=>({}));
+    if(!r.ok) throw new Error(d.error || 'Could not unban IP');
+    toast(`IP ${ip} unbanned`);
+    await loadIpGuard();
+  }catch(e){ toast(e.message || 'Could not unban IP', false); }
+}
+
+function clearIpGuardFilters(){
+  ['ipguard-search','ipguard-status','ipguard-kind'].forEach(id=>{
+    const e = document.getElementById(id); if(e) e.value = '';
+  });
+  const b = document.getElementById('ipguard-banned-only'); if(b) b.checked = false;
+  renderIpLogs();
+}
+
+/* ═══════════════════════════════════════════════════════════
+   USER LOOKUP
    ═══════════════════════════════════════════════════════════ */
 function useConfiguredGuild(){
   const el=document.getElementById('lookup-guild-id');
@@ -3749,6 +4024,7 @@ function nav(page){
   if(page === 'userlookup'){ useConfiguredGuild(); loadScanBlacklist(); }
   if(page === 'staff') loadStaff();
   if(page === 'welcome') welcomeSyncButtons();
+  if(page === 'ipguard') loadIpGuard();
 }
 function refreshAll(){
   loadConfig();
@@ -3760,6 +4036,7 @@ function refreshAll(){
   if(p === 'page-whitelist') loadWhitelist();
   if(p === 'page-ai') loadAiPanel();
   if(p === 'page-welcome') welcomeSyncButtons();
+  if(p === 'page-ipguard') loadIpGuard();
 }
 
 /* ═══ SAVING ═══ */
