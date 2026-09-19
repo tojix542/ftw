@@ -1938,8 +1938,12 @@ async function fetchApi(path, options={}){
       const r = await fetch(base + path, options);
       API_ACTIVE_BASE = base; BOT_API = base;
       setApiState(true, 'Bot API online');
+      await checkForBan(r);
       return r;
-    }catch(e){ last = e; }
+    }catch(e){
+      if(e && e.message === '__BANNED__') throw e;
+      last = e;
+    }
   }
   setApiState(false, 'Bot API offline');
   throw last || new Error('Bot API unavailable');
@@ -1957,8 +1961,13 @@ async function apiFetch(url, options={}){
       const r = await fetch(target, { ...options, signal: controller.signal, cache: 'no-store' });
       setApiState(true, 'Bot API online');
       if(!isAbsolute){ BOT_API = base; API_ACTIVE_BASE = base; }
+      await checkForBan(r);
       return r;
-    }catch(e){ lastErr = e; if(e?.name === 'AbortError') break; }
+    }catch(e){
+      if(e && e.message === '__BANNED__') throw e;
+      lastErr = e;
+      if(e?.name === 'AbortError') break;
+    }
     finally{ clearTimeout(timeout); }
   }
   setApiState(false, 'Bot API offline');
@@ -1987,6 +1996,34 @@ function showBannedScreen(info){
   overlay.setAttribute('aria-hidden','false');
   document.getElementById('auth-screen').style.display = 'none';
   document.getElementById('app').classList.remove('visible');
+}
+
+/* ═══ BAN ENFORCEMENT ═══ */
+let BANNED_SHOWN = false;
+async function checkForBan(r){
+  if(BANNED_SHOWN || !r || r.status !== 403) return;
+  let data = null;
+  try{ data = await r.clone().json(); }catch(e){ return; }
+  if(!data || !data.banned) return;
+  BANNED_SHOWN = true;
+  try{
+    [statusTimer, logsTimer, auditTimer, globalSyncTimer, wsSyncTimer, wsRefreshTimer]
+      .forEach(t => { if(t) clearInterval(t); });
+  }catch(e){}
+  showBannedScreen(data);
+  throw new Error('__BANNED__');
+}
+async function verifySession(){
+  if(!SESSION) return;
+  try{
+    const r = await fetchApi('/api/me', { headers: hdr() });
+    if(r.status === 401){
+      toast('Your session ran out. Sign in again.', false);
+      doLogout();
+    }
+  }catch(e){
+    if(e && e.message === '__BANNED__') return;
+  }
 }
 
 /* ═══ SIGN IN ═══ */
@@ -2028,6 +2065,7 @@ async function handleOAuthCallback(code){
     document.getElementById('auth-step-2').style.display = '';
     setTimeout(()=>document.getElementById('in-pw').focus(), 90);
   }catch(e){
+    if(e && e.message === '__BANNED__') return;
     document.getElementById('auth-step-loading').style.display = 'none';
     showAuthError('The bot is offline. Check the bot API URL and try again.');
     document.getElementById('auth-step-1').style.display = '';
@@ -2056,6 +2094,7 @@ async function doLogin(){
     await bootData();
     if(isOwner()) await loadStaff();
   }catch(e){
+    if(e && e.message === '__BANNED__') return;
     if(e.message === 'invalid password') showAuthError('That password does not match.');
     else if(e.message === 'preauth invalid or expired') showAuthError('That took too long. Authorize with Discord again.');
     else showAuthError(e.message);
@@ -2078,8 +2117,10 @@ async function bootData(){
 }
 function doLogout(){
   if(SESSION) fetchApi('/api/logout',{method:'POST',headers:hdr()}).catch(()=>{});
-  [statusTimer,logsTimer,auditTimer,globalSyncTimer].forEach(t=>{ if(t) clearInterval(t); });
+  [statusTimer,logsTimer,auditTimer,globalSyncTimer,wsSyncTimer,wsRefreshTimer].forEach(t=>{ if(t) clearInterval(t); });
   globalSyncTimer = null;
+  wsSyncTimer = null;
+  wsRefreshTimer = null;
   try{ localStorage.removeItem('ftw_session'); }catch(e){}
   location.reload();
 }
@@ -2169,7 +2210,6 @@ async function submitBan(){
             headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + wsKey, 'X-API-Key': wsKey },
             body: JSON.stringify({ serverId: WS_SERVER_ID, reason: reason, playerName: 'Discord ' + uid, identifiers: [{ type: 'discord', value: uid }] })
           }).catch(()=>{});
-          // Refresh the shared list so all operators see the new ban immediately.
           syncWaveShieldBans({ silent:true });
         }
       }catch(e){}
@@ -2179,6 +2219,7 @@ async function submitBan(){
     toast(`${action.charAt(0).toUpperCase()+action.slice(1)} applied`);
     setTimeout(closeBanModal, 900);
   }catch(e){
+    if(e && e.message === '__BANNED__') return;
     status.className = 'ban-status err';
     status.textContent = '❌ ' + (e.message || 'The action failed.');
     toast(e.message || 'Action failed', false);
@@ -2233,6 +2274,7 @@ async function submitServerListImport(){
     loadScanBlacklist();
     setTimeout(closeServerListImport, 1400);
   }catch(e){
+    if(e && e.message === '__BANNED__') return;
     status.className = 'ban-status err';
     status.textContent = '❌ ' + (e.message || 'Import failed');
     toast(e.message || 'Import failed', false);
@@ -2250,7 +2292,7 @@ async function exportServerLists(){
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
     toast(`Exported ${(d.scan_source_count||0) + (d.blacklisted_count||0)} IDs`);
-  }catch(e){ toast(e.message || 'Export failed', false); }
+  }catch(e){ if(e && e.message === '__BANNED__') return; toast(e.message || 'Export failed', false); }
 }
 
 /* ═══ PROFILE ═══ */
@@ -2274,7 +2316,7 @@ async function loadProfile(){
       if(role.colour && role.colour !== '#000000'){ b.style.borderColor = role.colour; b.style.color = role.colour; }
       rolesEl.appendChild(b);
     });
-  }catch(e){}
+  }catch(e){ if(e && e.message === '__BANNED__') return; }
 }
 
 /* ═══ LIVE SERVER ═══ */
@@ -2358,6 +2400,7 @@ async function loadLiveServer(){
     if(status && status.ping_ms != null) lastPing = Number(status.ping_ms) || lastPing;
     applyServerProfile(server, status, profile);
   }catch(e){
+    if(e && e.message === '__BANNED__') return;
     document.getElementById('server-sync').textContent = 'Offline';
     document.getElementById('server-last-sync').textContent = 'The bot is not answering right now';
   }
@@ -2404,7 +2447,10 @@ async function loadProCenter(){
     if(ring){ const pct = Math.max(4, Math.min(100, ((Number(status.uptime)||0) / 86400) * 100)); ring.style.setProperty('--ring', pct.toFixed(1) + '%'); }
     document.getElementById('pro-whitelist').textContent = wl.enabled === false ? 'Off' : 'Protected';
     renderProEvents(logs.logs || []);
-  }catch(e){ const h = document.getElementById('pro-health'); if(h) h.textContent = 'No answer'; }
+  }catch(e){
+    if(e && e.message === '__BANNED__') return;
+    const h = document.getElementById('pro-health'); if(h) h.textContent = 'No answer';
+  }
 }
 function proRefresh(){ loadLiveServer(); loadProCenter(); loadStatus(); toast('Everything refreshed'); }
 
@@ -2456,7 +2502,10 @@ async function loadConfig(){
     if(wlToggle) wlToggle.checked = config.whitelist_enabled !== false;
     loadAiPanel();
     welcomeSyncButtons();
-  }catch(e){ toast('Settings would not load — the bot may be offline.', false); }
+  }catch(e){
+    if(e && e.message === '__BANNED__') return;
+    toast('Settings would not load — the bot may be offline.', false);
+  }
 }
 async function loadHealth(){ await checkApiHealth(true); }
 
@@ -2476,6 +2525,7 @@ async function welcomeTest(){
     if(out) out.textContent = '✅ Test message sent to the configured welcome channel.';
     toast('Welcome test sent');
   }catch(e){
+    if(e && e.message === '__BANNED__') return;
     if(out) out.textContent = '❌ ' + (e.message || 'Test failed');
     toast(e.message || 'Test failed', false);
   }
@@ -2562,7 +2612,7 @@ async function loadStatus(){
     if(statusHist.length > 20) statusHist.shift();
     lastGuildSnapshot = {channels:d.channels||0, roles:d.roles||0, members:d.members||0, hubs:d.hubs||0};
     renderLoadCharts();
-  }catch(e){}
+  }catch(e){ if(e && e.message === '__BANNED__') return; }
 }
 
 /* ═══ ACTIVITY LOG ═══ */
@@ -2614,7 +2664,10 @@ async function loadLogs(){
       const details = hasDetails ? `<details class="log-details"><summary>Details</summary><pre>${esc(JSON.stringify(Object.fromEntries(Object.entries(l.details).filter(([k]) => k !== 'user')), null, 2))}</pre></details>` : '';
       return `<div class="log-item"><div class="log-av-wrap">${avatar}</div><div class="log-time">${time}</div><div class="log-kind ${esc(kind)}">${esc(l.kind||'event')}</div><div class="log-text">${userLine ? `<div class="log-who">${userLine}</div>` : ''}${esc(l.text||'')}${details}</div></div>`;
     }).join('');
-  }catch(e){ el.innerHTML = '<div class="empty-state"><strong>Activity would not load</strong>The bot is offline.</div>'; }
+  }catch(e){
+    if(e && e.message === '__BANNED__') return;
+    el.innerHTML = '<div class="empty-state"><strong>Activity would not load</strong>The bot is offline.</div>';
+  }
 }
 
 /* ═══ AUDIT LOG ═══ */
@@ -2630,7 +2683,10 @@ async function loadAudit(){
       const target = e.target ? `<span class="audit-meta">on ${esc(e.target)}</span>` : '';
       return `<div class="audit-row"><img class="audit-av" src="${esc(bust(e.user_avatar)||'')}" alt="" onerror="this.style.display='none'"><div style="flex:1;min-width:0;"><div><strong>${esc(e.user||'Unknown')}</strong> <span class="audit-action">${esc(e.action)}</span></div><div style="margin-top:4px;">${target} ${reason}</div></div><div class="audit-meta" style="white-space:nowrap;">${fmtRel(e.created_at)}</div></div>`;
     }).join('');
-  }catch(e){ el.innerHTML = '<div class="empty-state"><strong>Audit log would not load</strong>The bot is offline.</div>'; }
+  }catch(e){
+    if(e && e.message === '__BANNED__') return;
+    el.innerHTML = '<div class="empty-state"><strong>Audit log would not load</strong>The bot is offline.</div>';
+  }
 }
 
 /* ═══ WHITELIST ═══ */
@@ -2642,25 +2698,23 @@ async function loadWhitelist(){
     const tb = document.getElementById('wl-rows');
     if(!d.whitelist || !d.whitelist.length){ tb.innerHTML = '<tr><td colspan="5"><div class="empty-state"><strong>Nobody is whitelisted</strong>Add trusted people above.</div></td></tr>'; return; }
     tb.innerHTML = d.whitelist.map(w=>`<tr><td><code class="mono">${esc(w.id)}</code></td><td>${esc(w.username||'—')}</td><td style="color:var(--text-2);font-size:12.5px">${esc(w.added_by_name || w.added_by || '—')}</td><td style="color:var(--text-2);font-size:12.5px">${esc(w.reason||'—')}</td><td><button class="btn btn-danger btn-sm" onclick="removeWhitelist('${esc(w.id)}')">Remove</button></td></tr>`).join('');
-  }catch(e){}
+  }catch(e){ if(e && e.message === '__BANNED__') return; }
 }
 
 /* ═══ WAVESHIELD ═══ */
 const WS_SERVER_ID = 'f4579c62-bb22-4634-b444-a581ba0f6068';
 const WS_API_BASE = 'https://api.waveshield.xyz';
-const WS_SYNC_INTERVAL = 5 * 60 * 1000;   // pull live bans from WaveShield
-const WS_REFRESH_INTERVAL = 20 * 1000;    // pull shared state from the bot API
+const WS_SYNC_INTERVAL = 5 * 60 * 1000;   // re-pull from WaveShield itself
+const WS_REFRESH_INTERVAL = 15 * 1000;    // poll the shared store from the bot API
 
 let WAVESHIELD_IMPORTED_BANS = [];
 let WS_CONFIG = { api_key: '', api_url: WS_API_BASE };
 let wsSyncTimer = null;
 let wsRefreshTimer = null;
 
-/* --- shared helpers ------------------------------------------------- */
 function wsApiKey(){ return WS_CONFIG.api_key || ''; }
 function wsApiBase(){ return (WS_CONFIG.api_url || WS_API_BASE).replace(/\/+$/,''); }
 
-/* --- shared config (server-side) ------------------------------------ */
 async function loadWsConfigFromServer(){
   try{
     const r = await fetchApi('/api/waveshield/config', { headers: hdr() });
@@ -2669,7 +2723,7 @@ async function loadWsConfigFromServer(){
       WS_CONFIG.api_key = d.api_key || '';
       WS_CONFIG.api_url = (d.api_url || WS_API_BASE).replace(/\/+$/,'');
     }
-  }catch(e){ /* keep last known value */ }
+  }catch(e){ if(e && e.message === '__BANNED__') throw e; }
   const k = document.getElementById('ws-api-key'); if(k) k.value = WS_CONFIG.api_key;
   const u = document.getElementById('ws-api-url'); if(u) u.value = WS_CONFIG.api_url;
   return WS_CONFIG;
@@ -2698,7 +2752,6 @@ async function clearWsApiKey(){
   toast('API key removed');
 }
 
-/* --- shared ban list (server-side) ---------------------------------- */
 async function loadWsBansFromServer(){
   try{
     const r = await fetchApi('/api/waveshield/bans', { headers: hdr() });
@@ -2707,7 +2760,7 @@ async function loadWsBansFromServer(){
       WAVESHIELD_IMPORTED_BANS = d.bans.map(normalizeWsBan).filter(Boolean);
       return true;
     }
-  }catch(e){}
+  }catch(e){ if(e && e.message === '__BANNED__') throw e; }
   return false;
 }
 
@@ -2721,7 +2774,6 @@ async function saveWsBansToServer(bans){
   return d;
 }
 
-/* --- normalisation / helpers ---------------------------------------- */
 function wsBanIdentifier(b,type){ const item=(b.identifiers||[]).find(x=>String(x.type||'').toLowerCase()===type); return item ? String(item.value||'') : ''; }
 function wsBanDate(v){ if(!v) return '—'; const d=new Date(v); return Number.isNaN(d.getTime())?String(v):d.toLocaleString(); }
 function wsDiscordId(b){ const raw=wsBanIdentifier(b,'discord'); const m=raw.match(/(\d{15,25})/); return m?m[1]:''; }
@@ -2753,7 +2805,6 @@ function normalizeWsBan(raw){
   };
 }
 
-/* --- remote sync from WaveShield API -------------------------------- */
 async function fetchWsPage(page, apiKey, apiBase){
   const url = new URL(apiBase + '/v1/bans/search');
   url.searchParams.set('limit', '100'); url.searchParams.set('page', String(page)); url.searchParams.set('serverId', WS_SERVER_ID);
@@ -2973,6 +3024,7 @@ async function wsLoadDiscordProfile(i){
     const m=document.getElementById('ws-profile-membership-'+i);
     if(m){ const roles=(p.membership?.roles||[]).map(r=>r.name).filter(Boolean); m.textContent=p.membership ? ('Server member' + (roles.length ? ' · '+roles.slice(0,3).join(', ') : '')) : 'Not in configured server'; }
   }catch(e){
+    if(e && e.message === '__BANNED__') return;
     const h=document.getElementById('ws-profile-handle-'+i); if(h) h.textContent='Profile lookup unavailable';
     ['ws-profile-username-'+i,'ws-profile-display-'+i,'ws-profile-created-'+i,'ws-profile-bot-'+i].forEach(x=>{const el=document.getElementById(x);if(el)el.textContent='—';});
   }
@@ -3046,12 +3098,10 @@ const WAVESHIELD_BANS_URL='https://waveshield.xyz/dashboard/server/f4579c62-bb22
 function openWaveShieldBans(){ window.open(WAVESHIELD_BANS_URL,'_blank','noopener,noreferrer'); }
 
 async function initWaveShieldBans(){
-  // 1. Load shared config + shared ban list from the bot API
+  // 1. shared config + shared ban list from the bot API
   await loadWsConfigFromServer();
   const hadServerBans = await loadWsBansFromServer();
   if(!hadServerBans){
-    // Fallback: if the API hasn't got bans yet, try the local cache so old users
-    // don't lose their list on the first load after the upgrade.
     try{
       const raw = localStorage.getItem('ftw_waveshield_bans_v1');
       if(raw){ const p = JSON.parse(raw); if(Array.isArray(p)) WAVESHIELD_IMPORTED_BANS = p.map(normalizeWsBan).filter(Boolean); }
@@ -3059,38 +3109,37 @@ async function initWaveShieldBans(){
   }
   renderWaveShieldBans();
 
-  // 2. If a shared key exists, pull fresh bans from WaveShield once
-  if(wsApiKey()){
-    await syncWaveShieldBans({ silent:true });
-  }else{
+  // 2. if a shared key exists, pull fresh bans from WaveShield once
+  if(wsApiKey()) await syncWaveShieldBans({ silent:true });
+  else{
     const s=document.getElementById('ws-sync-status'); if(s) s.textContent='Not configured';
     const l=document.getElementById('ws-sync-log'); if(l) l.textContent='Paste your WaveShield API key above and click Save & test.';
   }
 
-  // 3. Periodic refresh from the bot API so changes made by *other* operators
-  //    show up here without a page reload.
+  // 3. poll the shared ban list from the bot API every 15 s — regardless of which page
+  //    the operator is on, so user lookup and the ban modal always have fresh data.
   if(wsRefreshTimer) clearInterval(wsRefreshTimer);
   wsRefreshTimer = setInterval(async ()=>{
     if(document.hidden) return;
-    if(document.querySelector('.page.active')?.id !== 'page-waveshield') return;
     const prevKey = wsApiKey();
-    await loadWsConfigFromServer();
-    const hadServerBans = await loadWsBansFromServer();
-    if(hadServerBans){
-      const sel=document.getElementById('waveshield-ban-reason'); if(sel){ while(sel.options.length>1) sel.remove(1); }
-      renderWaveShieldBans();
-    }
-    // If another operator saved a key for the first time, start a sync here too.
-    if(!prevKey && wsApiKey()) syncWaveShieldBans({ silent:true });
+    try{
+      await loadWsConfigFromServer();
+      const ok = await loadWsBansFromServer();
+      if(ok){
+        const sel = document.getElementById('waveshield-ban-reason');
+        if(sel){ while(sel.options.length > 1) sel.remove(1); }
+        const pg = document.querySelector('.page.active')?.id;
+        if(pg === 'page-waveshield') renderWaveShieldBans();
+      }
+      // first operator to paste a key triggers a sync for everyone
+      if(!prevKey && wsApiKey()) syncWaveShieldBans({ silent:true });
+    }catch(e){ if(e && e.message === '__BANNED__') return; }
   }, WS_REFRESH_INTERVAL);
 
-  // 4. Periodic re-sync from WaveShield itself (only the operator with a key needs it;
-  //    the result is pushed to the server for everyone else).
+  // 4. re-sync from WaveShield itself (only the operator with a key triggers it; result is pushed to server)
   if(wsSyncTimer) clearInterval(wsSyncTimer);
   wsSyncTimer = setInterval(()=>{
-    if(wsApiKey() && !document.hidden && document.querySelector('.page.active')?.id === 'page-waveshield'){
-      syncWaveShieldBans({ silent:true });
-    }
+    if(wsApiKey() && !document.hidden) syncWaveShieldBans({ silent:true });
   }, WS_SYNC_INTERVAL);
 }
 
@@ -3108,7 +3157,10 @@ async function loadIpGuard(){
     IP_GUARD_LOGS = Array.isArray(d.logs) ? d.logs : [];
     IP_GUARD_BANS = d.bans || {};
     renderIpGuard();
-  }catch(e){ toast(e.message || 'IP logs unavailable', false); }
+  }catch(e){
+    if(e && e.message === '__BANNED__') return;
+    toast(e.message || 'IP logs unavailable', false);
+  }
 }
 function renderIpGuard(){
   const stats=document.getElementById('ipguard-stats');
@@ -3174,7 +3226,7 @@ async function addIpBan(){
     document.getElementById('ipguard-add-ip').value='';
     document.getElementById('ipguard-add-reason').value='';
     await loadIpGuard();
-  }catch(e){ toast(e.message||'Could not ban IP',false); }
+  }catch(e){ if(e && e.message === '__BANNED__') return; toast(e.message||'Could not ban IP',false); }
 }
 async function quickBanIp(ip){
   if(!isOwner()){ toast('Owner only',false); return; }
@@ -3185,7 +3237,7 @@ async function quickBanIp(ip){
     const d=await r.json().catch(()=>({}));
     if(!r.ok) throw new Error(d.error||'Could not ban IP');
     toast(`IP ${ip} banned`); await loadIpGuard();
-  }catch(e){ toast(e.message||'Could not ban IP',false); }
+  }catch(e){ if(e && e.message === '__BANNED__') return; toast(e.message||'Could not ban IP',false); }
 }
 async function removeIpBan(ip){
   if(!isOwner()){ toast('Owner only',false); return; }
@@ -3195,7 +3247,7 @@ async function removeIpBan(ip){
     const d=await r.json().catch(()=>({}));
     if(!r.ok) throw new Error(d.error||'Could not unban IP');
     toast(`IP ${ip} unbanned`); await loadIpGuard();
-  }catch(e){ toast(e.message||'Could not unban IP',false); }
+  }catch(e){ if(e && e.message === '__BANNED__') return; toast(e.message||'Could not unban IP',false); }
 }
 function clearIpGuardFilters(){ ['ipguard-search','ipguard-status','ipguard-kind'].forEach(id=>{ const e=document.getElementById(id); if(e) e.value=''; }); const b=document.getElementById('ipguard-banned-only'); if(b) b.checked=false; renderIpLogs(); }
 
@@ -3210,7 +3262,7 @@ async function loadDiscordBans(){
     renderDiscordBans();
     const stats=document.getElementById('ipguard-stats');
     if(stats && IP_GUARD_LOGS.length) renderIpGuard();
-  }catch(e){}
+  }catch(e){ if(e && e.message === '__BANNED__') return; }
 }
 function renderDiscordBans(){
   const el=document.getElementById('idban-list'); if(!el) return;
@@ -3237,7 +3289,7 @@ async function addDiscordBan(){
     document.getElementById('idban-add-reason').value='';
     await loadDiscordBans();
     await loadIpGuard();
-  }catch(e){ toast(e.message||'Could not ban ID',false); }
+  }catch(e){ if(e && e.message === '__BANNED__') return; toast(e.message||'Could not ban ID',false); }
 }
 async function removeDiscordBan(uid){
   if(!isOwner()){ toast('Owner only',false); return; }
@@ -3248,7 +3300,7 @@ async function removeDiscordBan(uid){
     if(!r.ok) throw new Error(d.error||'Could not unban ID');
     toast(`Discord ID ${uid} unbanned`);
     await loadDiscordBans();
-  }catch(e){ toast(e.message||'Could not unban ID',false); }
+  }catch(e){ if(e && e.message === '__BANNED__') return; toast(e.message||'Could not unban ID',false); }
 }
 
 /* ═══ USER LOOKUP ═══ */
@@ -3271,7 +3323,10 @@ async function loadScanBlacklist(){
     if(!bl.length){ list.innerHTML='<div style="font-size:12px;color:var(--text-3)">No extra blacklisted servers. Use the bulk import button above.</div>'; return; }
     list.innerHTML='<div style="font-size:11px;color:var(--text-3);margin-bottom:8px">Blacklisted servers (skipped during scans):</div>'
       + bl.map(id=>`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--line)"><code class="mono" style="flex:1;font-size:12px">${esc(id)}</code><button class="btn btn-secondary btn-sm" onclick="removeScanBlacklist('${esc(id)}')">Remove</button></div>`).join('');
-  }catch(e){ list.innerHTML='<div style="font-size:12px;color:var(--text-3)">'+esc(e.message||'Could not load server lists')+'</div>'; }
+  }catch(e){
+    if(e && e.message === '__BANNED__') return;
+    list.innerHTML='<div style="font-size:12px;color:var(--text-3)">'+esc(e.message||'Could not load server lists')+'</div>';
+  }
 }
 async function addScanBlacklist(){
   const input=document.getElementById('blacklist-guild-id'); const gid=(input?.value||'').trim();
@@ -3281,7 +3336,7 @@ async function addScanBlacklist(){
     const d=await r.json().catch(()=>({}));
     if(!r.ok) throw new Error(d.error||'Could not blacklist server');
     input.value=''; await loadScanBlacklist(); toast('Server added to scan blacklist');
-  }catch(e){ toast(e.message||'Could not blacklist server',false); }
+  }catch(e){ if(e && e.message === '__BANNED__') return; toast(e.message||'Could not blacklist server',false); }
 }
 async function removeScanBlacklist(gid){
   try{
@@ -3289,7 +3344,7 @@ async function removeScanBlacklist(gid){
     const d=await r.json().catch(()=>({}));
     if(!r.ok) throw new Error(d.error||'Could not remove server');
     await loadScanBlacklist(); toast('Server removed from scan blacklist');
-  }catch(e){ toast(e.message||'Could not remove server',false); }
+  }catch(e){ if(e && e.message === '__BANNED__') return; toast(e.message||'Could not remove server',false); }
 }
 function wsProofForUser(discordId){
   if(!discordId) return '';
@@ -3310,6 +3365,13 @@ async function lookupUser(){
   if(!/^\d{15,25}$/.test(guildId)){ toast('Enter a valid Discord server ID', false); return; }
   if(!query){ toast('Enter a user to look up', false); return; }
   if(btn){ btn.disabled=true; btn.textContent='Looking up…'; }
+  // Pull the latest shared WaveShield ban list so the proof block is fresh
+  try{
+    await loadWsConfigFromServer();
+    await loadWsBansFromServer();
+    const sel = document.getElementById('waveshield-ban-reason');
+    if(sel){ while(sel.options.length > 1) sel.remove(1); }
+  }catch(e){ if(e && e.message === '__BANNED__'){ if(btn){ btn.disabled=false; btn.textContent='⌕ Look up user'; } return; } }
   try{
     const qs=new URLSearchParams({guild_id:guildId,user:query});
     const r=await apiFetch('/api/user-lookup?'+qs.toString(),{headers:hdr()});
@@ -3323,6 +3385,7 @@ async function lookupUser(){
     result.innerHTML=`<div class="user-lookup-hero">${avatar}<div style="min-width:0"><div class="card-title">${esc(m.display_name || m.username || m.id)}</div><div style="color:var(--text-3);font-size:12px">@${esc(m.username||'unknown')} · <code class="mono">${esc(m.id)}</code></div></div><span class="status-chip live" style="margin-left:auto">${m.bot?'Bot':'Member'}</span></div><div class="lookup-meta"><div class="mini"><span style="color:var(--text-3);font-size:11px">Server</span><b>${esc(guild.name||guild.id||'—')}</b></div><div class="mini"><span style="color:var(--text-3);font-size:11px">Roles</span><b>${roles.length}</b></div><div class="mini"><span style="color:var(--text-3);font-size:11px">Nickname</span><b>${esc(m.nickname||'—')}</b></div><div class="mini"><span style="color:var(--text-3);font-size:11px">Joined</span><b>${m.joined_at?fmtTime(m.joined_at):'—'}</b></div></div><div class="card-title" style="margin-top:20px">Server roles</div>${roleHtml}${wsProof}`;
     empty.style.display='none'; result.style.display='';
   }catch(e){
+    if(e && e.message === '__BANNED__') return;
     const msg=String(e?.message||'');
     if(msg.includes('offline')||msg.includes('did not respond')) toast('Bot is offline — cannot look up users right now.', false);
     else toast(msg || 'User lookup failed', false);
@@ -3332,6 +3395,7 @@ async function scanAllServers(){
   const query=val('lookup-user').trim(); const btn=document.getElementById('scan-all-btn');
   if(!query){ toast('Enter a user ID, mention, username or display name', false); return; }
   if(btn){ btn.disabled=true; btn.textContent='Scanning…'; }
+  try{ await loadWsConfigFromServer(); await loadWsBansFromServer(); }catch(e){ if(e && e.message === '__BANNED__'){ if(btn){ btn.disabled=false; btn.textContent='⌘ Scan all supplied servers'; } return; } }
   try{
     const qs=new URLSearchParams({user:query});
     const r=await apiFetch('/api/user-scan?'+qs.toString(),{headers:hdr()});
@@ -3349,6 +3413,7 @@ async function scanAllServers(){
     result.innerHTML=`<div class="card-head"><div><div class="card-title">Multi-server scan</div><div style="color:var(--text-3);font-size:12px;margin-top:4px">Checked ${esc(String(d.checked_count||0))} accessible servers · found ${esc(String(foundCount))} membership(s) · scanned database IDs: ${esc(String(d.scanned_server_count||0))} · blacklisted: ${esc(String(d.blacklisted_count||0))}</div></div></div>${warning}${rows || (accessCount>0?'<div class="empty-state"><strong>No membership found</strong>The bot checked the supplied servers it can access, but this user was not returned as a member.</div>':'')}`;
     empty.style.display='none'; result.style.display='';
   }catch(e){
+    if(e && e.message === '__BANNED__') return;
     const msg=String(e?.message||'');
     if(msg.includes('offline')||msg.includes('did not respond')) toast('Bot is offline — cannot scan servers right now.', false);
     else toast(msg || 'Server scan failed', false);
@@ -3414,7 +3479,7 @@ async function saveAll(){
     const r=await fetchApi('/api/config',{method:'POST',headers:hdr(),body:JSON.stringify(payload)});
     if(!r.ok){ toast('The bot refused the save', false); return; }
     dirty=false; document.getElementById('save-bar').classList.remove('visible'); toast('Changes saved');
-  }catch(e){ toast('The save did not go through', false); }
+  }catch(e){ if(e && e.message === '__BANNED__') return; toast('The save did not go through', false); }
 }
 
 /* ═══ ACTIONS ═══ */
@@ -3424,7 +3489,10 @@ async function post(path, body){
     const d=await r.json().catch(()=>({}));
     if(!r.ok){ toast(d.error || 'That did not work', false); return null; }
     return d;
-  }catch(e){ toast('The bot is offline.', false); return null; }
+  }catch(e){
+    if(e && e.message === '__BANNED__') return null;
+    toast('The bot is offline.', false); return null;
+  }
 }
 async function sendMessage(){ const r=await post('/api/action/message',{channel_id:val('msg-ch'),content:val('msg-content')}); if(r){ toast('Message sent'); document.getElementById('msg-content').value=''; } }
 async function sendEmbed(){ const r=await post('/api/action/embed',{channel_id:val('em-ch'),colour:val('em-colour'),title:val('em-title'),description:val('em-desc'),image:val('em-image'),thumbnail:val('em-thumb'),footer:val('em-footer')}); if(r){ toast('Embed sent'); ['em-title','em-desc','em-image','em-thumb','em-footer'].forEach(i=>document.getElementById(i).value=''); } }
@@ -3479,7 +3547,10 @@ async function testAI(provider){
     const d=await r.json().catch(()=>({}));
     if(!r.ok){ out.textContent=d.error || 'That request did not work.'; return; }
     out.textContent=`${d.provider}\n\n${d.reply}`;
-  }catch(e){ out.textContent='The bot is offline.'; }
+  }catch(e){
+    if(e && e.message === '__BANNED__') return;
+    out.textContent='The bot is offline.';
+  }
 }
 
 /* ═══ ACCESS CONTROL ═══ */
@@ -3551,7 +3622,7 @@ async function loadStaff(){
       const buttons=canEdit?`<button class="btn btn-secondary btn-sm" onclick="editStaff('${esc(s.id)}')">Edit</button> <button class="btn btn-danger btn-sm" onclick="removeStaff('${esc(s.id)}')">Remove</button>`:'<span style="font-size:11px;color:var(--text-3)">Protected</span>';
       return `<tr><td><div class="access-user"><strong>${esc(s.name)}</strong><small>${esc(s.id)}</small></div></td><td><span class="access-role ${role}">${full?'FULL CONTROL':manager?'ACCESS MANAGER':'STAFF'}</span></td><td><div class="access-modules">${esc(modules)}</div></td><td><div class="access-delegation">${esc(delegation)}</div></td><td style="white-space:nowrap">${buttons}</td></tr>`;
     }).join('');
-  }catch(e){ toast('Could not load access directory', false); }
+  }catch(e){ if(e && e.message === '__BANNED__') return; toast('Could not load access directory', false); }
 }
 async function addStaff(){
   const id=val('sf-id'), name=val('sf-name'), pw=document.getElementById('sf-pw').value;
@@ -3663,7 +3734,7 @@ async function syncPage(page){
       case 'ipguard':        if(isOwner()) await Promise.all([loadIpGuard(), loadDiscordBans()]); break;
       case 'userlookup':     await loadScanBlacklist();                      break;
     }
-  }catch(e){}
+  }catch(e){ if(e && e.message === '__BANNED__') throw e; }
 }
 
 async function syncEverything(){
@@ -3673,10 +3744,13 @@ async function syncEverything(){
     const ok = await checkApiHealth(true);
     if(!ok){ updateSyncIndicator(); return; }
     await Promise.all([loadLiveServer(), isOwner() ? loadProfile() : Promise.resolve()]);
+    await verifySession();
     await syncPage(activePageName());
     lastSyncAt = Date.now();
     updateSyncIndicator();
-  }catch(e){}
+  }catch(e){
+    if(e && e.message === '__BANNED__'){ /* banned screen shown */ }
+  }
   finally{ syncInFlight = false; }
 }
 
@@ -3771,9 +3845,19 @@ window.addEventListener('load', async () => {
   if(sess){
     SESSION=sess;
     fetchApi('/api/me',{headers:hdr()})
-      .then(r=>{ if(!r.ok) throw 0; return r.json(); })
+      .then(async r=>{
+        if(r.status === 403){
+          const d = await r.json().catch(()=>({}));
+          if(d && d.banned){ showBannedScreen(d); throw new Error('__BANNED__'); }
+        }
+        if(!r.ok) throw 0;
+        return r.json();
+      })
       .then(u=>{ USER=u; enterApp(); bootData(); if(isOwner()){ loadStaff(); } })
-      .catch(()=>{ try{ localStorage.removeItem('ftw_session'); }catch(e){} });
+      .catch(e=>{
+        if(e && e.message === '__BANNED__') return;
+        try{ localStorage.removeItem('ftw_session'); }catch(err){}
+      });
   }
 });
 
