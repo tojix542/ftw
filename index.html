@@ -944,7 +944,46 @@ table code{font-size:12.5px;color:var(--text-2)}
 .perm-item input{accent-color:var(--iris-2);width:15px;height:15px}
 .perm-category-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:9px;margin-top:12px}
 #ai-provider-row [data-provider].active{border-color:var(--iris);background:var(--iris-wash);color:var(--iris-2)}
-.tpl-chip-name{font-weight:600}
+.tpl-chip-name{font-weight:600}/* ===== WaveShield ban records table ===== */
+.ws-table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--panel)}
+.ws-table{width:100%;border-collapse:collapse;font-size:13px;min-width:940px}
+.ws-table thead th{text-align:left;padding:12px 14px;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--text-3);border-bottom:1px solid var(--line);white-space:nowrap;position:sticky;top:0;background:var(--panel);z-index:1}
+.ws-table thead th.ws-th-act{text-align:right}
+.ws-table tbody td{padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:middle}
+.ws-table tbody tr:last-child td{border-bottom:0}
+.ws-table tbody tr:hover{background:var(--panel-2)}
+.ws-table tbody tr.ws-row-alt{box-shadow:inset 3px 0 0 var(--rose)}
+.ws-cell-player{display:flex;align-items:center;gap:10px;min-width:0}
+.ws-uic{width:30px;height:30px;flex:0 0 30px;border-radius:50%;display:grid;place-items:center;background:var(--iris-wash);color:var(--iris-2);font-size:11px}
+.ws-pn{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:6px}
+.ws-sub{font-size:11px;color:var(--text-3);margin-top:1px}
+.ws-banid{font-family:'IBM Plex Mono',monospace;font-size:12px;padding:3px 9px;border-radius:7px;border:1px solid var(--line);background:var(--panel-2);color:var(--text-2);cursor:pointer;white-space:nowrap}
+.ws-reason{max-width:230px;color:var(--text)}
+.ws-ev{width:54px;height:36px;object-fit:cover;border-radius:7px;border:1px solid var(--line);cursor:zoom-in;display:block;transition:transform .15s}
+.ws-ev:hover{transform:scale(1.06)}
+.ws-noev{font-size:12px;color:var(--text-3)}
+.ws-pill{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;font-size:11.5px;font-weight:700;white-space:nowrap}
+.ws-pill.perm{background:rgba(251,113,133,.14);color:#fb7185;border:1px solid rgba(251,113,133,.3)}
+.ws-pill.temp{background:var(--amber-wash,rgba(251,191,36,.14));color:var(--amber);border:1px solid rgba(251,191,36,.3)}
+.ws-when{display:flex;flex-direction:column;line-height:1.25}
+.ws-when b{font-weight:700;font-size:12.5px;white-space:nowrap}
+.ws-when span{font-size:11px;color:var(--text-3);white-space:nowrap}
+.ws-actions{display:flex;gap:6px;justify-content:flex-end}
+.ws-ic{width:30px;height:30px;border-radius:8px;border:1px solid var(--line);background:var(--panel-2);color:var(--text-2);cursor:pointer;display:grid;place-items:center;font-size:13px;transition:all .15s}
+.ws-ic:hover{color:var(--iris-2);border-color:var(--iris)}
+.ws-ic-del:hover{color:#fb7185;border-color:#fb7185}
+.ws-overlay{position:fixed;inset:0;z-index:1200;display:flex;align-items:center;justify-content:center;padding:22px}
+.ws-overlay-back{position:absolute;inset:0;background:rgba(6,6,14,.72);backdrop-filter:blur(5px)}
+.ws-overlay-card{position:relative;z-index:1;max-width:640px;width:100%;max-height:88vh;overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:var(--shadow-2)}
+.ws-detail-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
+.ws-detail-name{font-size:19px;font-weight:800;font-family:'Sora',sans-serif}
+.ws-detail-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:11px}
+.ws-detail-grid > div{display:flex;flex-direction:column;gap:3px;padding:10px 12px;border:1px solid var(--line);border-radius:11px;background:rgba(255,255,255,.015)}
+.ws-detail-grid span{font-size:10.5px;color:var(--text-3);text-transform:uppercase;letter-spacing:.04em}
+.ws-detail-grid b{font-size:13px}
+.ws-detail-ev{width:100%;max-height:280px;object-fit:cover;border-radius:12px;margin-top:14px;cursor:zoom-in;border:1px solid var(--line)}
+.ws-idwrap{display:flex;flex-wrap:wrap;gap:6px}
+.ws-idchip{font-size:11px;padding:4px 8px;border-radius:7px;border:1px solid var(--line);background:var(--panel-2);color:var(--text-2);cursor:pointer;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 </style>
 </head>
 <body>
@@ -3367,17 +3406,47 @@ function loadWaveShieldConfig(){
   populateWsReasonFilter(); renderWaveShieldBans(); updateWsStatus();
   pullSharedBans(true); /* fetch the global list so this device matches everyone else */
 }
+function wsPlayer(b){ return (b && b.player) || {}; }
+function wsName(b){ return wsPlayer(b).playerName || b.player_name || b.name || b.playerName || (wsDiscord(b) ? 'Discord '+wsDiscord(b) : 'Unknown'); }
+function wsDiscord(b){
+  const hit = wsIdentifiers(b).find(i=>i.startsWith('discord:'));
+  return hit ? hit.split(':')[1] : (b.discord || b.discord_id || '');
+}
 function wsIdentifiers(b){
-  const ids=[];
-  ['discord','discord_id','fivem','license','steam','ip','hwid','player','name','id'].forEach(k=>{ if(b&&b[k]) ids.push(String(b[k]).toLowerCase()); });
-  if(Array.isArray(b?.identifiers)) b.identifiers.forEach(i=>ids.push(String(i).toLowerCase()));
-  return ids.filter(Boolean);
+  const ids=[]; const push=v=>{ if(v==null) return; const s=String(typeof v==='object'?(v.value||v.id||''):v).toLowerCase().trim(); if(s) ids.push(s); };
+  const p=wsPlayer(b);
+  push(p.playerLicense);
+  (p.identifiers||[]).forEach(push);
+  (p.oldIdentifiers||[]).forEach(push);
+  ['discord','discord_id','fivem','steam','hwid','license'].forEach(k=>push(b&&b[k]));
+  if(Array.isArray(b&&b.identifiers)) b.identifiers.forEach(push);
+  // exclude the community/server licence (identical on every ban) so it can't mark everyone as alts
+  const server=String((b&&b.licenseId)||'').toLowerCase();
+  return [...new Set(ids.filter(x=>x && x!==server))];
+}
+function wsPlaytime(mins){ mins=Math.max(0,Math.floor(Number(mins)||0)); const h=Math.floor(mins/60), m=mins%60; return h?`${h}h ${m}m`:`${m}m`; }
+function wsDateShort(iso){ if(!iso) return '\u2014'; const d=new Date(iso); return isNaN(d)?'\u2014':d.toLocaleDateString(undefined,{month:'short',day:'2-digit',year:'numeric'}); }
+function wsTimeShort(iso){ if(!iso) return ''; const d=new Date(iso); return isNaN(d)?'':d.toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit'}); }
+function wsRel(iso){
+  if(!iso) return ''; const then=new Date(iso).getTime(); if(isNaN(then)) return '';
+  const s=(Date.now()-then)/1000, abs=Math.abs(s);
+  for(const [n,secs] of [['year',31536000],['month',2592000],['day',86400],['hour',3600],['minute',60]]){
+    const v=Math.round(abs/secs); if(v>=1) return (s<0?'in ':'')+v+' '+n+(v>1?'s':'')+(s<0?'':' ago');
+  }
+  return 'just now';
+}
+function wsIsPermanent(b){ return !b.expiresAt && !b.expires; }
+let _wsAltIndex=null;
+function buildWsAltIndex(){
+  const idx=new Map();
+  waveShieldBans.forEach((b,i)=>{ wsIdentifiers(b).forEach(id=>{ let s=idx.get(id); if(!s){ s=new Set(); idx.set(id,s); } s.add(i); }); });
+  _wsAltIndex=idx;
 }
 function altCountFor(ban, all){
-  const mine = new Set(wsIdentifiers(ban));
-  let n=0;
-  all.forEach(o=>{ if(o===ban) return; if(wsIdentifiers(o).some(i=>mine.has(i))) n++; });
-  return n;
+  if(!_wsAltIndex) buildWsAltIndex();
+  const my=(all||waveShieldBans).indexOf(ban); const others=new Set();
+  wsIdentifiers(ban).forEach(id=>{ const s=_wsAltIndex.get(id); if(s) s.forEach(j=>{ if(j!==my) others.add(j); }); });
+  return others.size;
 }
 function crossReferenceWaveShield(user){
   if(!waveShieldBans.length) return [];
@@ -3455,40 +3524,105 @@ function clearWaveShieldBanFilters(){
   const a=document.getElementById('waveshield-alts-only'); if(a) a.checked=false;
   renderWaveShieldBans();
 }
+let _wsView=[];
 function renderWaveShieldBans(){
   const list=document.getElementById('waveshield-ban-list'); const stats=document.getElementById('waveshield-ban-stats');
   if(!list) return;
+  buildWsAltIndex();
   const q=(val('waveshield-ban-search')||'').toLowerCase();
   const reason=(document.getElementById('waveshield-ban-reason')||{}).value||'';
   const status=(document.getElementById('waveshield-ban-status')||{}).value||'';
   const altsOnly=(document.getElementById('waveshield-alts-only')||{}).checked;
-  let rows = waveShieldBans.map(b=>({b, alts:altCountFor(b, waveShieldBans)}));
+  let rows = waveShieldBans.map((b,i)=>{
+    const others=new Set();
+    wsIdentifiers(b).forEach(id=>{ const s=_wsAltIndex.get(id); if(s) s.forEach(j=>{ if(j!==i) others.add(j); }); });
+    return {b, alts:others.size};
+  });
   rows = rows.filter(({b,alts})=>{
-    if(q && !wsIdentifiers(b).some(i=>i.includes(q)) && !(b.reason||'').toLowerCase().includes(q)) return false;
+    if(q){ const hay=(wsName(b)+' '+(b.banId||'')+' '+(b.reason||'')+' '+wsIdentifiers(b).join(' ')).toLowerCase(); if(!hay.includes(q)) return false; }
     if(reason && b.reason!==reason) return false;
-    if(status==='permanent' && b.expires) return false;
-    if(status==='temporary' && !b.expires) return false;
+    const perm=wsIsPermanent(b);
+    if(status==='permanent' && !perm) return false;
+    if(status==='temporary' && perm) return false;
     if(altsOnly && alts===0) return false;
     return true;
   });
   if(stats){
-    const total=waveShieldBans.length, withAlts=waveShieldBans.filter(b=>altCountFor(b,waveShieldBans)>0).length;
+    const total=waveShieldBans.length;
+    const withAlts=rows.filter(r=>r.alts>0).length;
+    const withEv=waveShieldBans.filter(b=>b.evidenceUrl).length;
     stats.innerHTML = `<div class="ws-stat"><b>${total}</b><span>Total bans</span></div>
       <div class="ws-stat"><b>${rows.length}</b><span>Matching filter</span></div>
-      <div class="ws-stat"><b style="color:var(--rose)">${withAlts}</b><span>With shared IDs</span></div>`;
+      <div class="ws-stat"><b style="color:var(--mint)">${withEv}</b><span>With evidence</span></div>
+      <div class="ws-stat"><b style="color:var(--rose)">${withAlts}</b><span>Shared IDs (alts)</span></div>`;
   }
+  _wsView = rows.map(r=>r.b);
   if(!rows.length){ list.innerHTML='<div class="empty-state"><strong>No bans to show</strong>Sync from the WaveShield API or import a JSON backup.</div>'; return; }
-  list.innerHTML = rows.slice(0,400).map(({b,alts})=>`
-    <div class="ws-ban ${alts?'has-alt':''}">
-      <div class="ws-ban-main">
-        <div class="ws-ban-name">${esc(safeText(b.player||b.name||b.discord||b.id,'Unknown'))} ${alts?`<span class="ws-alt-badge">\ud83d\udd17 ${alts} alt${alts>1?'s':''}</span>`:''}</div>
-        <div class="mono muted ws-ban-ids">${wsIdentifiers(b).slice(0,4).map(i=>`<span class="click-copy" onclick="copyText('${esc(i)}','ID')">${esc(i)}</span>`).join(' \u00b7 ')}</div>
-      </div>
-      <div class="ws-ban-meta">
-        <span class="status-chip ${b.expires?'':'live'}">${b.expires?'Temporary':'Permanent'}</span>
-        <span class="muted">${esc(safeText(b.reason,'No reason'))}</span>
-      </div>
-    </div>`).join('');
+  const body = rows.slice(0,600).map(({b,alts},i)=>{
+    const p=wsPlayer(b), name=esc(wsName(b)), perm=wsIsPermanent(b);
+    const ev=b.evidenceUrl;
+    return `<tr class="${alts?'ws-row-alt':''}">
+      <td><div class="ws-cell-player"><span class="ws-uic">&#9679;</span><div style="min-width:0"><div class="ws-pn">${name}${alts?` <span class="ws-alt-badge" title="Shares an identifier with ${alts} other ban${alts>1?'s':''}">&#128279; ${alts}</span>`:''}</div><div class="ws-sub">Played ${wsPlaytime(p.playTime)}</div></div></div></td>
+      <td><span class="ws-banid click-copy" onclick="copyText('${esc(b.banId||b.id||'')}','Ban ID')">#${esc(b.banId||b.id||'\u2014')}</span></td>
+      <td class="ws-reason">${esc(safeText(b.reason,'\u2014'))}</td>
+      <td>${ev?`<img class="ws-ev" src="${esc(ev)}" loading="lazy" onclick="openEvidence('${esc(ev)}')" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'ws-noev',textContent:'No image'}))">`:'<span class="ws-noev">No evidence</span>'}</td>
+      <td><span class="ws-pill ${perm?'perm':'temp'}">&#9711; ${perm?'Permanent':'Temporary'}</span></td>
+      <td><div class="ws-when"><b>${wsDateShort(b.bannedAt)}</b><span>${wsTimeShort(b.bannedAt)}</span></div></td>
+      <td><div class="ws-when"><b>${wsDateShort(p.firstJoin)}</b><span>${wsRel(p.firstJoin)}</span></div></td>
+      <td><div class="ws-actions">
+        <button class="ws-ic" title="View details" onclick="openWsDetail(${i})">&#128065;</button>
+        <button class="ws-ic" title="Copy Discord ID" onclick="copyText('${esc(wsDiscord(b)||'')}','Discord ID')">&#128269;</button>
+        ${isOwner()?`<button class="ws-ic ws-ic-del" title="Remove ban" onclick="deleteWsBan(${i})">&#128465;</button>`:''}
+      </div></td>
+    </tr>`;
+  }).join('');
+  list.innerHTML = `<div class="ws-table-wrap"><table class="ws-table">
+    <thead><tr><th>Player</th><th>Ban ID</th><th>Reason</th><th>Evidence</th><th>Status</th><th>Banned At</th><th>First Join</th><th class="ws-th-act">Actions</th></tr></thead>
+    <tbody>${body}</tbody></table></div>`;
+}
+/* ---- WaveShield overlays / actions ---- */
+function wsCloseOverlay(){ const o=document.getElementById('ws-overlay'); if(o) o.remove(); }
+function wsOverlay(inner){
+  wsCloseOverlay();
+  const o=document.createElement('div'); o.id='ws-overlay'; o.className='ws-overlay';
+  o.innerHTML=`<div class="ws-overlay-back" onclick="wsCloseOverlay()"></div><div class="ws-overlay-card">${inner}</div>`;
+  document.body.appendChild(o);
+}
+function openEvidence(url){
+  if(!url) return;
+  wsOverlay(`<img src="${esc(url)}" style="max-width:100%;max-height:78vh;border-radius:12px;display:block;margin:0 auto"><div style="text-align:center;margin-top:12px;display:flex;gap:8px;justify-content:center"><a href="${esc(url)}" target="_blank" rel="noopener" class="btn btn-secondary btn-sm">Open original</a><button class="btn btn-secondary btn-sm" onclick="wsCloseOverlay()">Close</button></div>`);
+}
+function openWsDetail(i){
+  const b=_wsView[i]; if(!b) return; const p=wsPlayer(b); const ids=wsIdentifiers(b);
+  wsOverlay(`
+    <div class="ws-detail-head">
+      <div><div class="ws-detail-name">${esc(wsName(b))}</div><div class="mono muted">Ban #${esc(b.banId||b.id||'')}</div></div>
+      <button class="btn btn-secondary btn-sm" onclick="wsCloseOverlay()">Close</button>
+    </div>
+    <div class="ws-detail-grid">
+      <div><span>Reason</span><b>${esc(safeText(b.reason,'\u2014'))}</b></div>
+      <div><span>Status</span><b>${wsIsPermanent(b)?'Permanent':'Temporary'}</b></div>
+      <div><span>Banned at</span><b>${wsDateShort(b.bannedAt)} ${wsTimeShort(b.bannedAt)}</b></div>
+      <div><span>First join</span><b>${wsDateShort(p.firstJoin)} \u00b7 ${wsRel(p.firstJoin)}</b></div>
+      <div><span>Last join</span><b>${wsDateShort(p.lastJoin)}</b></div>
+      <div><span>Play time</span><b>${wsPlaytime(p.playTime)}</b></div>
+      <div><span>Banned by</span><b class="mono click-copy" onclick="copyText('${esc(b.bannedBy||'')}','ID')">${esc(b.bannedBy||'\u2014')}</b></div>
+      <div><span>Discord</span><b class="mono click-copy" onclick="copyText('${esc(wsDiscord(b)||'')}','Discord ID')">${esc(wsDiscord(b)||'\u2014')}</b></div>
+    </div>
+    ${b.evidenceUrl?`<img class="ws-detail-ev" src="${esc(b.evidenceUrl)}" onclick="openEvidence('${esc(b.evidenceUrl)}')" onerror="this.remove()">`:''}
+    <div class="muted" style="margin:14px 0 7px;font-size:12px;text-transform:uppercase;letter-spacing:.05em">Identifiers (${ids.length})</div>
+    <div class="ws-idwrap">${ids.map(x=>`<span class="ws-idchip mono click-copy" onclick="copyText('${esc(x)}','ID')">${esc(x)}</span>`).join('') || '<span class="muted">None</span>'}</div>`);
+}
+async function deleteWsBan(i){
+  const b=_wsView[i]; if(!b) return;
+  if(!isOwner()){ toast('Only the owner can remove bans', false); return; }
+  if(!confirm('Remove ban #'+(b.banId||b.id||'')+' for '+wsName(b)+'?\n\nThis updates the shared list for every operator.')) return;
+  const key=banKey(b);
+  waveShieldBans = waveShieldBans.filter(x=>banKey(x)!==key);
+  try{ localStorage.setItem(WS_KEY_BANS, JSON.stringify(waveShieldBans)); }catch(e){}
+  const shared=await pushSharedBans(waveShieldBans,'replace');
+  _wsAltIndex=null; populateWsReasonFilter(); renderWaveShieldBans(); updateWsStatus();
+  toast('Ban removed'+(shared?' & synced to everyone':' locally'));
 }
 function openWaveShieldBans(){ nav('waveshield'); }
 
