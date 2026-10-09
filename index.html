@@ -984,6 +984,23 @@ table code{font-size:12.5px;color:var(--text-2)}
 .ws-detail-ev{width:100%;max-height:280px;object-fit:cover;border-radius:12px;margin-top:14px;cursor:zoom-in;border:1px solid var(--line)}
 .ws-idwrap{display:flex;flex-wrap:wrap;gap:6px}
 .ws-idchip{font-size:11px;padding:4px 8px;border-radius:7px;border:1px solid var(--line);background:var(--panel-2);color:var(--text-2);cursor:pointer;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* FTW vNext: profile synchronization + Discord-native embed composer */
+.profile-strip{flex-wrap:wrap}
+.profile-actions{position:relative;z-index:2;display:flex;align-items:center;gap:10px;margin-left:auto;flex-wrap:wrap}
+.sync-caption{font-size:11px;color:var(--mint);white-space:nowrap}
+.embed-preview-shell{margin:18px 0 16px;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:rgba(5,5,10,.55)}
+.embed-preview-label{display:flex;justify-content:space-between;gap:12px;padding:11px 14px;border-bottom:1px solid var(--line);font-size:10px;letter-spacing:.13em;font-weight:800;color:var(--text-3)}
+.preview-discord-mark{color:#8c9eff;letter-spacing:.08em}
+.discord-preview{display:flex;gap:12px;padding:18px;background:#313338;color:#dbdee1;font-family:Arial,sans-serif}
+.preview-bot-avatar{width:38px;height:38px;flex:0 0 38px;display:grid;place-items:center;border-radius:50%;background:linear-gradient(135deg,#a855f7,#5865f2);color:white;font-weight:800}
+.preview-message{min-width:0;flex:1}.preview-bot-name{font-weight:700;font-size:14px;color:#f2f3f5;margin-bottom:7px}.preview-bot-name span{font-size:9px;background:#5865f2;color:#fff;padding:3px 5px;border-radius:4px;margin-left:4px}.preview-bot-name small{font-size:10px;font-weight:400;color:#949ba4;margin-left:7px}
+.embed-preview{max-width:520px;border-left:4px solid #a855f7;border-radius:4px;background:#2b2d31;overflow:hidden}
+.embed-preview-inner{padding:13px 15px;position:relative;min-height:76px;overflow:hidden}
+.embed-preview-author{font-size:12px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:7px}.embed-preview-author:empty{display:none}.embed-preview-author img{width:22px;height:22px;object-fit:cover;border-radius:50%}
+.embed-preview-title{font-size:16px;font-weight:700;color:#fff;margin-bottom:7px;overflow-wrap:anywhere}.embed-preview-desc{font-size:13px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere;color:#dbdee1}.embed-preview-thumb{float:right;max-width:80px;max-height:80px;object-fit:cover;border-radius:5px;margin:0 0 8px 12px}.embed-preview-image{display:block;max-width:100%;max-height:230px;object-fit:cover;border-radius:4px;margin-top:12px}
+.embed-preview-image[hidden],.embed-preview-thumb[hidden]{display:none!important}.embed-preview-footer{clear:both;font-size:11px;color:#b5bac1;margin-top:12px;overflow-wrap:anywhere}.embed-preview-footer:empty{display:none}
+@media(max-width:760px){.profile-actions{width:100%;margin-left:0}.discord-preview{padding:12px}.embed-preview-shell{margin-top:14px}}
 </style>
 </head>
 <body>
@@ -1392,6 +1409,7 @@ table code{font-size:12.5px;color:var(--text-2)}
             </div>
             <div class="role-badges" id="pf-roles"></div>
           </div>
+          <div class="profile-actions"><span class="sync-caption" id="profile-sync-state">Live profile sync</span><button class="btn btn-secondary btn-sm" id="profile-sync-btn" onclick="syncDiscordProfiles()">↻ Sync profiles</button></div>
         </div>
 
         <div class="grid-kpi">
@@ -1509,7 +1527,12 @@ table code{font-size:12.5px;color:var(--text-2)}
             <div class="field"><label>Image URL</label><input class="input-sm" id="em-image"></div>
             <div class="field"><label>Thumbnail URL</label><input class="input-sm" id="em-thumb"></div>
           </div>
-          <div class="field" style="margin-bottom:14px"><label>Footer</label><input class="input-sm" id="em-footer"></div>
+          <div class="grid-2" style="margin-bottom:12px">
+            <div class="field"><label>Author name</label><input class="input-sm" id="em-author" placeholder="FTW System" oninput="updateEmbedPreview()"></div>
+            <div class="field"><label>Author icon URL</label><input class="input-sm" id="em-author-icon" placeholder="https://…" oninput="updateEmbedPreview()"></div>
+          </div>
+          <div class="field" style="margin-bottom:14px"><label>Footer</label><input class="input-sm" id="em-footer" oninput="updateEmbedPreview()" placeholder="FTW • Control Center"></div>
+          <div class="embed-preview-shell"><div class="embed-preview-label"><span>LIVE PREVIEW</span><span class="preview-discord-mark">DISCORD MESSAGE</span></div><div class="discord-preview"><div class="preview-bot-avatar">F</div><div class="preview-message"><div class="preview-bot-name">FTW <span>APP</span> <small>Today at 12:00 PM</small></div><div class="embed-preview" id="em-preview"><div class="embed-preview-inner" id="em-preview-inner"><div class="embed-preview-author" id="em-preview-author"></div><div class="embed-preview-title" id="em-preview-title">Your embed title</div><div class="embed-preview-desc" id="em-preview-desc">Your description will appear here. Edit the fields to preview your message.</div><img class="embed-preview-thumb" id="em-preview-thumb" alt="Embed thumbnail" hidden><img class="embed-preview-image" id="em-preview-image" alt="Embed image" hidden><div class="embed-preview-footer" id="em-preview-footer">FTW • Control Center</div></div></div></div></div></div>
           <button class="btn btn-primary" onclick="sendEmbed()">Send embed</button>
         </div>
         <div class="card">
@@ -2639,7 +2662,8 @@ async function loadProfile(){
     if(!r.ok) return;
     const p = await r.json();
     document.getElementById('pf-avatar').src = bust(p.avatar) || '';
-    document.getElementById('pf-name').textContent = p.display_name || p.username;
+    document.getElementById('pf-name').textContent = p.display_name || p.global_name || p.username;
+    const profileCard=document.getElementById('profile-card'); if(profileCard && p.banner) profileCard.style.backgroundImage='linear-gradient(110deg,rgba(18,8,31,.90),rgba(18,8,31,.74)),url('+JSON.stringify(bust(p.banner))+')';
     document.getElementById('pf-username').textContent = '@' + p.username;
     document.getElementById('pf-id').textContent = p.id;
     document.getElementById('pf-created').textContent = fmtTime(p.created_at);
@@ -2654,6 +2678,18 @@ async function loadProfile(){
       rolesEl.appendChild(b);
     });
   }catch(e){}
+}
+
+async function syncDiscordProfiles(){
+  const btn=document.getElementById('profile-sync-btn'), state=document.getElementById('profile-sync-state');
+  if(btn){btn.disabled=true;btn.textContent='↻ Syncing…';}
+  if(state) state.textContent='Refreshing Discord and bot profiles…';
+  try{
+    await Promise.all([loadProfile(),loadLiveServer()]);
+    if(state) state.textContent='Synced at '+new Date().toLocaleTimeString();
+    toast('Discord and bot profiles synchronized');
+  }catch(e){if(state) state.textContent='Sync failed — retry shortly';toast('Profile sync failed',false);}
+  finally{if(btn){btn.disabled=false;btn.textContent='↻ Sync profiles';}}
 }
 
 /* LIVE SERVER */
@@ -3154,10 +3190,22 @@ async function sendMessage(){
   await doAction('message',{channel_id,content},'Message sent');
   pushNotif('message','Message sent to '+channel_id);
 }
+function updateEmbedPreview(){
+  const get=id=>(document.getElementById(id)?.value||'').trim();
+  const colour=get('em-colour').replace('#','');
+  const border=document.getElementById('em-preview'); if(border) border.style.borderLeftColor=/^[0-9a-fA-F]{6}$/.test(colour)?'#'+colour:'#a855f7';
+  const title=document.getElementById('em-preview-title'), desc=document.getElementById('em-preview-desc'), footer=document.getElementById('em-preview-footer');
+  if(title) title.textContent=get('em-title')||'Your embed title';
+  if(desc) desc.textContent=get('em-desc')||'Your description will appear here. Edit the fields to preview your message.';
+  if(footer) footer.textContent=get('em-footer');
+  const author=document.getElementById('em-preview-author'); if(author){author.textContent='';const name=get('em-author'),icon=get('em-author-icon');if(name){if(icon&&/^https?:\/\//i.test(icon)){const img=document.createElement('img');img.src=icon;img.alt='';img.onerror=()=>img.remove();author.appendChild(img);}author.appendChild(document.createTextNode(name));}}
+  for(const [inputId,imgId] of [['em-image','em-preview-image'],['em-thumb','em-preview-thumb']]){const img=document.getElementById(imgId),url=get(inputId);if(!img)continue;if(/^https?:\/\//i.test(url)){img.src=url;img.hidden=false;img.onerror=()=>{img.hidden=true;};}else{img.removeAttribute('src');img.hidden=true;}}
+}
 async function sendEmbed(){
   const payload = {
     channel_id: val('em-ch'), title: val('em-title'), description: val('em-desc'),
-    colour: val('em-colour'), footer: val('em-footer'), image: val('em-image'), thumbnail: val('em-thumb')
+    colour: val('em-colour'), footer: val('em-footer'), image: val('em-image'), thumbnail: val('em-thumb'),
+    author: val('em-author'), author_icon: val('em-author-icon')
   };
   if(!payload.channel_id){ toast('Channel ID is required', false); return; }
   await doAction('embed',payload,'Embed sent');
@@ -4178,6 +4226,8 @@ document.addEventListener('keydown', (e)=>{
 });
 // command palette live filter
 document.addEventListener('input', (e)=>{ if(e.target && e.target.id==='command-input') renderCommandList(e.target.value); });
+document.addEventListener('input', e=>{if(e.target && /^em-(title|desc|colour|footer|image|thumb|author|author-icon)$/.test(e.target.id)) updateEmbedPreview();});
+document.addEventListener('DOMContentLoaded', updateEmbedPreview);
 </script>
 </body>
 </html>
