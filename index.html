@@ -2741,10 +2741,10 @@ function applyServerProfile(d, fallbackStatus, botProfile){
   document.getElementById('server-channels').textContent = safeText(firstDefined(guild.channel_count, guild.channels, d.channels, fallbackStatus.channels), 0);
   document.getElementById('server-roles').textContent = safeText(firstDefined(guild.role_count, guild.roles, d.roles, fallbackStatus.roles), 0);
   document.getElementById('server-hubs').textContent = safeText(firstDefined(guild.active_voice, guild.hubs, d.hubs, fallbackStatus.hubs), 0);
-  document.getElementById('server-owner').textContent = safeText(firstDefined(guild.owner_name, guild.owner?.name, guild.owner_id, d.owner_name));
-  document.getElementById('server-created').textContent = formatDiscordDate(firstDefined(guild.created_at, d.created_at));
-  document.getElementById('server-boost').textContent = safeText(firstDefined(guild.premium_tier, guild.boost_level, d.premium_tier));
-  document.getElementById('server-verification').textContent = safeText(firstDefined(guild.verification_level, d.verification_level));
+  document.getElementById('server-owner').textContent = safeText(firstDefined(guild.owner_name, guild.owner?.name, guild.owner_id, d.owner_name), 'Unavailable');
+  document.getElementById('server-created').textContent = formatDiscordDate(firstDefined(guild.created_at, d.created_at)) || 'Unavailable';
+  document.getElementById('server-boost').textContent = safeText(firstDefined(guild.premium_tier, guild.boost_level, d.premium_tier), 'Unavailable');
+  document.getElementById('server-verification').textContent = safeText(firstDefined(guild.verification_level, d.verification_level), 'Unavailable');
   document.getElementById('server-description').textContent = safeText(firstDefined(guild.description, d.description), 'This server has no description set in Discord.');
   setImg('bot-avatar-large', botAvatar);
   document.getElementById('bot-profile-name').textContent = safeText(firstDefined(bot.display_name, bot.name, botProfile.display_name, botProfile.username), 'Bot');
@@ -2776,6 +2776,12 @@ async function loadLiveServer(){
     const profile = profileRes.ok ? await profileRes.json() : {};
     if(status && status.ping_ms != null) lastPing = Number(status.ping_ms) || lastPing;
     applyServerProfile(server, status, profile);
+    if (!server.guild || !server.guild.id) {
+      const sync = document.getElementById('server-sync');
+      if (sync) sync.textContent = 'No server';
+      const last = document.getElementById('server-last-sync');
+      if (last) last.textContent = 'The bot is online but has not joined a Discord server, or its server ID is not configured.';
+    }
   }catch(e){
     document.getElementById('server-sync').textContent = 'Offline';
     document.getElementById('server-last-sync').textContent = 'The bot is not answering right now';
