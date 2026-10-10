@@ -1025,6 +1025,30 @@ button,.btn,.nav-item{transition:transform .16s ease,box-shadow .2s ease,backgro
 button:active,.btn:active{transform:translateY(1px)}
 @media(max-width:760px){body{overflow:auto}#app{min-height:100vh;height:auto}#sidebar{width:76px;min-width:76px}#sidebar .nav-label,#sidebar .brand-text,#sidebar .sidebar-status span{display:none}.auth-card{padding:24px}.auth-wordmark{font-size:29px}}
 
+
+/* FTW sign-in refresh v2: focused, responsive Discord OAuth entry */
+#auth-screen{gap:26px;padding:30px 20px;overflow:auto;background:#0b0614;isolation:isolate}
+#auth-screen::before{background:radial-gradient(560px 360px at 50% 43%,rgba(124,39,174,.22),transparent 72%),radial-gradient(700px 420px at 50% 100%,rgba(83,30,158,.18),transparent 70%)}
+#auth-screen::after{opacity:.38;background-image:radial-gradient(circle,rgba(218,190,255,.24) .8px,transparent 1px);background-size:26px 26px;-webkit-mask-image:linear-gradient(to bottom,#000,transparent 94%);mask-image:linear-gradient(to bottom,#000,transparent 94%)}
+#auth-screen .auth-theme{top:22px;right:22px}
+#auth-screen .auth-logo{gap:13px;z-index:1}
+#auth-screen .auth-mark{width:82px;height:82px;border-radius:25px;background:linear-gradient(145deg,rgba(242,118,162,.15),rgba(126,34,206,.19));border-color:rgba(224,171,255,.35);box-shadow:0 0 0 1px rgba(255,255,255,.025),0 18px 54px rgba(171,54,187,.22),inset 0 1px 0 rgba(255,255,255,.15)}
+#auth-screen .auth-wordmark{font-size:35px;letter-spacing:-.055em;background:linear-gradient(100deg,#ff8caa 8%,#d7a4ff 92%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+#auth-screen .auth-wordmark span{font-size:15px;-webkit-text-fill-color:#d6c1e9;color:#d6c1e9}
+#auth-screen .auth-logo .sub{font-size:13px;color:#8f7aa8;letter-spacing:.015em;margin-top:2px}
+#auth-screen .auth-card{z-index:1;width:min(430px,100%);padding:31px 34px 28px;gap:17px;border-radius:22px;background:linear-gradient(150deg,rgba(31,17,48,.94),rgba(20,11,34,.97));border:1px solid rgba(211,169,242,.13);box-shadow:0 24px 90px rgba(72,19,120,.24),inset 0 1px 0 rgba(255,255,255,.035);backdrop-filter:blur(16px)}
+#auth-screen .auth-card h2{font-size:21px;letter-spacing:-.025em}
+#auth-screen .auth-card p{font-size:13px;color:#c4b4d8}
+#auth-screen .btn-oauth{min-height:47px;border-radius:11px;background:linear-gradient(105deg,#5865f2,#7165f8);box-shadow:0 8px 22px rgba(88,101,242,.15);letter-spacing:-.01em}
+#auth-screen .btn-oauth:focus-visible,#auth-screen .theme-switch:focus-visible{outline:3px solid #d8b4fe;outline-offset:3px}
+#auth-screen .btn-oauth:hover{box-shadow:0 13px 28px rgba(88,101,242,.3)}
+#auth-screen #auth-error{padding:10px 12px;border-radius:10px;background:rgba(244,63,94,.08);border:1px solid rgba(244,63,94,.18)}
+.auth-trust{z-index:1;display:flex;justify-content:center;align-items:center;gap:8px;flex-wrap:wrap;color:#88779d;font-size:11px;line-height:1.5;margin-top:-10px}
+.auth-trust span{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border:1px solid rgba(211,169,242,.11);background:rgba(35,19,51,.5);border-radius:99px}
+.auth-trust i{display:inline-block;width:6px;height:6px;border-radius:50%;background:#39d3b0;box-shadow:0 0 0 3px rgba(57,211,176,.1)}
+@media(max-width:520px){#auth-screen{gap:22px;padding:72px 18px 26px}#auth-screen .auth-card{padding:27px 22px 24px}#auth-screen .auth-wordmark{font-size:31px}#auth-screen .auth-wordmark span{font-size:13px}#auth-screen .auth-theme{top:14px;right:14px}}
+@media(prefers-reduced-motion:reduce){#auth-screen .auth-mark,#auth-screen .auth-card{animation:none!important}#auth-screen .auth-mark::before{animation:none!important}}
+
 </style>
 </head>
 <body>
@@ -1149,6 +1173,11 @@ button:active,.btn:active{transform:translateY(1px)}
     </div>
     <div id="auth-step-loading" style="display:none"><p>Checking your Discord authorization…</p><div class="skeleton" style="height:42px;margin-top:14px"></div></div>
     <div id="auth-error"></div>
+  </div>
+  <div class="auth-trust" aria-label="Sign-in information">
+    <span><i></i> Secure Discord authorization</span>
+    <span>Only requested account access</span>
+    <span>FTW Control Center</span>
   </div>
 </div>
 
